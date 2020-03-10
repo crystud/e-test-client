@@ -1,0 +1,82 @@
+<template>
+  <div
+    class="alert"
+    :class="{
+      'show': show,
+    }"
+  >
+    <div class="body">
+      <slot></slot>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'AppModalWindow.vue',
+  props: {
+    show: {
+      type: Boolean,
+      required: true,
+    },
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@small: ~"screen and (max-width: 799px)";
+@medium: ~"screen and (max-width: 1200px)";
+@large: ~"screen and (min-width: 1201px)";
+
+.alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  z-index: 1000;
+
+  background: rgba(0, 0, 0, 0.85);
+
+  display: flex;
+
+  visibility: hidden;
+  opacity: 0;
+
+  transition: all .3s;
+
+  @media @small {
+    padding: 20px;
+  }
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+
+    .body {
+      transform: scale(1);
+
+      .icon {
+        transform: scale(1);
+      }
+    }
+  }
+
+  .body {
+    padding: 20px;
+
+    margin: auto;
+    background: #111;
+    color: #fff;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.72);
+    border-radius: 10px;
+
+    text-align: center;
+
+    transform: scale(0.9);
+    transition: all .3s;
+  }
+}
+</style>
