@@ -27,12 +27,6 @@
           <div class="name">Random person</div>
         </div>
 
-        <div class="logout">
-          <button
-            @click="exit"
-            class="btn"
-          >Вихід</button>
-        </div>
 
         <div class="roles">
           <div
@@ -41,6 +35,13 @@
               class="role"
               :class="[`role-${role}`]"
           >{{ localization.role[role] }}</div>
+        </div>
+
+        <div class="logout">
+          <button
+            @click="exit"
+            class="btn"
+          >Вихід</button>
         </div>
 
         <div class="stats">
@@ -83,7 +84,8 @@
         <div class="menu" @click="sidebar.opened = false">
           <div class="divider">Основне</div>
 
-          <app-home-link role="student" link="homeUser">Домівка</app-home-link>
+          <app-home-link role="user" link="homeUser">Домівка</app-home-link>
+          <app-home-link role="student" link="tests">Тести</app-home-link>
         </div>
       </div>
 
@@ -215,6 +217,8 @@ export default {
       display: flex;
       justify-content: center;
       width: 100%;
+
+      margin: 10px 0;
 
       .btn {
         background: transparent;

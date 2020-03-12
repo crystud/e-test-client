@@ -64,10 +64,13 @@ body {
   --color-font-gray: #55636E;
 }
 
+#app, button {
+  font-family: 'Exo 2', 'Lato', sans-serif;
+}
+
 #app {
   height: 100%;
   width: 100%;
-  font-family: 'Exo 2', 'Lato', sans-serif;
   background: var(--color-bg-main);
   overflow: auto;
 

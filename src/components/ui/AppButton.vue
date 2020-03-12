@@ -22,8 +22,8 @@ export default {
 
 <style lang="less" scoped>
 button {
-  &.primary {
-    background: #3242D5;
+  &.primary,
+  &.secondary {
     border: 0;
     border-radius: 10px;
 
@@ -31,6 +31,14 @@ button {
     cursor: pointer;
     font-size: 1em;
     padding: 12px 40px;
+  }
+
+  &.primary {
+    background: #3242D5;
+  }
+
+  &.secondary {
+    background: #D32323;
   }
 
   &.link {

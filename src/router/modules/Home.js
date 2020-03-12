@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/user',
+    path: '/',
     name: 'homeUser',
     meta: {
       title: 'Домівка - CRYSTUD',
