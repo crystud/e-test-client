@@ -65,10 +65,10 @@ export default {
   }
 
   .body {
-    padding: 20px;
+    padding: 50px 30px;
 
     margin: auto;
-    background: #111;
+    background: var(--color-bg-dark);
     color: #fff;
     box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.72);
     border-radius: 10px;

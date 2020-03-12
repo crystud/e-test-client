@@ -5,9 +5,9 @@ export default async (to, from, next) => {
     if (token) {
       next()
     } else {
-      next({ name: 'SignIn' })
+      next({ name: 'signIn' })
     }
-  } else if (to.matched.some((route) => route.meta.onlyWithoutAuth)) {
+  } else if (to.matched.some((route) => route.meta && route.meta.onlyWithoutAuth)) {
     if (!token) {
       next()
     } else {

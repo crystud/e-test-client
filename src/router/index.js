@@ -5,19 +5,21 @@ import Verify from './hooks/Verify'
 
 import Home from './modules/Home'
 import Authorization from './modules/Authorization'
+import Tests from './modules/Tests'
 
 Vue.use(VueRouter)
 
 const routes = [
   ...Authorization,
   {
-    path: '/home',
+    path: '/',
     component: () => import('@/views/Home'),
     meta: {
       requiredAuth: true,
     },
     children: [
       ...Home,
+      ...Tests,
     ],
   },
 ]

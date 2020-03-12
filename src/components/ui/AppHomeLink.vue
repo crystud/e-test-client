@@ -105,6 +105,8 @@ export default {
   .line-hide {
     background: transparent;
 
+    transition: all 0s;
+
     .shadow {
       background: transparent !important;
     }
