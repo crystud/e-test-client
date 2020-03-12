@@ -47,6 +47,8 @@ export default {
 .app-finish-warning {
   text-align: center;
 
+  color: var(--color-font-main);
+
   .title {
     width: 80%;
     font-size: 1.5em;
