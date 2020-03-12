@@ -1,8 +1,21 @@
 <template>
-  <div id="app">
+  <div id="app" :class="isDark ? 'dark' : 'light'">
     <router-view />
   </div>
 </template>
+
+<script>
+import { mapGetters } from 'vuex'
+
+export default {
+  name: 'App',
+  computed: {
+    ...mapGetters({
+      isDark: 'theme/isDarkTheme',
+    }),
+  },
+}
+</script>
 
 <style lang="less">
 @import (css) url('https://fonts.googleapis.com/css?family=Exo+2:200,400,500,700|Lato:300,400,700,900&display=swap&subset=cyrillic-ext');
@@ -21,9 +34,11 @@ body {
   margin: 0;
   box-sizing: border-box;
   outline: none;
+
+  transition: background .4s .1s, color .4s;
 }
 
-:root {
+.dark {
   --color-bg-main: #1E2329;
   --color-bg-dark: #15191C;
   --color-bg-light: #2C3339;
@@ -33,6 +48,19 @@ body {
   --color-accent-green: #1fe361;
   --color-font-main: #ffffff;
   --color-font-dark: #656D78;
+  --color-font-gray: #55636E;
+}
+
+.light {
+  --color-bg-main: #DCE0E3;
+  --color-bg-dark: #FFFFFF;
+  --color-bg-light: #2C3339;
+  --color-accent-orange: #FC7136;
+  --color-accent-blue: #0E8DEA;
+  --color-accent-red: #FF1E1E;
+  --color-accent-green: #1fe361;
+  --color-font-main: #000000;
+  --color-font-dark: #55636E;
   --color-font-gray: #55636E;
 }
 

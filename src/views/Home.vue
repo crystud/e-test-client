@@ -143,7 +143,7 @@ export default {
     exit() {
       localStorage.removeItem('accessToken')
 
-      this.$router.push({ name: 'SignIn' })
+      this.$router.push({ name: 'signIn' })
     },
   },
   components: {
@@ -194,8 +194,6 @@ export default {
     font-size: 1.1em;
     font-weight: 100;
     color: var(--color-font-dark);
-
-    // or #5a6d7b
   }
 
   .sidebar {
@@ -358,8 +356,11 @@ export default {
 
       transition: left .3s, background .3s .1s;
 
+      @color: var(--color-bg-main);
+
       &.mobile-opened {
-        background: rgba(0, 0, 0, 0.95);
+        background-color: var(--color-bg-dark);
+        opacity: 1;
         left: 0;
       }
 

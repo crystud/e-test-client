@@ -14,6 +14,6 @@ export default {
 .app-card {
   background: var(--color-bg-dark);
   border-radius: 8px;
-  color: #fff;
+  color: var(--color-font-main);
 }
 </style>

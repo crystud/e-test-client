@@ -28,7 +28,9 @@ const router = new VueRouter({
   routes,
 })
 
-
 router.beforeEach(Verify)
+router.afterEach((to) => {
+  document.title = to.meta.title || 'Title неоприділено'
+})
 
 export default router

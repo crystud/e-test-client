@@ -76,6 +76,8 @@ export default {
   methods: {
     setAccessToken() {
       localStorage.setItem('accessToken', '123')
+
+      this.$router.push({ name: 'homeUser' })
     },
   },
 }
