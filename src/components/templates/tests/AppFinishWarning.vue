@@ -62,7 +62,7 @@ export default {
 
   .btns {
     button {
-      margin: 0 10px;
+      margin: 10px;
     }
   }
 }

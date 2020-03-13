@@ -35,7 +35,7 @@ body {
   box-sizing: border-box;
   outline: none;
 
-  transition: background .4s .1s, color .4s;
+  transition: background .3s, color .15s;
 }
 
 .dark {
@@ -54,7 +54,7 @@ body {
 .light {
   --color-bg-main: #DCE0E3;
   --color-bg-dark: #FFFFFF;
-  --color-bg-light: #2C3339;
+  --color-bg-light: #c5cbd0;
   --color-accent-orange: #FC7136;
   --color-accent-blue: #0E8DEA;
   --color-accent-red: #FF1E1E;

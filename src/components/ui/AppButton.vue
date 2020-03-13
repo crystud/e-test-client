@@ -23,9 +23,10 @@ export default {
 <style lang="less" scoped>
 button {
   &.primary,
-  &.secondary {
+  &.secondary,
+  &.neutral {
     border: 0;
-    border-radius: 10px;
+    border-radius: 7px;
 
     color: #fff;
     cursor: pointer;
@@ -35,6 +36,11 @@ button {
 
   &.primary {
     background: #3242D5;
+  }
+
+  &.neutral {
+    background: var(--color-bg-light);
+    color: var(--color-font-main);
   }
 
   &.secondary {
