@@ -210,14 +210,14 @@ export default {
     }
 
     .questions {
-      margin-left: 15px;
       color: var(--color-font-dark);
+      font-weight: 100;
     }
 
     .content {
       .minimized {
         display: flex;
-        align-items: center;
+        flex-direction: column;
       }
     }
   }

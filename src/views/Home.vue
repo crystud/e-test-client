@@ -2,6 +2,11 @@
   <app-screen>
     <app-preloader :show="false"></app-preloader>
 
+    <app-settings
+      :show="settingsOpen"
+      @close="settingsOpen = false"
+    ></app-settings>
+
     <div class="sidebar">
       <div
         class="desktop-sidebar"
@@ -9,6 +14,15 @@
           'mobile-opened': sidebar.opened,
         }"
       >
+        <div
+          class="settings-icon"
+          @click="settingsOpen = true"
+        >
+          <font-awesome-icon
+            icon="user-cog"
+          ></font-awesome-icon>
+        </div>
+
         <div class="header">
           <font-awesome-icon
             icon="times"
@@ -119,8 +133,10 @@
 <script>
 import AppScreen from '@/components/ui/AppScreen.vue'
 import AppHomeLink from '@/components/ui/AppHomeLink.vue'
-import AppConfirmEmail from '@/components/templates/authorization/AppConfirmEmail.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
+
+import AppConfirmEmail from '@/components/templates/authorization/AppConfirmEmail.vue'
+import AppSettings from '../components/templates/settings/AppSettings.vue'
 
 export default {
   name: 'Home.vue',
@@ -130,6 +146,7 @@ export default {
       sidebar: {
         opened: false,
       },
+      settingsOpen: false,
       roles: ['student', 'admin'],
       localization: {
         role: {
@@ -153,6 +170,7 @@ export default {
     AppHomeLink,
     AppConfirmEmail,
     AppPreloader,
+    AppSettings,
   },
 }
 </script>
@@ -204,6 +222,19 @@ export default {
 
     max-height: 100vh;
     overflow: auto;
+
+    position: relative;
+
+    .settings-icon {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+
+      cursor: pointer;
+
+      color: var(--color-font-dark);
+      font-size: 1.5em;
+    }
 
     .header {
       height: 15px;

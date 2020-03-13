@@ -28,11 +28,10 @@ export default {
 @large: ~"screen and (min-width: 1250px)";
 
 .app-tests {
-  color: var(--color-font-main);
-
   h1 {
     font-weight: 300;
     margin-bottom: 20px;
+    color: var(--color-font-main);
   }
 
   .list {

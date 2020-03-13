@@ -83,6 +83,10 @@ export default {
 
     font-size: 1.1em;
 
+    @media screen and (max-width: 680px) {
+      grid-template-columns: 1fr;
+    }
+
     .section {
       display: flex;
       justify-content: center;

@@ -40,7 +40,6 @@ export default {
 
 <style lang="less" scoped>
 .app-tests-item {
-  color: var(--color-font-main);
   background: var(--color-bg-dark);
 
   padding: 20px;
@@ -70,6 +69,7 @@ export default {
 
   .title {
     font-size: 1.5em;
+    color: var(--color-font-main);
   }
 
   .description {
@@ -81,6 +81,7 @@ export default {
   .data {
     font-size: 1.1em;
     font-weight: 100;
+    color: var(--color-font-main);
 
     .item {
       display: grid;
@@ -94,6 +95,7 @@ export default {
 
       .value {
         font-weight: 400;
+        color: var(--color-font-main);
       }
     }
   }
