@@ -20,10 +20,15 @@
         <div class="property">
           <div class="name">Мова</div>
           <div class="value">
-            <select>
-              <option value="1">Українська</option>
-              <option value="1">English</option>
-              <option value="1">Deutsch</option>
+            <select
+              v-on:change="handleLanguageChange"
+            >
+              <option
+                v-for="([name, id], i) in languages"
+                v-bind:key="i"
+                :value="id"
+                :selected="id === currentLanguage"
+              >{{name}}</option>
             </select>
           </div>
         </div>
@@ -64,6 +69,16 @@ export default {
       default: () => false,
     },
   },
+  data() {
+    return {
+      currentLanguage: localStorage.getItem('lang'),
+      languages: [
+        ['Українська', 'ua'],
+        ['English', 'en'],
+        ['Deutsch', 'de'],
+      ],
+    }
+  },
   computed: {
     ...mapGetters({
       darkTheme: 'theme/isDarkTheme',
@@ -73,6 +88,11 @@ export default {
     ...mapActions({
       setTheme: 'theme/setCurrentTheme',
     }),
+    handleLanguageChange(ev) {
+      const { target: { value } } = ev || {}
+
+      localStorage.setItem('lang', value)
+    },
   },
 }
 </script>
@@ -83,7 +103,8 @@ export default {
 
   .app-settings {
     font-weight: 100;
-    padding: 20px;
+    width: 80vw;
+    max-width: 400px;
 
     .title {
       font-size: 1.6em;
