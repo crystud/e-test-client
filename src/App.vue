@@ -71,8 +71,10 @@ body {
 #app {
   height: 100%;
   width: 100%;
-  background: var(--color-bg-main);
   overflow: auto;
+
+  background: var(--color-bg-main);
+  color: var(--color-font-main);
 
   a {
     color: var(--color-font-main);
