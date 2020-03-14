@@ -1,5 +1,8 @@
 <template>
-  <div id="app" :class="isDark ? 'dark' : 'light'">
+  <div
+    id="app"
+    :class="isDark ? 'dark' : 'light'"
+  >
     <router-view />
   </div>
 </template>

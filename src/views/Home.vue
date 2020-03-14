@@ -100,6 +100,10 @@
 
           <app-home-link role="user" link="homeUser">Домівка</app-home-link>
           <app-home-link role="student" link="tests">Тести</app-home-link>
+
+          <div class="divider">Адмін</div>
+
+          <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
         </div>
       </div>
 
@@ -204,7 +208,7 @@ export default {
 
     .username {
       text-align: center;
-      color: #fff;
+      color: var(--color-font-main);
     }
   }
 
@@ -417,7 +421,7 @@ export default {
     overflow: auto;
 
     @media @small {
-      padding: 20px;
+      padding: 10px;
     }
   }
 }

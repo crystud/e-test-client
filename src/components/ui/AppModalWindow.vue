@@ -47,10 +47,6 @@ export default {
 
   transition: all .3s;
 
-  @media @small {
-    padding: 20px;
-  }
-
   &.show {
     opacity: 1;
     visibility: visible;
@@ -77,6 +73,14 @@ export default {
 
     transform: scale(0.9);
     transition: all .3s;
+  }
+
+  @media @small {
+    padding: 10px;
+
+    .body {
+      padding: 20px;
+    }
   }
 }
 </style>
