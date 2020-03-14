@@ -4,14 +4,32 @@
       :showMinimize="true"
     ></app-test-header>
 
-    <div class="results-list">
-      <div
-        v-for="([ label, value ], index) in results"
-        v-bind:key="index"
-        class="item"
-      >
-        <div class="value">{{value}}</div>
-        <div class="label">{{label}}</div>
+    <div class="results-wrap">
+      <div class="student-info">
+        <div class="wrap">
+          <div class="profile-image">
+            <img
+              src="https://www.thispersondoesnotexist.com/image"
+              alt="student's profile image"
+            />
+          </div>
+
+          <div class="info">
+            <div class="name">Студент Студентович</div>
+            <div class="last-visit">Не в мережі</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-list">
+        <div
+          v-for="([ label, value ], index) in results"
+          v-bind:key="index"
+          class="item"
+        >
+          <div class="value">{{value}}</div>
+          <div class="label">{{label}}</div>
+        </div>
       </div>
     </div>
 
@@ -51,11 +69,70 @@ export default {
 
 <style lang="less" scoped>
 @extrasmall: ~"screen and (max-width: 430px)";
-@small: ~"screen and (max-width: 750px)";
-@medium: ~"screen and (max-width: 1000px)";
+@small: ~"screen and (max-width: 1050px)";
+@medium: ~"screen and (max-width: 1200px)";
 @large: ~"screen and (min-width: 1250px)";
 
 .app-test-results {
+  .results-wrap {
+    margin: 20px 0;
+
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-gap: 15px;
+
+    .student-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: var(--color-bg-dark);
+      border-radius: 10px;
+      padding: 20px;
+
+      .wrap {
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        grid-gap: 10px;
+
+        align-items: center;
+
+        .name {
+          font-size: 1.1em;
+          color: var(--color-font-main);
+        }
+
+        .last-visit {
+          color: var(--color-font-dark);
+          margin-top: 5px;
+        }
+
+        .profile-image {
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          border-radius: 50%;
+
+          img {
+            width: 100%;
+          }
+        }
+      }
+    }
+
+    @media screen and (max-width: 800px) {
+      grid-template-columns: 1fr;
+
+      .student-info {
+        padding: 30px;
+
+        .wrap {
+          grid-gap: 20px;
+        }
+      }
+    }
+  }
+
   .results-list {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -67,13 +144,11 @@ export default {
 
     justify-content: center;
 
-    margin: 20px 0;
-
-    @media @small {
-      grid-template-columns: repeat(3, 1fr);
+    @media @medium {
+      grid-template-columns: 1fr 1fr 1fr;
     }
 
-    @media @extrasmall {
+    @media @small {
       grid-template-columns: 1fr 1fr;
     }
 

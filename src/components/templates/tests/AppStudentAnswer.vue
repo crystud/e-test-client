@@ -66,6 +66,8 @@ export default {
 
       font-size: 1.1em;
 
+      color: #fff;
+
       justify-content: center;
       align-items: center;
     }

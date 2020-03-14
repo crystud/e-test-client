@@ -75,7 +75,7 @@ export default {
 
     img {
       margin: auto;
-      max-width: 60vw;
+      max-width: 90vw;
 
       transform: scale(.8);
       transition: all .15s .1s;

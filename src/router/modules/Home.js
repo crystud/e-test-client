@@ -5,6 +5,6 @@ export default [
     meta: {
       title: 'Домівка - CRYSTUD',
     },
-    component: () => import('@/components/templates/authorization/home/User'),
+    component: () => import('@/views/Student'),
   },
 ]

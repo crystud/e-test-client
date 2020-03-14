@@ -6,6 +6,7 @@ import Verify from './hooks/Verify'
 import Home from './modules/Home'
 import Authorization from './modules/Authorization'
 import Tests from './modules/Tests'
+import Student from './modules/Student'
 
 Vue.use(VueRouter)
 
@@ -20,6 +21,7 @@ const routes = [
     children: [
       ...Home,
       ...Tests,
+      ...Student,
     ],
   },
 ]
