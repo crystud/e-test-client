@@ -12,6 +12,12 @@
         <div class="value">{{value}}</div>
       </div>
     </div>
+
+    <div
+      v-if="fullIsOpened !== null"
+      class="check-full"
+      @click="$emit('setFullHistory', !fullIsOpened)"
+    >{{ getHistoryText() }}</div>
   </app-user-card>
 </template>
 
@@ -23,11 +29,23 @@ export default {
   components: {
     AppUserCard,
   },
+  methods: {
+    getHistoryText() {
+      return this.fullIsOpened
+        ? 'Приховати історію проходження тестів'
+        : 'Переглянути історію проходження тестів'
+    },
+  },
   props: {
     data: {
       type: Array,
       required: true,
       default: () => [],
+    },
+    fullIsOpened: {
+      type: Boolean,
+      required: false,
+      default: () => null,
     },
   },
 }
@@ -58,6 +76,18 @@ export default {
       .value {
         color: var(--color-font-main);
       }
+    }
+  }
+
+  .check-full {
+    user-select: none;
+    margin-top: 20px;
+    color: var(--color-font-main);
+    cursor: pointer;
+    font-weight: 400;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 }

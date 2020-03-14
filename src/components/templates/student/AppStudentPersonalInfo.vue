@@ -46,6 +46,14 @@ export default {
   grid-gap: 20px;
   align-items: center;
 
+  @media screen and (max-width: 580px) {
+    grid-template-columns: 1fr;
+
+    .profile-image {
+      margin: 0 auto;
+    }
+  }
+
   .profile-image {
     width: @profile-image-size;
     height: @profile-image-size;

@@ -8,16 +8,22 @@
     <div class="test-stats">
       <div class="section">
         <div>
-          <div class="title">Загальна статистика</div>
+          <div class="title">Ваша статистика</div>
 
           <div class="data">
-            <div
-              class="item"
-              v-for="i in 3"
-              v-bind:key="i"
-            >
+            <div class="item">
               <div class="property">Пройдено разів</div>
               <div class="value">49</div>
+            </div>
+
+            <div class="item">
+              <div class="property">Середній результат</div>
+              <div class="value">78%</div>
+            </div>
+
+            <div class="item">
+              <div class="property">Середній час проходження</div>
+              <div class="value">13:56</div>
             </div>
           </div>
         </div>
@@ -89,14 +95,13 @@ export default {
 
     .section {
       display: flex;
-      justify-content: center;
       align-items: center;
 
       background: var(--color-bg-dark);
       color: var(--color-font-main);
       border-radius: 10px;
 
-      padding: 30px;
+      padding: 30px 50px;
 
       .title {
         font-size: 1.6em;
@@ -108,6 +113,9 @@ export default {
         .item {
           display: grid;
           grid-template-columns: 160px 1fr;
+          grid-gap: 20px;
+
+          align-items: center;
 
           margin-bottom: 10px;
 

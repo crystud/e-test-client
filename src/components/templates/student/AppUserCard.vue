@@ -1,5 +1,8 @@
 <template>
-  <div class="app-user-card">
+  <div
+    class="app-user-card"
+    @click="$emit('click')"
+  >
     <slot></slot>
   </div>
 </template>

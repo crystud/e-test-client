@@ -26,6 +26,7 @@ import {
   faAngleDown,
   faStopCircle,
   faUserCog,
+  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -55,6 +56,7 @@ library.add(faPlay)
 library.add(faAngleDown)
 library.add(faStopCircle)
 library.add(faUserCog)
+library.add(faInfoCircle)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
