@@ -105,6 +105,7 @@
 
           <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
           <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
+          <app-home-link role="admin" link="classes">Пари</app-home-link>
         </div>
       </div>
 
