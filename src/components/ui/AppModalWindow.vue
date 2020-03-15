@@ -72,7 +72,7 @@ export default {
     text-align: center;
 
     transform: scale(0.9);
-    transition: all .3s;
+    transition: transform .3s;
   }
 
   @media @small {

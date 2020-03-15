@@ -38,7 +38,7 @@ body {
   box-sizing: border-box;
   outline: none;
 
-  transition: background .3s, color .15s;
+  transition: background .3s;
 }
 
 .dark {
