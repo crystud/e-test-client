@@ -101,9 +101,10 @@
           <app-home-link role="user" link="homeUser">Домівка</app-home-link>
           <app-home-link role="student" link="tests">Тести</app-home-link>
 
-          <div class="divider">Адмін</div>
+          <div class="divider">Адміністратор</div>
 
           <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
+          <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
         </div>
       </div>
 
