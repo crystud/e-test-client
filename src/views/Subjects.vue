@@ -1,29 +1,29 @@
 <template>
   <div class="app-specialtys">
     <div class="header">
-      <div class="title">Спеціальності</div>
+      <div class="title">Предмети</div>
 
-      <app-create-button>Додати спеціальність</app-create-button>
+      <app-create-button>Створити предмет</app-create-button>
     </div>
 
     <div class="list">
-      <app-specialty
+      <app-subject
         v-for="i in 15"
         v-bind:key="i"
-      ></app-specialty>
+      ></app-subject>
     </div>
   </div>
 </template>
 
 <script>
 import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
-import AppSpecialty from '@/components/templates/admin/AppSpecialty.vue'
+import AppSubject from '@/components/templates/admin/AppSubject.vue'
 
 export default {
-  name: 'specialtys',
+  name: 'classes',
   components: {
     AppCreateButton,
-    AppSpecialty,
+    AppSubject,
   },
 }
 </script>

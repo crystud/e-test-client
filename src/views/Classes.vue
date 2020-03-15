@@ -41,6 +41,15 @@ export default {
       font-size: 1.6em;
       color: var(--color-font-main);
     }
+
+    @media screen and (max-width: 400px) {
+      flex-direction: column;
+      justify-items: center;
+
+      .title {
+        margin-bottom: 10px;
+      }
+    }
   }
 
   .list {
@@ -49,6 +58,21 @@ export default {
     grid-gap: 20px;
 
     margin-top: 20px;
+  }
+
+  @small: ~"screen and (max-width: 650px)";
+  @medium: ~"screen and (max-width: 1300px)";
+
+  @media @medium {
+    .list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media @small {
+    .list {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>
