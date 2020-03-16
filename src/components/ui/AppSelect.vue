@@ -13,7 +13,8 @@
         <div
           v-if="value && !isFocused"
           class="value"
-        >{{value.label}}</div>
+          :title="value.label"
+        >{{sliceText(value.label)}}</div>
       </div>
 
       <div
@@ -68,6 +69,13 @@ export default {
     }
   },
   methods: {
+    sliceText(words) {
+      const sliceLength = 25
+
+      if (words.length < sliceLength) return words
+
+      return `${words.substring(0, sliceLength)}...`
+    },
     reset() {
       this.filter = ''
       this.value = null
