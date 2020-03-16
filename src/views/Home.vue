@@ -107,6 +107,7 @@
           <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
           <app-home-link role="admin" link="classes">Пари</app-home-link>
           <app-home-link role="admin" link="subjects">Предмети</app-home-link>
+          <app-home-link role="admin" link="students">Студенти</app-home-link>
         </div>
       </div>
 

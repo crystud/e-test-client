@@ -19,4 +19,9 @@ export default [
     name: 'subjects',
     component: () => import('@/views/Subjects.vue'),
   },
+  {
+    path: '/admin/students',
+    name: 'students',
+    component: () => import('@/views/Students.vue'),
+  },
 ]
