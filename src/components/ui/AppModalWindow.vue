@@ -5,7 +5,12 @@
       'show': show,
     }"
   >
-    <div class="body">
+    <div
+      class="body"
+      :class="{
+        'no-paddings': noPaddings,
+      }"
+    >
       <slot></slot>
     </div>
   </div>
@@ -18,6 +23,11 @@ export default {
     show: {
       type: Boolean,
       required: true,
+    },
+    noPaddings: {
+      type: Boolean,
+      required: false,
+      default: () => false,
     },
   },
 }
@@ -73,6 +83,10 @@ export default {
 
     transform: scale(0.9);
     transition: transform .3s;
+
+    &.no-paddings {
+      padding: 0;
+    }
   }
 
   @media @small {

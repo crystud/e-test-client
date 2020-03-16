@@ -1,5 +1,13 @@
 <template>
-  <div class="app-select" @mouseleave="isFocused = false">
+  <div
+    class="app-select"
+    :class="{
+      'side-border': sideBorder,
+      'is-okay': value,
+      'is-bad': !value,
+    }"
+    @mouseleave="isFocused = false"
+  >
     <div class="body">
       <div
         @click="focus"
@@ -42,7 +50,7 @@
         class="option highlight"
         @click="reset"
       >
-        Скинути
+        Не обрано
       </div>
 
       <div
@@ -125,6 +133,11 @@ export default {
       required: false,
       default: () => null,
     },
+    sideBorder: {
+      type: Boolean,
+      required: false,
+      default: () => false,
+    },
   },
 }
 </script>
@@ -136,6 +149,33 @@ export default {
   padding: 10px;
   position: relative;
 
+  &.is-okay::before {
+    background: #22D582;
+  }
+
+  &.is-bad::before {
+    background: #D52222;
+  }
+
+  &.side-border::before {
+    content: "";
+
+    display: block;
+
+    width: 3px;
+    height: 50%;
+
+    max-height: 60px;
+
+    border-radius: 10px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+  }
+
   .focus-area {
     cursor: pointer;
   }
@@ -145,6 +185,8 @@ export default {
     flex-direction: column;
     justify-content: center;
 
+    z-index: 0;
+
     height: 100%;
 
     .label {
@@ -153,6 +195,11 @@ export default {
       font-weight: 100;
 
       margin-bottom: 5px;
+    }
+
+    .value {
+      color: var(--color-font-dark);
+      font-weight: 400;
     }
 
     .filter {
@@ -181,7 +228,10 @@ export default {
     top: 100%;
     left: 0;
 
+    z-index: 125;
+
     background: var(--color-bg-dark);
+    border: 1px solid var(--color-bg-light);
     border-radius: 0;
 
     width: 100%;
@@ -200,11 +250,18 @@ export default {
       border-bottom: 1px solid var(--color-bg-main);
       cursor: pointer;
 
+      color: var(--color-font-main);
+
       &.highlight {
         color: var(--color-font-dark);
         padding: 10px 15px;
 
         font-weight: 100;
+      }
+
+      &:hover {
+        background: linear-gradient(45deg, #1BC388, #0C6993);
+        color: #fff;
       }
     }
 

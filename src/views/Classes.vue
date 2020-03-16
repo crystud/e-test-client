@@ -1,9 +1,14 @@
 <template>
   <div class="app-specialtys">
+    <app-create-class
+      :show="showCreateClass"
+      @close="showCreateClass = false"
+    ></app-create-class>
+
     <div class="header">
       <div class="title">Пари</div>
 
-      <app-create-button>Створити пару</app-create-button>
+      <app-create-button @click="showCreateClass = true">Створити пару</app-create-button>
     </div>
 
     <div class="list">
@@ -18,12 +23,19 @@
 <script>
 import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
 import AppClass from '@/components/templates/admin/AppClass.vue'
+import AppCreateClass from '@/components/templates/admin/AppCreateClass.vue'
 
 export default {
   name: 'classes',
   components: {
     AppCreateButton,
+    AppCreateClass,
     AppClass,
+  },
+  data() {
+    return {
+      showCreateClass: false,
+    }
   },
 }
 </script>
