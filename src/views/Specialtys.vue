@@ -1,9 +1,14 @@
 <template>
   <div class="app-specialtys">
+    <app-sync-specialtys
+      :show="showSync"
+      @close="showSync = false"
+    ></app-sync-specialtys>
+
     <div class="header">
       <div class="title">Спеціальності</div>
 
-      <app-create-button>Додати спеціальність</app-create-button>
+      <app-create-button @click="showSync = true">Синхронізувати спеціальності</app-create-button>
     </div>
 
     <div class="list">
@@ -18,12 +23,19 @@
 <script>
 import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
 import AppSpecialty from '@/components/templates/admin/AppSpecialty.vue'
+import AppSyncSpecialtys from '@/components/templates/admin/AppSyncSpecialtys.vue'
 
 export default {
+  data() {
+    return {
+      showSync: false,
+    }
+  },
   name: 'specialtys',
   components: {
     AppCreateButton,
     AppSpecialty,
+    AppSyncSpecialtys,
   },
 }
 </script>
