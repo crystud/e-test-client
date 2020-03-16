@@ -4,7 +4,7 @@
 
     <div class="list">
       <app-user-item
-        v-for="i in 6"
+        v-for="i in 5"
         v-bind:key="i"
         class="user-item"
       ></app-user-item>

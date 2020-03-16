@@ -4,22 +4,26 @@
     class="modal"
     :noPaddings="true"
   >
-    <div class="app-sync-specialtys">
-      <div class="title">Синхронізація спеціальностей</div>
+    <div class="app-create-subject">
+      <div class="title">Створення предмету</div>
 
       <div class="content">
         <div class="text">
-          Ми використовуємо список професій, наданий edbo.
-          Синхронізація відбувається за цим списком.
+          Щоб створити предмет вам потрібно вказати тільки назву предмету.
         </div>
 
         <app-data-list
           class="data-list"
           :data="[
-            ['Наразі у вас', '18 спеціальностей'],
-            ['Остання синхронізація', '28.02.2020 13:45'],
+            ['Наразі у вас', '18 предметів'],
+            ['Останній предмет створено', '28.02.2020 13:45'],
           ]"
         ></app-data-list>
+
+        <app-input
+          placeholder="Назва предмету"
+          appearance="primary"
+        ></app-input>
 
         <div class="btns">
           <app-button
@@ -42,6 +46,7 @@
 import AppModalWindow from '../../ui/AppModalWindow.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 import AppButton from '../../ui/AppButton.vue'
+import AppInput from '../../ui/AppInput.vue'
 
 export default {
   name: 'AppSyncSpecialtys',
@@ -49,6 +54,7 @@ export default {
     AppModalWindow,
     AppDataList,
     AppButton,
+    AppInput,
   },
   props: {
     show: {
@@ -65,7 +71,7 @@ export default {
   .body {
     padding: 0 !important;
 
-    .app-sync-specialtys {
+    .app-create-subject {
       font-weight: 100;
       max-width: 600px;
 
@@ -86,6 +92,10 @@ export default {
           color: var(--color-font-dark);
         }
 
+        .subject-input {
+          margin: 20px 0;
+        }
+
         .data-list {
           margin: 30px 0;
         }
@@ -94,6 +104,8 @@ export default {
           display: grid;
           grid-template-columns: 1fr 1fr;
           grid-gap: 20px;
+
+          margin-top: 30px;
 
           @media screen and (max-width: 450px) {
             grid-template-columns: 1fr;

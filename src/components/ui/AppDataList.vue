@@ -32,6 +32,7 @@ export default {
   .item {
     margin-bottom: 10px;
     display: grid;
+    align-items: center;
 
     grid-template-columns: minmax(100px, auto) 1fr;
     grid-gap: 15px;

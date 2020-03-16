@@ -128,6 +128,10 @@ export default {
           grid-gap: 20px;
 
           margin-top: 40px;
+
+          @media screen and (max-width: 450px) {
+            grid-template-columns: 1fr;
+          }
         }
       }
     }

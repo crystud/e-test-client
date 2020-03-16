@@ -8,8 +8,10 @@
     </div>
 
     <div class="info">
-      <div class="name">Прізвищевич Студент Студентович</div>
-      <div class="last-visit">Остання активність: 37 хвилин тому</div>
+      <div class="basic-info">
+        <div class="name">Прізвищевич Студент Студентович</div>
+        <div class="last-visit">Остання активність: 37 хвилин тому</div>
+      </div>
 
       <div class="additional">
         <div class="item">
@@ -51,6 +53,10 @@ export default {
 
     .profile-image {
       margin: 0 auto;
+    }
+
+    .basic-info {
+      text-align: center;
     }
   }
 

@@ -1,9 +1,14 @@
 <template>
   <div class="app-specialtys">
+    <app-create-subject
+      :show="showCreateSubject"
+      @close="showCreateSubject = false"
+    ></app-create-subject>
+
     <div class="header">
       <div class="title">Предмети</div>
 
-      <app-create-button>Створити предмет</app-create-button>
+      <app-create-button @click="showCreateSubject = true">Створити предмет</app-create-button>
     </div>
 
     <div class="list">
@@ -18,12 +23,19 @@
 <script>
 import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
 import AppSubject from '@/components/templates/admin/AppSubject.vue'
+import AppCreateSubject from '@/components/templates/admin/AppCreateSubject.vue'
 
 export default {
   name: 'classes',
   components: {
     AppCreateButton,
+    AppCreateSubject,
     AppSubject,
+  },
+  data() {
+    return {
+      showCreateSubject: false,
+    }
   },
 }
 </script>

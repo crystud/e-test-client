@@ -54,7 +54,7 @@ export default {
       color: var(--color-font-main);
     }
 
-    @media screen and (max-width: 400px) {
+    @media screen and (max-width: 500px) {
       flex-direction: column;
       justify-items: center;
 

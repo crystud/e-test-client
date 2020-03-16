@@ -1,7 +1,10 @@
 <template>
   <div
     class="app-input"
-    :class="appearance"
+    :class="[
+      appearance,
+      (value ? 'is-okay' : 'is-bad'),
+    ]"
   >
     <input
       :type="type"
@@ -62,6 +65,10 @@ export default {
 .app-input {
   position: relative;
 
+  .main-input {
+    font: 1em 'Exo 2', 'Lato', Tahoma, Arial;
+  }
+
   &.bottom-border-highlight {
     .main-input,
     .placeholder {
@@ -77,9 +84,7 @@ export default {
       border-bottom: 2px solid #2A3138;
       background: rgba(0, 0, 0, 0);
 
-      color: #fff;
-
-      font-size: 1em;
+      color: var(--color-font-dark);
     }
 
     .placeholder {
@@ -95,19 +100,72 @@ export default {
 
       font-weight: 100;
 
-      opacity: .35;
-
-      color: #fff;
+      color: var(--color-font-dark);
 
       &.hidden {
         padding-top: 0;
         top: -15px;
         font-size: .9em;
 
-        opacity: .15;
+        opacity: .8;
       }
 
       transition: all .22s;
+    }
+  }
+
+  &.primary {
+    .main-input,
+    .placeholder {
+      padding: 30px 10px 10px;
+      cursor: text;
+    }
+
+    .main-input {
+      width: 100%;
+      display: inline-block;
+
+      border: 1px solid transparent;
+      border-radius: 5px;
+
+      background: rgba(0, 0, 0, 0);
+
+      color: var(--color-font-main);
+
+      transition: all .3s;
+    }
+
+    .placeholder {
+      position: absolute;
+      top: -10px;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+
+      font-weight: 100;
+
+      color: var(--color-font-dark);
+
+      &.hidden {
+        padding-top: 0;
+        top: 10px;
+        font-size: .9em;
+      }
+
+      transition: all .22s;
+    }
+
+    &.is-okay {
+      .main-input {
+        border-color: #22D582;
+      }
+    }
+
+    &.is-bad {
+      .main-input {
+        border-color: #D52222;
+      }
     }
   }
 }
