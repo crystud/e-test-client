@@ -55,7 +55,7 @@ body {
 .light {
   --color-bg-main: #DCE0E3;
   --color-bg-dark: #FFFFFF;
-  --color-bg-light: #c5cbd0;
+  --color-bg-light: #e3e6e8;
   --color-accent-orange: #FC7136;
   --color-accent-blue: #0E8DEA;
   --color-accent-red: #FF1E1E;

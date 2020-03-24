@@ -115,6 +115,8 @@ export default {
   }
 
   &.primary {
+    background: var(--color-bg-main);
+
     .main-input,
     .placeholder {
       padding: 30px 10px 10px;
@@ -166,6 +168,51 @@ export default {
       .main-input {
         border-color: #D52222;
       }
+    }
+  }
+
+  // # SECONDARY
+
+  &.secondary {
+    .main-input,
+    .placeholder {
+      padding: 30px 10px 10px;
+      cursor: text;
+    }
+
+    .main-input {
+      width: 100%;
+      display: inline-block;
+
+      border: 1px solid transparent;
+      border-radius: 5px;
+
+      background: rgba(0, 0, 0, 0);
+
+      color: var(--color-font-main);
+
+      transition: all .3s;
+    }
+
+    .placeholder {
+      position: absolute;
+      top: -10px;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+
+      font-weight: 100;
+
+      color: var(--color-font-dark);
+
+      &.hidden {
+        padding-top: 0;
+        top: 10px;
+        font-size: .9em;
+      }
+
+      transition: all .22s;
     }
   }
 }

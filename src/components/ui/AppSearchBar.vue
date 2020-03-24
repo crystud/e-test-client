@@ -35,12 +35,14 @@ export default {
 <style lang="less" scoped>
 .app-search-bar {
   border-radius: 10px;
-  background: var(--color-bg-main);
+  background: var(--color-bg-light);
 
   display: grid;
   grid-template-columns: 1fr 60px;
 
   font-weight: 100;
+
+  width: 100%;
 
   input, button {
     padding: 15px;
@@ -48,7 +50,7 @@ export default {
     border: 0;
 
     background: transparent;
-    color: #fff;
+    color: var(--color-font-main);
   }
 
   input {
@@ -61,7 +63,20 @@ export default {
   }
 
   button {
-    border-left: 1px solid var(--color-font-dark);
+    border-left: 1px solid var(--color-bg-main);
+  }
+
+  @media screen and (max-width: 450px) {
+    grid-template-columns: 1fr;
+
+    button {
+      border-left: 0;
+      border-top: 1px solid var(--color-bg-main);
+    }
+
+    input, button {
+      padding: 10px;
+    }
   }
 }
 </style>

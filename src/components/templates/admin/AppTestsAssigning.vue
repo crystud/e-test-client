@@ -115,18 +115,29 @@ export default {
 
 <style lang="less" scoped>
 .app-tests-assigning {
+  max-height: 95vh;
+  overflow: auto;
+  max-width: 700px;
+
+  background: var(--color-bg-dark);
+  border-radius: 15px;
+
   .header,
   .content {
     padding: 30px;
     border-bottom: 1px solid var(--color-bg-main);
+
+    @media screen and (max-width: 350px) {
+      padding: 15px;
+    }
   }
 
   .header {
     font-size: 1.5em;
+    color: var(--color-font-main);
   }
 
   .content {
-    width: 600px;
     text-align: left;
 
     .tip {
@@ -143,6 +154,8 @@ export default {
         margin-bottom: 10px;
         align-items: center;
         min-height: 40px;
+
+        color: var(--color-font-main);
 
         .date {
           display: flex;
@@ -205,6 +218,44 @@ export default {
             }
           }
         }
+
+        @media screen and (max-width: 350px) {
+          .created {
+            flex-wrap: wrap;
+          }
+        }
+
+        @media screen and (max-width: 650px) {
+          grid-template-columns: 1fr;
+          grid-gap: 0;
+          margin-bottom: 30px;
+
+          border-bottom: 1px solid fadeout(#000, 80%);
+
+          .name {
+            font-size: 1.2em;
+          }
+
+          .created {
+            justify-content: flex-start;
+
+            padding: 15px 0;
+          }
+
+          .date, .action {
+            margin: 10px 0;
+          }
+
+          .date {
+            margin-right: 15px;
+          }
+
+          .action {
+            position: relative;
+            top: 0;
+            left: 0;
+          }
+        }
       }
     }
 
@@ -216,6 +267,19 @@ export default {
 
       .app-button {
         margin-left: 12px;
+      }
+
+      @media screen and (max-width: 400px) {
+        flex-direction: column;
+
+        .app-button {
+          width: 100%;
+          margin: 0;
+        }
+
+        .app-button:first-child {
+          margin: 0 0 20px;
+        }
       }
     }
   }
