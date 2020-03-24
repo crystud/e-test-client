@@ -15,6 +15,9 @@
 
   position: relative;
 
+  font-size: 1.1em;
+  line-height: 1.3em;
+
   &::before {
     content: "";
 

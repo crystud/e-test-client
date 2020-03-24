@@ -11,22 +11,12 @@
       class="main-input"
       ref="appInput"
       v-model="value"
+      :placeholder="placeholder"
       v-on:blur="focused = false"
       v-on:focus="focused = true"
       v-on:change="$emit('change', $event.target.value)"
       v-on:keyup="$emit('change', $event.target.value)"
     />
-
-    <div
-      v-if="placeholder"
-      @click="focus"
-      class="placeholder"
-      :class="{
-        'hidden': focused || value,
-      }"
-    >
-      {{placeholder}}
-    </div>
   </div>
 </template>
 
@@ -64,14 +54,37 @@ export default {
 <style lang="less" scoped>
 .app-input {
   position: relative;
+  border-radius: 15px;
 
   .main-input {
-    font: 1em 'Exo 2', 'Lato', Tahoma, Arial;
+    font: 1em 'Lato', Tahoma, Arial;
+
+     &::placeholder {
+      font-weight: 100;
+      color: var(--color-font-dark);
+    }
   }
 
   &.bottom-border-highlight {
-    .main-input,
-    .placeholder {
+    .main-input {
+      width: 100%;
+      display: inline-block;
+
+      padding: 20px 10px;
+      cursor: text;
+
+      border: 0;
+      border-bottom: 2px solid #2A3138;
+      background: transparent;
+
+      color: var(--color-font-dark);
+    }
+  }
+
+  &.primary {
+    background: var(--color-bg-main);
+
+    .main-input {
       padding: 20px 10px;
       cursor: text;
     }
@@ -80,82 +93,15 @@ export default {
       width: 100%;
       display: inline-block;
 
-      border: 0;
-      border-bottom: 2px solid #2A3138;
-      background: rgba(0, 0, 0, 0);
-
-      color: var(--color-font-dark);
-    }
-
-    .placeholder {
-      position: absolute;
-      top: 0;
-      left: 0;
-
-      display: flex;
-      align-items: center;
-
-      width: 100%;
-      height: 100%;
-
-      font-weight: 100;
-
-      color: var(--color-font-dark);
-
-      &.hidden {
-        padding-top: 0;
-        top: -15px;
-        font-size: .9em;
-
-        opacity: .8;
-      }
-
-      transition: all .22s;
-    }
-  }
-
-  &.primary {
-    background: var(--color-bg-main);
-
-    .main-input,
-    .placeholder {
-      padding: 30px 10px 10px;
-      cursor: text;
-    }
-
-    .main-input {
-      width: 100%;
-      display: inline-block;
-
       border: 1px solid transparent;
-      border-radius: 5px;
+      border-radius: 15px;
+      overflow: hidden;
 
       background: rgba(0, 0, 0, 0);
 
       color: var(--color-font-main);
 
       transition: all .3s;
-    }
-
-    .placeholder {
-      position: absolute;
-      top: -10px;
-      left: 0;
-
-      width: 100%;
-      height: 100%;
-
-      font-weight: 100;
-
-      color: var(--color-font-dark);
-
-      &.hidden {
-        padding-top: 0;
-        top: 10px;
-        font-size: .9em;
-      }
-
-      transition: all .22s;
     }
 
     &.is-okay {
@@ -174,9 +120,30 @@ export default {
   // # SECONDARY
 
   &.secondary {
-    .main-input,
-    .placeholder {
-      padding: 30px 10px 10px;
+    background: var(--color-bg-dark);
+    border-radius: 10px;
+    position: relative;
+
+    &::before {
+      content: "";
+
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+
+      margin: auto;
+
+      height: 35%;
+      width: 2px;
+      max-height: 60px;
+
+      background: #1ED6BA;
+      border-radius: 10px;
+    }
+
+    .main-input {
+      padding: 20px 10px;
       cursor: text;
     }
 
@@ -187,32 +154,11 @@ export default {
       border: 1px solid transparent;
       border-radius: 5px;
 
-      background: rgba(0, 0, 0, 0);
+      background: transparent;
 
       color: var(--color-font-main);
 
       transition: all .3s;
-    }
-
-    .placeholder {
-      position: absolute;
-      top: -10px;
-      left: 0;
-
-      width: 100%;
-      height: 100%;
-
-      font-weight: 100;
-
-      color: var(--color-font-dark);
-
-      &.hidden {
-        padding-top: 0;
-        top: 10px;
-        font-size: .9em;
-      }
-
-      transition: all .22s;
     }
   }
 }

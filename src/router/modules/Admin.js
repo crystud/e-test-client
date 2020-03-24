@@ -29,4 +29,9 @@ export default [
     name: 'assigning',
     component: () => import('@/views/TestsAssigning.vue'),
   },
+  {
+    path: '/request',
+    name: 'request',
+    component: () => import('@/views/CollegeRequest.vue'),
+  },
 ]

@@ -31,14 +31,15 @@ export default {
 
   .item {
     margin-bottom: 10px;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
 
-    grid-template-columns: minmax(100px, auto) 1fr;
     grid-gap: 15px;
 
     .property {
       color: var(--color-font-dark);
+      margin-right: 10px;
     }
 
     .value {
