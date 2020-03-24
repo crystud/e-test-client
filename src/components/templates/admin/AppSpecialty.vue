@@ -10,7 +10,12 @@
     ></app-data-list>
 
     <router-link
-      :to="{ name: 'studyPlan' }"
+      :to="{
+        name: 'assigning',
+        params: {
+          specialtyID: 1,
+        },
+      }"
       class="study-plan"
     >Навчальний план</router-link>
   </app-card>

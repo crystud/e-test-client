@@ -24,4 +24,9 @@ export default [
     name: 'students',
     component: () => import('@/views/Students.vue'),
   },
+  {
+    path: '/assigning/:specialtyID',
+    name: 'assigning',
+    component: () => import('@/views/TestsAssigning.vue'),
+  },
 ]

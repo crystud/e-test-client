@@ -87,12 +87,14 @@ export default {
     height: 3px;
     width: 20%;
 
-    background: #1ED849;
+    border-radius: 10px;
+
+    background: #1ED6BA;
   }
 
   &.right-answer {
     .answer .icon {
-      background: #23D38F;
+      background: #1ED6BA;
     }
   }
 

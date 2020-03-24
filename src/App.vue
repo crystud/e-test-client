@@ -21,8 +21,6 @@ export default {
 </script>
 
 <style lang="less">
-@import (css) url('https://fonts.googleapis.com/css?family=Exo+2:200,400,500,700|Lato:300,400,700,900&display=swap&subset=cyrillic-ext');
-
 html,
 body {
   height: 100vh;
@@ -50,7 +48,7 @@ body {
   --color-accent-red: #FF1E1E;
   --color-accent-green: #1fe361;
   --color-font-main: #ffffff;
-  --color-font-dark: #656D78;
+  --color-font-dark: #55636E;
   --color-font-gray: #55636E;
 }
 
@@ -68,7 +66,8 @@ body {
 }
 
 #app, button {
-  font-family: 'Exo 2', 'Lato', sans-serif;
+  font-family: 'Lato', sans-serif;
+  font-weight: 100;
 }
 
 #app {

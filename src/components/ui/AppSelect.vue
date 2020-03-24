@@ -14,7 +14,7 @@
         class="focus-area"
       >
         <div
-          v-if="label && value && !isFocused"
+          v-if="label && value && !isFocused && !hidePlaceholder"
           class="label"
         >{{label}}</div>
 
@@ -37,6 +37,12 @@
           @click="isFocused = true"
           @blur="isFocused = false"
         />
+      </div>
+
+      <div class="icon">
+        <font-awesome-icon
+          icon="angle-down"
+        ></font-awesome-icon>
       </div>
     </div>
 
@@ -123,17 +129,17 @@ export default {
       required: true,
       default: () => [],
     },
-    placeholder: {
-      type: String,
-      required: false,
-      default: () => 'Оберіть опцію...',
-    },
     label: {
       type: String,
       required: false,
       default: () => null,
     },
     sideBorder: {
+      type: Boolean,
+      required: false,
+      default: () => false,
+    },
+    hidePlaceholder: {
       type: Boolean,
       required: false,
       default: () => false,
@@ -189,6 +195,19 @@ export default {
 
     height: 100%;
 
+    position: relative;
+
+    .icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+
+      display: flex;
+      align-items: center;
+    }
+
     .label {
       color: var(--color-font-dark);
       font-size: 0.9em;
@@ -198,8 +217,8 @@ export default {
     }
 
     .value {
-      color: var(--color-font-dark);
-      font-weight: 400;
+      color: var(--color-font-main);
+      font-weight: 100;
     }
 
     .filter {

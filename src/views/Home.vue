@@ -265,7 +265,6 @@ export default {
         cursor: pointer;
         color: var(--color-font-dark);
         font-size: 1em;
-        font-family: 'Exo 2';
         margin: 10px 0;
 
         &:hover {
@@ -279,7 +278,6 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: center;
-
 
       .avatar {
         height: 130px;
