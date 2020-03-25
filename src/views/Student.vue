@@ -14,11 +14,18 @@
       <app-student-tests-history></app-student-tests-history>
     </div>
 
-    <div v-show="!fullIsOpened">
-      <app-student-subjects
-        v-for="i in 3"
-        v-bind:key="i"
-      ></app-student-subjects>
+    <div
+      v-show="!fullIsOpened"
+      class="sections"
+    >
+      <div>
+        <app-student-subjects
+          v-for="i in 3"
+          v-bind:key="i"
+        ></app-student-subjects>
+      </div>
+
+      <app-student-messages></app-student-messages>
     </div>
   </div>
 </template>
@@ -28,6 +35,7 @@ import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPer
 import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
 import AppStudentTestsHistory from '@/components/templates/student/AppStudentTestsHistory.vue'
+import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 
 export default {
   name: 'AppStudent',
@@ -36,6 +44,7 @@ export default {
     AppStudentActivity,
     AppStudentSubjects,
     AppStudentTestsHistory,
+    AppStudentMessages,
   },
   methods: {
     setFullHistory(isOpened) {
@@ -67,6 +76,12 @@ export default {
     @media screen and (max-width: 880px) {
       grid-template-columns: 1fr;
     }
+  }
+
+  .sections {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 20px;
   }
 }
 </style>

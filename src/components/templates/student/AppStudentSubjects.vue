@@ -3,24 +3,70 @@
     <div class="title">Українська мова (за професiйним спрямуванням)</div>
 
     <div class="tests">
-      <app-tests-item
-        v-for="i in 7"
-        v-bind:key="i"
-        class="test"
-      ></app-tests-item>
+      <div class="row header-title">
+        <div class="name">Назва</div>
+        <div class="result">Результат</div>
+        <div class="permission">Доступ</div>
+      </div>
+
+      <div
+        class="row cursor-pointer"
+        v-for="({ name, result, permission }, index) in tests"
+        v-bind:key="index"
+        @click="$router.push({ name: 'testPreview', params: { id: index } })"
+      >
+        <div class="name">{{name}}</div>
+
+        <div
+          class="result"
+          :class="getResultClasses(result)"
+        >
+          <span v-if="result !== null">
+            {{result}}%
+          </span>
+
+          <span v-else-if="result === null">-</span>
+        </div>
+
+        <div
+          class="permission"
+          :class="{
+            'closed': !permission,
+            'opened': permission,
+          }"
+        >{{permission ? 'Відкритий' : 'Закритий'}}</div>
+      </div>
     </div>
   </app-user-card>
 </template>
 
 <script>
 import AppUserCard from './AppUserCard.vue'
-import AppTestsItem from '../tests/AppTestsItem.vue'
 
 export default {
   name: 'AppStudentSubjects',
   components: {
-    AppTestsItem,
     AppUserCard,
+  },
+  methods: {
+    getResultClasses(result) {
+      return result !== null ? {
+        bad: result < 60,
+        warning: result >= 60 && result <= 70,
+        good: result > 70,
+      } : {}
+    },
+  },
+  data() {
+    return {
+      tests: [
+        { name: 'Проміжний контроль 1', result: 93, permission: false },
+        { name: 'Проміжний контроль 2', result: null, permission: true },
+        { name: 'Проміжний контроль 3', result: null, permission: true },
+        { name: 'Проміжний контроль 4', result: null, permission: false },
+        { name: 'Проміжний контроль 5', result: null, permission: false },
+      ],
+    }
   },
 }
 </script>
@@ -35,18 +81,43 @@ export default {
   }
 
   .tests {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
-
     margin-top: 20px;
 
-    .test {
-      background: var(--color-bg-main);
-    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 100px 100px;
 
-    @media screen and (max-width: 680px) {
-      grid-template-columns: 1fr;
+      padding: 7px 0;
+
+      &.cursor-pointer {
+        cursor: pointer;
+
+        &:hover {
+          .name {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      &.header-title {
+        color: var(--color-font-dark);
+      }
+
+      .result {
+        &.bad { color: #E01616 }
+        &.warning { color: #FC7136 }
+        &.good { color: #1ED6BA }
+      }
+
+      .permission {
+        &.closed {
+          color: #E01616;
+        }
+
+        &.opened {
+          color: #1ED6BA;
+        }
+      }
     }
   }
 }
