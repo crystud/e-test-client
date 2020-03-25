@@ -15,12 +15,12 @@
       v-bind:key="index"
     >
       <div class="sender">
-        <div class="name">{{message}}</div>
+        <div class="name">{{sender}}</div>
         <div class="sendtime">Надіслано {{time}}</div>
       </div>
 
       <div class="content">
-        {{sender}}
+        {{message}}
       </div>
     </div>
   </div>
@@ -92,7 +92,8 @@ export default {
       border-bottom: 1px solid var(--color-bg-main);
 
       .name {
-        font-size: 1.3em;
+        font-size: 1.15em;
+        margin-bottom: 5px;
       }
 
       .sendtime {

@@ -118,6 +118,23 @@ export default {
           color: #1ED6BA;
         }
       }
+
+      @media screen and (max-width: 500px) {
+        grid-template-columns: 1fr;
+        grid-gap: 10px;
+
+        margin-bottom: 20px;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--color-bg-main);
+
+        .name {
+          font-size: 1.3em;
+        }
+
+        &:last-child {
+          border-bottom: 0;
+        }
+      }
     }
   }
 }
