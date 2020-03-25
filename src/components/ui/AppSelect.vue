@@ -168,8 +168,8 @@ export default {
 
     display: block;
 
-    width: 3px;
-    height: 50%;
+    width: 2px;
+    height: 40%;
 
     max-height: 60px;
 

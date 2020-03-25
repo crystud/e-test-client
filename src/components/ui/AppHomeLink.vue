@@ -3,9 +3,12 @@
   @click="go"
   v-show="isAvailable"
   class="app-home-link"
-  :class="role === 'admin' ? 'admin-link' : 'user-link'"
+  :class="`${role}-link`"
 >
-  <div class="line" :class="[this.$router.currentRoute.name === this.link  ? '' : 'line-hide']">
+  <div
+    class="line"
+    :class="[this.$router.currentRoute.name === this.link  ? '' : 'line-hide']"
+  >
     <div class="shadow"></div>
   </div>
 
@@ -67,24 +70,15 @@ export default {
     }
   }
 
-  &.user-link {
-    .line {
-      .shadow {
-        background: linear-gradient(90deg, var(--color-accent-orange) 0%, rgba(0,0,0,0) 100%);
-      }
-    }
+  .icon {
+    margin-left: 40px;
+    color: var(--color-accent-orange);
   }
 
-  &.admin-link {
-    .icon {
-      color: var(--color-accent-blue);
-    }
-
-    .line {
-      .shadow {
-        background: linear-gradient(90deg, var(--color-accent-blue) 0%, rgba(0,0,0,0) 100%);
-      }
-    }
+  .title {
+    margin-left: 22px;
+    font-size: 16px;
+    color: var(--color-font-main);
   }
 
   .line {
@@ -102,29 +96,49 @@ export default {
     }
   }
 
-  .line-hide {
-    background: transparent;
+  &.user-link,
+  &.student-link {
+    color: var(--color-accent-yellow);
 
-    transition: all 0s;
-
-    .shadow {
-      background: transparent !important;
+    .line {
+      .shadow {
+        background: linear-gradient(90deg, var(--color-accent-orange) 0%, rgba(0,0,0,0) 100%);
+      }
     }
   }
 
-  .icon {
-    margin-left: 40px;
-    color: var(--color-accent-orange);
+  &.teacher-link {
+    .icon {
+      color: #0EEAA6;
+    }
+
+    .line {
+      background: var(--color-accent-orange);
+
+      .shadow {
+        background: linear-gradient(90deg, #0EEAA6 0%, rgba(0,0,0,0) 100%);
+      }
+    }
   }
 
-  .admin-link {
-    color: var(--color-accent-blue);
+  &.admin-link {
+    .icon {
+      color: var(--color-accent-blue);
+    }
+
+    .line {
+      .shadow {
+        background: linear-gradient(90deg, var(--color-accent-blue) 0%, rgba(0,0,0,0) 100%);
+      }
+    }
   }
 
-  .title {
-    margin-left: 22px;
-    font-size: 16px;
-    color: var(--color-font-main);
+  .line-hide {
+    transition: all 0s;
+
+    &, .shadow {
+      background: transparent !important;
+    }
   }
 }
 </style>
