@@ -36,7 +36,11 @@ const router = new VueRouter({
 
 router.beforeEach(Verify)
 router.afterEach((to) => {
-  document.title = to.meta.title || 'Title неоприділено'
+  const {
+    meta: { title } = {},
+  } = to
+
+  document.title = title ? `${to.meta.title} - CRYSTUD` : 'CRYSTUD'
 })
 
 export default router

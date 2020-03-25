@@ -3,7 +3,7 @@ export default [
     path: '/',
     name: 'homeUser',
     meta: {
-      title: 'Домівка - CRYSTUD',
+      title: 'Домівка',
     },
     component: () => import('@/views/Student'),
   },
