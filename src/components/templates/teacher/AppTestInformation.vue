@@ -30,7 +30,7 @@ export default {
 <style lang="less" scoped>
 .app-test-information {
   h1 {
-    font-weight: 100;
+    font-weight: 400;
     font-size: 1.5em;
 
     margin-bottom: 15px;

@@ -46,6 +46,7 @@ export default {
 
   .title {
     font-size: 1.15em;
+    font-weight: 400;
   }
 
   .list {

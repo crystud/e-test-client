@@ -206,6 +206,8 @@ export default {
 
       display: flex;
       align-items: center;
+
+      color: var(--color-font-main);
     }
 
     .label {

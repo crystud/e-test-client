@@ -84,11 +84,40 @@ export default {
     .save-btn {
       background: #2047C9;
       margin-left: 20px;
+      color: #fff;
     }
   }
 
   .questions-list {
     grid-area: questions-list;
+  }
+
+  @media screen and (max-width: 1050px) {
+    .save-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 10px;
+
+      button {
+        padding: 20px;
+        font-size: 1.1em;
+        font-weight: 400;
+      }
+
+      .save-btn {
+        margin: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width: 650px) {
+    grid-template-rows: auto;
+    grid-template-columns: 1fr;
+    grid-template-areas: 'questions-list' 'test-info' 'question-info' 'save-section';
+
+    .questions-list {
+      max-height: 300px;
+    }
   }
 }
 </style>

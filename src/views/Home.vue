@@ -432,7 +432,7 @@ export default {
   }
 
   .content {
-    padding: 20px 45px 70px;
+    padding: 20px 45px 80px;
     position: relative;
 
     max-height: 100vh;
