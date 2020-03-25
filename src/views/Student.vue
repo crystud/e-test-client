@@ -14,11 +14,20 @@
       <app-student-tests-history></app-student-tests-history>
     </div>
 
-    <div v-show="!fullIsOpened">
-      <app-student-subjects
-        v-for="i in 3"
-        v-bind:key="i"
-      ></app-student-subjects>
+    <div
+      v-show="!fullIsOpened"
+      class="sections"
+    >
+      <div>
+        <app-student-subjects
+          v-for="i in 3"
+          v-bind:key="i"
+        ></app-student-subjects>
+      </div>
+
+      <app-student-messages
+        :messages="exampleMessages"
+      ></app-student-messages>
     </div>
   </div>
 </template>
@@ -28,6 +37,7 @@ import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPer
 import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
 import AppStudentTestsHistory from '@/components/templates/student/AppStudentTestsHistory.vue'
+import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 
 export default {
   name: 'AppStudent',
@@ -36,6 +46,7 @@ export default {
     AppStudentActivity,
     AppStudentSubjects,
     AppStudentTestsHistory,
+    AppStudentMessages,
   },
   methods: {
     setFullHistory(isOpened) {
@@ -50,6 +61,28 @@ export default {
         ['Середній результат', '78%'],
         ['Середній час проходження', '13 хвилин 16 секунд'],
       ],
+      exampleMessages: [
+        {
+          sender: 'Юрочко Ольга Михайлівна',
+          time: '03.02.2020 16:45',
+          message: `
+            Ви пройшли тест, но ще не здали
+            мій предмет без перездач.
+            Побачимось на наступних тестах.
+          `,
+        },
+        {
+          sender: 'Смиковчук Тетяна Володимирівна',
+          time: '03.02.2020 16:45',
+          message: `
+            Проміжний контроль по темах 5-6 до
+            завтра тренуєтесь, завтра з 10.00
+            до 12.00 здаєте в системі (пароль доступу скину)
+            Дотримуємось академічної доброчесності.і з контролями
+            ВСЕ
+          `,
+        },
+      ],
     }
   },
 }
@@ -63,8 +96,17 @@ export default {
     grid-gap: 20px;
 
     margin-bottom: 20px;
+  }
 
-    @media screen and (max-width: 880px) {
+  .sections {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 20px;
+  }
+
+  @media screen and (max-width: 880px) {
+    .student-info,
+    .sections {
       grid-template-columns: 1fr;
     }
   }
