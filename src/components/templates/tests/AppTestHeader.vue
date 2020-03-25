@@ -176,11 +176,13 @@ export default {
     width: 20%;
     height: 5px;
 
-    background: #22D667;
+    background: #1ED6BA;
     border-radius: 10px;
   }
 
   &.minimized {
+    padding: 20px;
+
     .line {
       width: 3px;
       height: 80%;
@@ -190,10 +192,6 @@ export default {
       bottom :0;
       left: 0;
       right: auto;
-    }
-
-    & {
-      padding: 20px;
     }
 
     .minimize-btn {

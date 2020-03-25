@@ -100,6 +100,15 @@
 
           <app-home-link role="user" link="homeUser">Домівка</app-home-link>
           <app-home-link role="student" link="tests">Тести</app-home-link>
+
+          <div class="divider">Адміністратор</div>
+
+          <app-home-link role="admin" link="request">Заявка</app-home-link>
+          <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
+          <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
+          <app-home-link role="admin" link="classes">Пари</app-home-link>
+          <app-home-link role="admin" link="subjects">Предмети</app-home-link>
+          <app-home-link role="admin" link="students">Студенти</app-home-link>
         </div>
       </div>
 
@@ -114,7 +123,7 @@
         </span>
 
         <span class="username">
-          user name
+          Студент студентович
         </span>
       </div>
     </div>
@@ -204,7 +213,7 @@ export default {
 
     .username {
       text-align: center;
-      color: #fff;
+      color: var(--color-font-main);
     }
   }
 
@@ -257,7 +266,6 @@ export default {
         cursor: pointer;
         color: var(--color-font-dark);
         font-size: 1em;
-        font-family: 'Exo 2';
         margin: 10px 0;
 
         &:hover {
@@ -271,7 +279,6 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: center;
-
 
       .avatar {
         height: 130px;
@@ -417,7 +424,7 @@ export default {
     overflow: auto;
 
     @media @small {
-      padding: 20px;
+      padding: 10px;
     }
   }
 }

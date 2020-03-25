@@ -10,7 +10,7 @@ export default [
         path: '/',
         name: 'signIn',
         meta: {
-          title: 'Авторизація - CRYSTUD',
+          title: 'Авторизація',
         },
         component: () => import('@/components/templates/authorization/AppSignIn.vue'),
       },
@@ -18,7 +18,7 @@ export default [
         path: '/join',
         name: 'signUp',
         meta: {
-          title: 'Приєднатись - CRYSTUD',
+          title: 'Приєднатись',
         },
         component: () => import('@/components/templates/authorization/AppSignUp.vue'),
       },
@@ -26,7 +26,7 @@ export default [
         path: '/forgot',
         name: 'forgotPassword',
         meta: {
-          title: 'Відновлення паролю - CRYSTUD',
+          title: 'Відновлення паролю',
         },
         component: () => import('@/components/templates/authorization/AppForgotPassword.vue'),
       },
@@ -34,7 +34,7 @@ export default [
         path: '/restore/:hash',
         name: 'restorePassword',
         meta: {
-          title: 'Скидання паролю - CRYSTUD',
+          title: 'Скидання паролю',
         },
         component: () => import('@/components/templates/authorization/AppRestorePassword.vue'),
       },

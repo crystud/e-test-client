@@ -7,6 +7,7 @@ import Home from './modules/Home'
 import Authorization from './modules/Authorization'
 import Tests from './modules/Tests'
 import Student from './modules/Student'
+import Admin from './modules/Admin'
 
 Vue.use(VueRouter)
 
@@ -22,6 +23,7 @@ const routes = [
       ...Home,
       ...Tests,
       ...Student,
+      ...Admin,
     ],
   },
 ]
@@ -34,7 +36,11 @@ const router = new VueRouter({
 
 router.beforeEach(Verify)
 router.afterEach((to) => {
-  document.title = to.meta.title || 'Title неоприділено'
+  const {
+    meta: { title } = {},
+  } = to
+
+  document.title = title ? `${to.meta.title} - CRYSTUD` : 'CRYSTUD'
 })
 
 export default router

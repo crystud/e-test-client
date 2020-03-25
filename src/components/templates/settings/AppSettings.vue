@@ -109,7 +109,7 @@ export default {
     .title {
       font-size: 1.6em;
 
-      margin-bottom: 20px;
+      margin-bottom: 50px;
       color: var(--color-font-main);
     }
 
@@ -144,6 +144,7 @@ export default {
     .footer {
       display: flex;
       align-items: center;
+      justify-content: space-between;
 
       span {
         display: inline-block;

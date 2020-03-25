@@ -24,7 +24,8 @@ export default {
 button {
   &.primary,
   &.secondary,
-  &.neutral {
+  &.neutral,
+  &.brand {
     border: 0;
     border-radius: 7px;
 
@@ -36,6 +37,11 @@ button {
 
   &.primary {
     background: #3242D5;
+  }
+
+  &.brand {
+    background: linear-gradient(45deg, #1BC388, #0C6993);
+    color: #fff;
   }
 
   &.neutral {
