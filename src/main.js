@@ -31,6 +31,7 @@ import {
   faFolderPlus,
   faFolderMinus,
   faTrash,
+  faListOl,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -65,6 +66,7 @@ library.add(faSearch)
 library.add(faFolderPlus)
 library.add(faFolderMinus)
 library.add(faTrash)
+library.add(faListOl)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

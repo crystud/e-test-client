@@ -7,4 +7,12 @@ export default [
     },
     component: () => import('@/views/CreateTest.vue'),
   },
+  {
+    name: 'testLiveData',
+    path: '/test/:testID/live',
+    meta: {
+      title: 'Дані про тест (наживо)',
+    },
+    component: () => import('@/views/TestDataLive.vue'),
+  },
 ]
