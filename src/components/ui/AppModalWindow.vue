@@ -81,6 +81,9 @@ export default {
 
     text-align: center;
 
+    max-height: 90vh;
+    overflow: auto;
+
     transform: scale(0.9);
     transition: transform .3s;
 

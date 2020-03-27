@@ -8,6 +8,7 @@ import Authorization from './modules/Authorization'
 import Tests from './modules/Tests'
 import Student from './modules/Student'
 import Admin from './modules/Admin'
+import Teacher from './modules/Teacher'
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,7 @@ const routes = [
       ...Tests,
       ...Student,
       ...Admin,
+      ...Teacher,
     ],
   },
 ]

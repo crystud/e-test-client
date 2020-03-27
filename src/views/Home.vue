@@ -96,10 +96,18 @@
         </div>
 
         <div class="menu" @click="sidebar.opened = false">
-          <div class="divider">Основне</div>
+          <div class="divider">Загальне</div>
 
           <app-home-link role="user" link="homeUser">Домівка</app-home-link>
           <app-home-link role="student" link="tests">Тести</app-home-link>
+
+          <!-- ====== -->
+
+          <div class="divider">Вчитель</div>
+
+          <app-home-link role="teacher" link="createTest">Створити тест</app-home-link>
+
+          <!-- ====== -->
 
           <div class="divider">Адміністратор</div>
 
@@ -156,13 +164,14 @@ export default {
         opened: false,
       },
       settingsOpen: false,
-      roles: ['student', 'admin'],
+      roles: ['student', 'teacher', 'admin', 'superadmin'],
       localization: {
         role: {
           user: 'Користувач',
           student: 'Студент',
           admin: 'Адміністратор',
           teacher: 'Викладач',
+          superadmin: 'Root',
         },
       },
     }
@@ -306,10 +315,12 @@ export default {
     .roles {
       display: flex;
       justify-content: center;
-      margin-top: 7px;
+      flex-wrap: wrap;
+      margin: 7px 0;
+      padding: 0 20px;
 
       .role {
-        margin: 0 8px;
+        margin: 0 8px 5px;
         font-size: 17px;
       }
 
@@ -322,11 +333,15 @@ export default {
       }
 
       .role-teacher {
-        color: var(--color-accent-red);
+        color: #0EEAA6;
       }
 
       .role-admin {
         color: var(--color-accent-blue);
+      }
+
+      .role-superadmin {
+        color: #6660ED;
       }
     }
 
@@ -417,7 +432,7 @@ export default {
   }
 
   .content {
-    padding: 20px 45px 70px;
+    padding: 20px 45px 80px;
     position: relative;
 
     max-height: 100vh;
