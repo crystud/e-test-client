@@ -8,24 +8,36 @@
         v-for="i in 10"
         v-bind:key="i"
       >
-        <div class="name">Студент студентович</div>
+        <div class="base-data">
+          <div class="name">Студент студентович</div>
 
-        <div class="current-data">
-          <span class="item" title="Правильність відповідей">
-            <span class="icon progress">
-              <font-awesome-icon icon="check"></font-awesome-icon>
+          <div class="current-data">
+            <span class="item" title="Правильність відповідей">
+              <span class="icon progress">
+                <font-awesome-icon icon="check"></font-awesome-icon>
+              </span>
+
+              <span class="text">74%</span>
             </span>
 
-            <span class="text">74%</span>
-          </span>
+            <span class="item" title="Завершено">
+              <span class="icon success">
+                <font-awesome-icon icon="list-ol"></font-awesome-icon>
+              </span>
 
-          <span class="item" title="Завершено">
-            <span class="icon success">
-              <font-awesome-icon icon="list-ol"></font-awesome-icon>
+              <span class="text">40%</span>
             </span>
 
-            <span class="text">40%</span>
-          </span>
+            <div class="item" title="Питання, на якому зараз студент">
+              <span class="icon current-question">
+                <font-awesome-icon icon="question-circle"></font-awesome-icon>
+              </span>
+
+              <span class="text dark">
+                Як ви відноситесь до прокрастинації?
+              </span>
+            </div>
+          </div>
         </div>
 
         <div class="progress-bar">
@@ -48,6 +60,8 @@
 
   .title {
     padding: 20px;
+    font-size: 1.15em;
+
     .border-bottom();
   }
 
@@ -55,6 +69,10 @@
     .student {
       padding: 20px;
       .border-bottom();
+
+      display: grid;
+      grid-template-columns: 1fr 100px;
+      align-items: center;
 
       &:last-child {
         border-bottom: none;
@@ -72,6 +90,7 @@
 
         .item {
           margin-right: 20px;
+          margin-top: 10px;
 
           .icon {
             margin-right: 5px;
@@ -83,11 +102,19 @@
             &.success {
               color: var(--color-accent-green);
             }
+
+            &.current-question {
+              color: var(--color-font-dark);
+            }
           }
 
           .text {
             margin-left: 5px;
             color: var(--color-font-main);
+
+            &.dark {
+              color: var(--color-font-dark);
+            }
           }
         }
       }
@@ -112,6 +139,17 @@
 
           height: 100%;
           background: linear-gradient(45deg, #1BC388, #0C6993);
+        }
+      }
+
+      @media screen and (max-width: 500px) {
+        grid-template-columns: 1fr;
+
+        .current-data {
+          .item {
+            display: block;
+            margin: 15px 0;
+          }
         }
       }
     }

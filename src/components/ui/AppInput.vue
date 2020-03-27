@@ -143,7 +143,7 @@ export default {
     }
 
     .main-input {
-      padding: 20px 10px;
+      padding: 15px;
       cursor: text;
     }
 

@@ -152,7 +152,7 @@ export default {
 .app-select {
   width: 100%;
 
-  padding: 10px;
+  padding: 15px;
   position: relative;
 
   &.is-okay::before {
@@ -249,7 +249,7 @@ export default {
     top: 100%;
     left: 0;
 
-    z-index: 125;
+    z-index: 50125;
 
     background: var(--color-bg-dark);
     border: 1px solid var(--color-bg-light);
