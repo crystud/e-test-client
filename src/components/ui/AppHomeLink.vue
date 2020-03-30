@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      roles: ['admin', 'student', 'user', 'teacher'],
+      roles: ['admin', 'student', 'user', 'teacher', 'superadmin'],
     }
   },
   computed: {
@@ -72,7 +72,6 @@ export default {
 
   .icon {
     margin-left: 40px;
-    color: var(--color-accent-orange);
   }
 
   .title {
@@ -81,24 +80,10 @@ export default {
     color: var(--color-font-main);
   }
 
-  .line {
-    position: relative;
-    width: 6px;
-    height: 100%;
-    background: var(--color-accent-orange);
-
-    .shadow {
-      position: absolute;
-      height: 100%;
-      width: 20px;
-
-      transition: all .15s;
-    }
-  }
-
-  &.user-link,
   &.student-link {
-    color: var(--color-accent-yellow);
+    .icon {
+      color: var(--color-accent-orange);
+    }
 
     .line {
       .shadow {
@@ -127,17 +112,48 @@ export default {
     }
 
     .line {
+      background: var(--color-accent-blue);
+
       .shadow {
         background: linear-gradient(90deg, var(--color-accent-blue) 0%, rgba(0,0,0,0) 100%);
       }
     }
   }
 
-  .line-hide {
-    transition: all 0s;
+  &.superadmin-link {
+    .icon {
+      color: #463FEA !important;
+    }
 
-    &, .shadow {
-      background: transparent !important;
+    .line {
+      background: #463FEA;
+
+      .shadow {
+        background: linear-gradient(90deg, #463FEA 0%, rgba(0,0,0,0) 100%);
+      }
+    }
+  }
+
+  .line {
+    position: relative;
+    width: 6px;
+    height: 100%;
+    background: var(--color-accent-orange);
+
+    .shadow {
+      position: absolute;
+      height: 100%;
+      width: 20px;
+
+      transition: all .15s;
+    }
+
+    &.line-hide {
+      transition: all 0s;
+
+      &, .shadow {
+        background: transparent;
+      }
     }
   }
 }

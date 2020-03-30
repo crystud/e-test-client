@@ -33,6 +33,7 @@ import {
   faTrash,
   faListOl,
   faQuestionCircle,
+  faFile,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -69,6 +70,7 @@ library.add(faFolderMinus)
 library.add(faTrash)
 library.add(faListOl)
 library.add(faQuestionCircle)
+library.add(faFile)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

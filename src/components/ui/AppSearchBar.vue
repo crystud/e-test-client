@@ -53,13 +53,11 @@ export default {
     color: var(--color-font-main);
   }
 
-  input {
-    &::placeholder {
-      color: var(--color-font-dark);
+  input::placeholder {
+    color: var(--color-font-dark);
 
-      font-weight: 100;
-      font-family: 'Lato', Tahoma, Arial;
-    }
+    font-weight: 100;
+    font-family: 'Lato', Tahoma, Arial;
   }
 
   button {
@@ -75,7 +73,7 @@ export default {
     }
 
     input, button {
-      padding: 10px;
+      padding: 20px;
     }
   }
 }

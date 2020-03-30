@@ -104,10 +104,20 @@ export default {
     grid-gap: 20px;
   }
 
-  @media screen and (max-width: 880px) {
+  .mobile {
+    grid-template-columns: 1fr;
+  }
+
+  @media screen and (max-width: 1150px) and (min-width: 1000px) {
+    .student-info {
+      .mobile();
+    }
+  }
+
+  @media screen and (max-width: 980px) {
     .student-info,
     .sections {
-      grid-template-columns: 1fr;
+      .mobile();
     }
   }
 }
