@@ -5,6 +5,6 @@ export default [
     meta: {
       title: 'Персональна сторінка студента',
     },
-    component: () => import('@/views/Student.vue'),
+    component: () => import('@/views/student/Student.vue'),
   },
 ]

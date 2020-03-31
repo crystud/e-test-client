@@ -64,9 +64,9 @@
 </template>
 
 <script>
-import AppDataList from '../components/ui/AppDataList.vue'
-import AppButton from '../components/ui/AppButton.vue'
-import AppDesicionModal from '../components/templates/superadmin/AppDesicionModal.vue'
+import AppDataList from '@/components/ui/AppDataList.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import AppDesicionModal from '@/components/templates/superadmin/AppDesicionModal.vue'
 
 export default {
   components: {

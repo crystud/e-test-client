@@ -5,7 +5,7 @@ export default [
     meta: {
       title: 'Тести',
     },
-    component: () => import('@/views/Tests.vue'),
+    component: () => import('@/views/tests/Tests.vue'),
   },
   {
     path: '/test/:id',
@@ -13,7 +13,7 @@ export default [
     meta: {
       title: 'Інформація про тест',
     },
-    component: () => import('@/views/TestPreview.vue'),
+    component: () => import('@/views/tests/TestPreview.vue'),
   },
   {
     path: '/test/pass/:id',
@@ -21,7 +21,7 @@ export default [
     meta: {
       title: 'Проходження тесту',
     },
-    component: () => import('@/views/TestPass.vue'),
+    component: () => import('@/views/tests/TestPass.vue'),
   },
   {
     path: '/test/results/:id',
@@ -29,6 +29,6 @@ export default [
     meta: {
       title: 'Результати тесту',
     },
-    component: () => import('@/views/TestResults.vue'),
+    component: () => import('@/views/tests/TestResults.vue'),
   },
 ]

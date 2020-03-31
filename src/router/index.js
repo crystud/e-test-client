@@ -17,7 +17,7 @@ const routes = [
   ...Authorization,
   {
     path: '/',
-    component: () => import('@/views/Home'),
+    component: () => import('@/views/authorization/Home'),
     meta: {
       requiredAuth: true,
     },

@@ -28,8 +28,8 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppQuestionsList from '@/components/templates/teacher/AppQuestionsList.vue'
-import AppTestInformation from '../components/templates/teacher/AppTestInformation.vue'
-import AppQuestionInfo from '../components/templates/teacher/AppQuestionInfo.vue'
+import AppTestInformation from '@/components/templates/teacher/AppTestInformation.vue'
+import AppQuestionInfo from '@/components/templates/teacher/AppQuestionInfo.vue'
 
 export default {
   components: {

@@ -54,7 +54,9 @@ export default {
         bad: result < 60,
         warning: result >= 60 && result <= 70,
         good: result > 70,
-      } : {}
+      } : {
+        neutral: true,
+      }
     },
   },
   data() {
@@ -107,6 +109,7 @@ export default {
         &.bad { color: #E01616 }
         &.warning { color: #FC7136 }
         &.good { color: #1ED6BA }
+        &.neutral { color: var(--color-font-dark) }
       }
 
       .permission {

@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import AppSearchBar from '../components/ui/AppSearchBar.vue'
-import AppVerifyCandidate from '../components/templates/superadmin/AppVerifyCandidate.vue'
-import AppSwitch from '../components/ui/AppSwitch.vue'
+import AppSearchBar from '@/components/ui/AppSearchBar.vue'
+import AppVerifyCandidate from '@/components/templates/superadmin/AppVerifyCandidate.vue'
+import AppSwitch from '@/components/ui/AppSwitch.vue'
 
 export default {
   components: {

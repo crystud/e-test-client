@@ -158,7 +158,7 @@ import AppHomeLink from '@/components/ui/AppHomeLink.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 import AppConfirmEmail from '@/components/templates/authorization/AppConfirmEmail.vue'
-import AppSettings from '../components/templates/settings/AppSettings.vue'
+import AppSettings from '@/components/templates/settings/AppSettings.vue'
 
 export default {
   name: 'Home.vue',

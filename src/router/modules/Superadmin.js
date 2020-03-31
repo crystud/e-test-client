@@ -5,7 +5,7 @@ export default [
     meta: {
       title: 'Перевірка заявки на верифікацію',
     },
-    component: () => import('@/views/VerifyRequest.vue'),
+    component: () => import('@/views/superadmin/VerifyRequest.vue'),
   },
   {
     path: '/verify',
@@ -13,6 +13,6 @@ export default [
     meta: {
       title: 'Заявки на створення',
     },
-    component: () => import('@/views/VerifyRequests.vue'),
+    component: () => import('@/views/superadmin/VerifyRequests.vue'),
   },
 ]
