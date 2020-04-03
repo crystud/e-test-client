@@ -15,4 +15,12 @@ export default [
     },
     component: () => import('@/views/superadmin/VerifyRequests.vue'),
   },
+  {
+    path: '/stats',
+    name: 'statsGlobal',
+    meta: {
+      title: 'Загальна статистика',
+    },
+    component: () => import('@/views/superadmin/GlobalStats.vue'),
+  },
 ]

@@ -105,6 +105,7 @@
           <div class="divider">God</div>
 
           <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
+          <app-home-link role="superadmin" link="statsGlobal">Статистика</app-home-link>
 
           <!-- ====== -->
 
