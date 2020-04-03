@@ -4,7 +4,7 @@ export default [
     meta: {
       onlyWithoutAuth: true,
     },
-    component: () => import('@/views/Authorization.vue'),
+    component: () => import('@/views/authorization/Authorization.vue'),
     children: [
       {
         path: '/',

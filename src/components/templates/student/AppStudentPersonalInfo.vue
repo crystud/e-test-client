@@ -48,7 +48,7 @@ export default {
   grid-gap: 20px;
   align-items: center;
 
-  @media screen and (max-width: 580px) {
+  .mobile {
     grid-template-columns: 1fr;
 
     .profile-image {
@@ -58,6 +58,10 @@ export default {
     .basic-info {
       text-align: center;
     }
+  }
+
+  @media screen and (max-width: 550px) {
+    .mobile();
   }
 
   .profile-image {

@@ -9,10 +9,6 @@
     <div class="text">
       Lorem, ipsum dolor sit amet consectetur
       adipisicing elit. Recusandae quos
-      illo natus. Molestias distinctio totam
-      quidem, reiciendis sed optio veritatis,
-      aspernatur facilis ratione expedita
-      perspiciatis iure? Vel ex nemo dolor!
     </div>
 
     <div class="line"></div>
@@ -45,6 +41,8 @@ export default {
   position: relative;
   z-index: 1;
 
+  user-select: none;
+
   transition: all .3s;
 
   .line {
@@ -55,9 +53,9 @@ export default {
 
     margin: auto;
 
-    width: 25%;
+    width: 15%;
     background: var(--color-bg-light);
-    height: 5px;
+    height: 2px;
     border-radius: 10px;
   }
 

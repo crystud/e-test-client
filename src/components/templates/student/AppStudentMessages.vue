@@ -50,7 +50,7 @@ export default {
   .header,
   .sender,
   .content {
-    padding: 15px;
+    padding: 18px;
   }
 
   .no-message {

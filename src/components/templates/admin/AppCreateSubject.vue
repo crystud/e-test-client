@@ -22,7 +22,8 @@
 
         <app-input
           placeholder="Назва предмету"
-          appearance="primary"
+          appearance="secondary"
+          class="app-input"
         ></app-input>
 
         <div class="btns">
@@ -35,7 +36,7 @@
           <app-button
             appearance="primary"
             class="sync-btn"
-          >Синхронізувати зараз</app-button>
+          >Створити предмет</app-button>
         </div>
       </div>
     </div>
@@ -77,6 +78,10 @@ export default {
 
       .title, .content {
         padding: 20px 30px;
+      }
+
+      .app-input {
+        background: var(--color-bg-main);
       }
 
       .title {

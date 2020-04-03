@@ -5,7 +5,7 @@ export default [
     meta: {
       title: 'Навчальний заклад',
     },
-    component: () => import('@/views/College.vue'),
+    component: () => import('@/views/admin/College.vue'),
   },
   {
     path: '/admin/specialtys',
@@ -13,7 +13,7 @@ export default [
     meta: {
       title: 'Спеціальності',
     },
-    component: () => import('@/views/Specialtys.vue'),
+    component: () => import('@/views/admin/Specialtys.vue'),
   },
   {
     path: '/admin/classes',
@@ -21,7 +21,7 @@ export default [
     meta: {
       title: 'Пари/Уроки',
     },
-    component: () => import('@/views/Classes.vue'),
+    component: () => import('@/views/admin/Classes.vue'),
   },
   {
     path: '/admin/subjects',
@@ -29,7 +29,7 @@ export default [
     meta: {
       title: 'Предмети',
     },
-    component: () => import('@/views/Subjects.vue'),
+    component: () => import('@/views/admin/Subjects.vue'),
   },
   {
     path: '/admin/students',
@@ -37,7 +37,7 @@ export default [
     meta: {
       title: 'Студенти',
     },
-    component: () => import('@/views/Students.vue'),
+    component: () => import('@/views/admin/Students.vue'),
   },
   {
     path: '/assigning/:specialtyID',
@@ -45,7 +45,7 @@ export default [
     meta: {
       title: 'Призначення тестів',
     },
-    component: () => import('@/views/TestsAssigning.vue'),
+    component: () => import('@/views/admin/TestsAssigning.vue'),
   },
   {
     path: '/request',
@@ -53,6 +53,6 @@ export default [
     meta: {
       title: 'Заявка на створення навчального закладу',
     },
-    component: () => import('@/views/CollegeRequest.vue'),
+    component: () => import('@/views/admin/CollegeRequest.vue'),
   },
 ]

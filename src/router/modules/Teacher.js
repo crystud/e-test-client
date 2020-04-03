@@ -5,7 +5,7 @@ export default [
     meta: {
       title: 'Створення тесту',
     },
-    component: () => import('@/views/CreateTest.vue'),
+    component: () => import('@/views/teacher/CreateTest.vue'),
   },
   {
     name: 'testLiveData',
@@ -13,6 +13,6 @@ export default [
     meta: {
       title: 'Дані про тест (наживо)',
     },
-    component: () => import('@/views/TestDataLive.vue'),
+    component: () => import('@/views/teacher/TestDataLive.vue'),
   },
 ]

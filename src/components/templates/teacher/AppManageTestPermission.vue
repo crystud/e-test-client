@@ -3,7 +3,7 @@
     <div class="app-manage-test-permission">
       <div class="content">
         <div class="title">Доступ до "Проміжний контроль 1"</div>
-        <div class="permission closed">Закритий</div>
+        <div class="permission closed"><span>Наразі доступ:</span> Закритий</div>
 
         <app-select
           :values="[
@@ -87,7 +87,7 @@ export default {
 
   .permission {
     font-size: 1.15em;
-    margin: 5px 0 20px;
+    margin: 7px 0 25px;
 
     &.opened {
       color: #1AD9A5;
@@ -95,6 +95,10 @@ export default {
 
     &.closed {
       color: var(--color-accent-red);
+
+      span {
+        color: var(--color-font-dark);
+      }
     }
   }
 

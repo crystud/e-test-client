@@ -38,9 +38,8 @@
             />
           </div>
 
-          <div class="name">Random person</div>
+          <div class="name">Студент студентович</div>
         </div>
-
 
         <div class="roles">
           <div
@@ -98,8 +97,15 @@
         <div class="menu" @click="sidebar.opened = false">
           <div class="divider">Загальне</div>
 
-          <app-home-link role="user" link="homeUser">Домівка</app-home-link>
+          <app-home-link role="student" link="homeUser">Домівка</app-home-link>
           <app-home-link role="student" link="tests">Тести</app-home-link>
+
+          <!-- ====== -->
+
+          <div class="divider">God</div>
+
+          <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
+          <app-home-link role="superadmin" link="statsGlobal">Статистика</app-home-link>
 
           <!-- ====== -->
 
@@ -153,7 +159,7 @@ import AppHomeLink from '@/components/ui/AppHomeLink.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 import AppConfirmEmail from '@/components/templates/authorization/AppConfirmEmail.vue'
-import AppSettings from '../components/templates/settings/AppSettings.vue'
+import AppSettings from '@/components/templates/settings/AppSettings.vue'
 
 export default {
   name: 'Home.vue',
@@ -307,19 +313,20 @@ export default {
       .name {
         margin-top: 20px;
         color: var(--color-font-main);
-        font-size: 17px;
-        font-weight: 600;
+        font-size: 1.3em;
+        font-weight: 400;
       }
     }
 
     .roles {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin: 7px 0;
+      margin: 15px auto 7px;
       padding: 0 20px;
 
+      max-width: 80%;
+      text-align: center;
+
       .role {
+        display: inline-block;
         margin: 0 8px 5px;
         font-size: 17px;
       }

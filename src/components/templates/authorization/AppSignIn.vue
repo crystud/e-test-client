@@ -113,7 +113,7 @@ export default {
 
   .forgot-password-link {
     margin: 20px auto;
-    color: #444 !important;
+    color: #55636e !important;
   }
 
   .divider {
@@ -133,7 +133,7 @@ export default {
 
     .text {
       text-align: center;
-      color: #363A3E;
+      color: #55636e;
     }
   }
 
