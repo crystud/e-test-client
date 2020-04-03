@@ -23,4 +23,12 @@ export default [
     },
     component: () => import('@/views/superadmin/GlobalStats.vue'),
   },
+  {
+    path: '/stats/:collegeID',
+    name: 'statsCollege',
+    meta: {
+      title: 'Статистика навчального закладу',
+    },
+    component: () => import('@/views/superadmin/CollegeStats.vue'),
+  },
 ]

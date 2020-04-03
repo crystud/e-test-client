@@ -18,6 +18,7 @@
       <app-verify-candidate
         v-for="i in 15"
         v-bind:key="i"
+        :isVerificated="areVerificated"
       ></app-verify-candidate>
     </div>
   </div>

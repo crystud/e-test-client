@@ -8,8 +8,14 @@
     <app-data-list
       :data="[
         ['Директор', 'Ляшеник Андрій Васильович'],
-        ['Заявку подано', '26 червня 2020 о 17:45'],
-        ['Файлів прикріплено', '3'],
+        ...(isVerificated ? [
+          ['Заявку прийнято', '28 червня 2020 о 18:23'],
+          ['Студентів', '364'],
+          ['Вчителів', '114'],
+        ] : [
+          ['Заявку подано', '26 червня 2020 о 17:45'],
+          ['Файлів прикріплено', '3']
+        ]),
       ]"
       class="list"
     ></app-data-list>
@@ -23,12 +29,28 @@ export default {
   components: {
     AppDataList,
   },
+  props: {
+    isVerificated: {
+      type: Boolean,
+      required: true,
+      default: () => false,
+    },
+  },
   methods: {
     go() {
-      this.$router.push({
-        name: 'verifyRequest',
+      if (!this.isVerificated) {
+        return this.$router.push({
+          name: 'verifyRequest',
+          params: {
+            requestID: 1,
+          },
+        })
+      }
+
+      return this.$router.push({
+        name: 'statsCollege',
         params: {
-          requestID: 1,
+          collegeID: 1,
         },
       })
     },
