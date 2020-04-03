@@ -34,6 +34,11 @@
         </div>
       </div>
 
+      <div
+        class="visit-activity"
+        @click="go"
+      >Моя активність</div>
+
       <div class="footer">
         <span>Зміни зберігаються автоматично</span>
 
@@ -93,6 +98,15 @@ export default {
 
       localStorage.setItem('lang', value)
     },
+    go() {
+      this.$emit('close')
+
+      const name = 'activity'
+
+      if (this.$route.name !== name) {
+        this.$router.push({ name })
+      }
+    },
   },
 }
 </script>
@@ -138,6 +152,17 @@ export default {
 
           color: var(--color-font-main);
         }
+      }
+    }
+
+    .visit-activity {
+      color: var(--color-accent-orange);
+      text-align: center;
+      margin-bottom: 30px;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
       }
     }
 

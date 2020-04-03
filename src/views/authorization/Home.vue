@@ -442,8 +442,13 @@ export default {
     padding: 20px 45px 80px;
     position: relative;
 
+    max-width: 1320px;
+    width: 100%;
+
+    margin: 0 auto;
+
     max-height: 100vh;
-    overflow: auto;
+    overflow-y: auto;
 
     @media @small {
       padding: 10px;
