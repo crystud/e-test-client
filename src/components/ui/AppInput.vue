@@ -3,14 +3,14 @@
     class="app-input"
     :class="[
       appearance,
-      (value ? 'is-okay' : 'is-bad'),
+      (newValue ? 'is-okay' : 'is-bad'),
     ]"
   >
     <input
       :type="type"
       class="main-input"
       ref="appInput"
-      v-model="value"
+      :value="value"
       :placeholder="placeholder"
       v-on:blur="focused = false"
       v-on:focus="focused = true"
@@ -36,11 +36,15 @@ export default {
       required: false,
       default: () => 'text',
     },
+    value: {
+      required: false,
+      default: () => '',
+    },
   },
   data() {
     return {
       focused: false,
-      value: '',
+      newValue: '',
     }
   },
   methods: {
@@ -59,7 +63,7 @@ export default {
   .main-input {
     font: 1em 'Lato', Tahoma, Arial;
 
-     &::placeholder {
+    &::placeholder {
       font-weight: 100;
       color: var(--color-font-dark);
     }
@@ -77,7 +81,7 @@ export default {
       border-bottom: 2px solid #2A3138;
       background: transparent;
 
-      color: var(--color-font-dark);
+      color: var(--color-font-main);
     }
   }
 
@@ -143,13 +147,11 @@ export default {
     }
 
     .main-input {
-      padding: 15px;
-      cursor: text;
-    }
-
-    .main-input {
       width: 100%;
       display: inline-block;
+
+      padding: 15px;
+      cursor: text;
 
       border: 1px solid transparent;
       border-radius: 5px;
