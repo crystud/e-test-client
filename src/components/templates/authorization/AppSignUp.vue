@@ -2,6 +2,8 @@
   <div class="sign-in">
     <h2>Реєстрація</h2>
 
+    <app-preloader :show="showPreloader"></app-preloader>
+
     <app-alert
       :isSuccess="alert.isSuccess"
       :title="alert.title"
@@ -14,6 +16,7 @@
     <app-input
       type="text"
       placeholder="Ім'я"
+      :value="firstName"
       @change="newVal => firstName = newVal"
       appearance="bottom-border-highlight"
       class="app-form-field"
@@ -22,6 +25,7 @@
     <app-input
       type="text"
       placeholder="Прізвище"
+      :value="lastName"
       @change="newVal => lastName = newVal"
       appearance="bottom-border-highlight"
       class="app-form-field"
@@ -30,6 +34,7 @@
     <app-input
       type="text"
       placeholder="По-батькові"
+      :value="patronymic"
       @change="newVal => patronymic = newVal"
       appearance="bottom-border-highlight"
       class="app-form-field"
@@ -38,6 +43,7 @@
     <app-input
       type="text"
       placeholder="E-mail"
+      :value="email"
       @change="newVal => email = newVal"
       appearance="bottom-border-highlight"
       class="app-form-field"
@@ -46,6 +52,7 @@
     <app-input
       type="password"
       placeholder="Пароль"
+      :value="password"
       @change="newVal => password = newVal"
       appearance="bottom-border-highlight"
       class="app-form-field"
@@ -54,13 +61,16 @@
     <app-input
       type="password"
       placeholder="Повторіть пароль"
+      :value="verifyPassword"
       @change="newVal => verifyPassword = newVal"
       appearance="bottom-border-highlight"
       class="app-form-field"
     ></app-input>
 
     <div class="login-btn">
-      <app-button @click="validate(mutate)">Зареєструватися</app-button>
+      <app-button
+        @click="validateSignUp"
+      >Зареєструватися</app-button>
     </div>
 
     <div class="divider">
@@ -77,9 +87,12 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppAlert from '@/components/ui/AppAlert.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
   name: 'authorization',
@@ -87,6 +100,112 @@ export default {
     AppInput,
     AppButton,
     AppAlert,
+    AppPreloader,
+  },
+  methods: {
+    ...mapActions({
+      signUp: 'auth/signUp',
+    }),
+    validateSignUp() {
+      const {
+        firstName,
+        lastName,
+        patronymic,
+        email,
+        password,
+        verifyPassword,
+      } = this
+
+      if (!firstName || !lastName || !patronymic) {
+        this.alert = {
+          title: 'Валідація...',
+          text: 'Кожне поле ПІБ повинно бути заповнено.',
+          isSuccess: false,
+          show: true,
+        }
+
+        return false
+      }
+
+      const emailCheck = email.split('@')
+
+      if (emailCheck.length <= 1) {
+        this.alert = {
+          title: 'E-mail адреса',
+          text: 'Перевірте валідність вашої E-mail адреси',
+          isSuccess: false,
+          show: true,
+        }
+
+        return false
+      }
+
+      if (emailCheck[1].split('.').length <= 1) {
+        this.alert = {
+          title: 'E-mail адреса',
+          text: 'Перевірте валідність вашої E-mail адреси',
+          isSuccess: false,
+          show: true,
+        }
+
+        return false
+      }
+
+      if (password.length < 7) {
+        this.alert = {
+          title: 'Довжина паролю',
+          text: 'Довжина паролю повинна бути мінімум 7 символів.',
+          isSuccess: false,
+          show: true,
+        }
+
+        return false
+      }
+
+      if (password !== verifyPassword) {
+        this.alert = {
+          title: 'Пароль',
+          text: 'Паролі не співпадають. Перевірте їх, будь ласка, ще раз',
+          isSuccess: false,
+          show: true,
+        }
+
+        return false
+      }
+
+      this.showPreloader = true
+
+      return this.signUp({
+        firstName,
+        lastName,
+        patronymic,
+        email,
+        password,
+      }).then(() => {
+        this.$router.push({ name: 'homeUser' })
+
+        this.alert = {
+          title: 'Все чудово!',
+          text: 'Вас було успішно зареєстровано. Через 1.5 вас буде перенаправлено на ваш профіль.',
+          delay: 1500,
+          isSuccess: true,
+          show: true,
+        }
+
+        setTimeout(() => {
+          this.$router.push({ name: 'homeUser' })
+        }, 1500)
+      }).catch(() => {
+        this.alert = {
+          title: 'Помилка...',
+          text: 'Вас не вдалось зареєструвати...',
+          show: true,
+          isSuccess: false,
+        }
+      }).finally(() => {
+        this.showPreloader = false
+      })
+    },
   },
   data() {
     return {
@@ -96,7 +215,7 @@ export default {
       email: '',
       password: '',
       verifyPassword: '',
-      showConfirmEmail: false,
+      showPreloader: false,
       alert: {
         title: '',
         text: '',

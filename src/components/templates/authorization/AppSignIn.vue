@@ -2,6 +2,8 @@
   <div class="sign-in">
     <h2>Вхід</h2>
 
+    <app-preloader :show="showPreloader"></app-preloader>
+
     <app-alert
       :isSuccess="alert.isSuccess"
       :title="alert.title"
@@ -28,7 +30,9 @@
     ></app-input>
 
     <div class="login-btn">
-      <app-button @click="setAccessToken">Увійти</app-button>
+      <app-button
+        @click="validateSignIn"
+      >Увійти</app-button>
     </div>
 
     <router-link
@@ -50,9 +54,12 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppAlert from '@/components/ui/AppAlert.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
   name: 'authorization',
@@ -60,11 +67,13 @@ export default {
     AppInput,
     AppButton,
     AppAlert,
+    AppPreloader,
   },
   data() {
     return {
       email: '',
       password: '',
+      showPreloader: false,
       alert: {
         text: '',
         title: '',
@@ -74,10 +83,51 @@ export default {
     }
   },
   methods: {
-    setAccessToken() {
-      localStorage.setItem('accessToken', '123')
+    ...mapActions({
+      signIn: 'auth/signIn',
+    }),
+    validateSignIn() {
+      const { email, password } = this
 
-      this.$router.push({ name: 'homeUser' })
+      if (!email || !password) {
+        this.alert = {
+          title: 'Помилка...',
+          text: 'Всі поля повинні бути заповнено.',
+          isSuccess: false,
+          show: true,
+        }
+
+        return false
+      }
+
+      if (password.length < 8) {
+        this.alert = {
+          title: 'Помилка',
+          text: 'Пароль повинен бути довжиною мінімум 8 символів',
+          isSuccess: false,
+          show: true,
+        }
+
+        return false
+      }
+
+      this.showPreloader = true
+
+      return this.signIn({
+        email,
+        password,
+      }).then(() => {
+        this.$router.push({ name: 'homeUser' })
+      }).catch(() => {
+        this.alert = {
+          title: 'Помилка входу',
+          text: 'Увійти не вдалось. Перевірте правильність даних.',
+          isSuccess: false,
+          show: true,
+        }
+      }).finally(() => {
+        this.showPreloader = false
+      })
     },
   },
 }

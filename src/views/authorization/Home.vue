@@ -185,6 +185,7 @@ export default {
   methods: {
     exit() {
       localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
 
       this.$router.push({ name: 'signIn' })
     },
