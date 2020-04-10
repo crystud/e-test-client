@@ -34,12 +34,20 @@ import {
   faListOl,
   faQuestionCircle,
   faFile,
+  faChevronLeft,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import store from './store'
+
+import axios from './tools/axios'
+import accessTokenExpired from './tools/accessTokenExpired'
+import accessTokenHeader from './tools/accessTokenHeader'
+
+accessTokenExpired(axios, store)
+accessTokenHeader(axios, store)
 
 library.add(faLightbulb)
 library.add(faChartBar)
@@ -71,6 +79,7 @@ library.add(faTrash)
 library.add(faListOl)
 library.add(faQuestionCircle)
 library.add(faFile)
+library.add(faChevronLeft)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

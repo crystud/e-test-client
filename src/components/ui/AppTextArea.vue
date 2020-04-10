@@ -1,6 +1,7 @@
 <template>
   <textarea
     :placeholder="placeholder"
+    v-on:keyup="$emit('change', $event.target.value)"
   ></textarea>
 </template>
 
