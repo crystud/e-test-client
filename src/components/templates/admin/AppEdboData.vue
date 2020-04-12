@@ -97,6 +97,7 @@ export default {
       const {
         data: {
           university_short_name: name,
+          university_name: fullName,
           university_director_fio: director,
           university_site: website,
           university_email: email,
@@ -110,8 +111,8 @@ export default {
 
       const visibleData = []
 
-      if (name) {
-        visibleData.push(['Назва коледжу', name])
+      if (fullName || name) {
+        visibleData.push(['Назва коледжу', fullName || name])
       }
 
       if (director) {

@@ -55,4 +55,12 @@ export default [
     },
     component: () => import('@/views/admin/CollegeRequest.vue'),
   },
+  {
+    path: '/groups',
+    name: 'groups',
+    meta: {
+      title: 'Групи',
+    },
+    component: () => import('@/views/admin/Groups.vue'),
+  },
 ]
