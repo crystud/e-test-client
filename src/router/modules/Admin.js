@@ -63,4 +63,12 @@ export default [
     },
     component: () => import('@/views/admin/Groups.vue'),
   },
+  {
+    path: '/group/:id',
+    name: 'group',
+    meta: {
+      title: 'Група',
+    },
+    component: () => import('@/views/admin/Group.vue'),
+  },
 ]

@@ -39,6 +39,10 @@ import {
   faAngleDoubleRight,
   faAngleRight,
   faCalendarAlt,
+  faEllipsisV,
+  faUser,
+  faAddressCard,
+  faFilter,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -89,6 +93,10 @@ library.add(faAngleRight)
 library.add(faAngleDoubleLeft)
 library.add(faAngleDoubleRight)
 library.add(faCalendarAlt)
+library.add(faUser)
+library.add(faEllipsisV)
+library.add(faAddressCard)
+library.add(faFilter)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
