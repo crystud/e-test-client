@@ -5,6 +5,8 @@
     :noPaddings="true"
   >
     <div class="app-create-subject">
+      <app-preloader :show="showPreloader"></app-preloader>
+
       <div class="title">Створення предмету</div>
 
       <div class="content">
@@ -15,8 +17,7 @@
         <app-data-list
           class="data-list"
           :data="[
-            ['Наразі у вас', '18 предметів'],
-            ['Останній предмет створено', '28.02.2020 13:45'],
+            ['Наразі у вас', `${subjects.length} предметів`],
           ]"
         ></app-data-list>
 
@@ -24,6 +25,8 @@
           placeholder="Назва предмету"
           appearance="secondary"
           class="app-input"
+          :value="name"
+          @change="newName => name = newName"
         ></app-input>
 
         <div class="btns">
@@ -36,6 +39,7 @@
           <app-button
             appearance="primary"
             class="sync-btn"
+            @click="create"
           >Створити предмет</app-button>
         </div>
       </div>
@@ -44,6 +48,9 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
+import AppPreloader from '../../ui/AppPreloader.vue'
 import AppModalWindow from '../../ui/AppModalWindow.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 import AppButton from '../../ui/AppButton.vue'
@@ -56,6 +63,41 @@ export default {
     AppDataList,
     AppButton,
     AppInput,
+    AppPreloader,
+  },
+  computed: {
+    ...mapGetters({
+      subjects: 'subjects/subjects',
+    }),
+  },
+  data() {
+    return {
+      name: '',
+      showPreloader: false,
+    }
+  },
+  methods: {
+    ...mapActions({
+      createSubject: 'subjects/create',
+    }),
+    create() {
+      const { name } = this
+
+      this.showPreloader = true
+      this.name = ''
+
+      this.createSubject({ name }).then(() => {
+        this.$emit('created', {
+          success: true,
+        })
+      }).catch(() => {
+        this.$emit('created', {
+          success: false,
+        })
+      }).finally(() => {
+        this.showPreloader = false
+      })
+    },
   },
   props: {
     show: {

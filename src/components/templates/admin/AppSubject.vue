@@ -1,11 +1,12 @@
 <template>
-  <app-card class="specialty">
-    <div class="title">Фізкультура</div>
+  <app-card class="subject">
+    <div class="title">{{name}}</div>
 
     <app-data-list
       :data="[
-        ['Студентів вивчає', '150'],
+        ['Вчителів', teachers],
       ]"
+      class="data-list"
     ></app-data-list>
   </app-card>
 </template>
@@ -15,16 +16,27 @@ import AppCard from '../../ui/AppCard.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 
 export default {
-  name: 'AppSpecialty',
   components: {
     AppCard,
     AppDataList,
+  },
+  props: {
+    name: {
+      type: String,
+      required: true,
+      default: () => '',
+    },
+    teachers: {
+      type: Number,
+      required: true,
+      default: () => 0,
+    },
   },
 }
 </script>
 
 <style lang="less" scoped>
-.specialty {
+.subject {
   padding: 30px;
   font-weight: 100;
 
@@ -51,6 +63,10 @@ export default {
   .title {
     font-size: 1.3em;
     color: var(--color-font-main);
+  }
+
+  .data-list {
+    margin: 20px 0 0;
   }
 }
 </style>
