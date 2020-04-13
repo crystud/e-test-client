@@ -148,6 +148,7 @@ export default {
         additional,
         edboData: {
           university_short_name: name,
+          university_name: fullName,
           university_email: email,
           region_name_u: region,
           koatuu_name_u: city,
@@ -170,7 +171,7 @@ export default {
         return
       }
 
-      if (!name) {
+      if (!name && !fullName) {
         this.alert = {
           title: 'Помилка...',
           isSuccess: false,
@@ -219,7 +220,7 @@ export default {
       this.sendCollegeRequest({
         address,
         email,
-        name,
+        name: name || fullName,
         site,
         EDBO,
         additional,

@@ -117,6 +117,7 @@
 
           <div class="divider">Адміністратор</div>
 
+          <app-home-link role="admin" link="groups">Групи</app-home-link>
           <app-home-link role="admin" link="request">Заявка</app-home-link>
           <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
           <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
