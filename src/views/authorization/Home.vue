@@ -144,12 +144,14 @@
     </div>
 
     <div class="content">
-      <app-confirm-email
-        :show="false"
-        :showSend="true"
-      ></app-confirm-email>
+      <div class="max-width-container">
+        <app-confirm-email
+          :show="false"
+          :showSend="true"
+        ></app-confirm-email>
 
-      <router-view></router-view>
+        <router-view></router-view>
+      </div>
     </div>
   </app-screen>
 </template>
@@ -211,7 +213,6 @@ export default {
 
   height: 100vh;
 
-  grid-template-rows: 1fr;
   grid-template-columns: 360px 1fr;
   grid-template-areas: 'name .';
 
@@ -444,13 +445,15 @@ export default {
     padding: 20px 45px 80px;
     position: relative;
 
-    max-width: 1320px;
-    width: 100%;
-
-    margin: 0 auto;
-
     max-height: 100vh;
     overflow-y: auto;
+
+    .max-width-container {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+      overflow: hidden;
+    }
 
     @media @small {
       padding: 10px;

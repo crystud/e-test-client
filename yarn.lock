@@ -9051,11 +9051,6 @@ uuid@^3.0.1, uuid@^3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
-v-select@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/v-select/-/v-select-0.0.1.tgz#b40cbdbfa1b0791743f8ad71c981f1e0c4d92fc0"
-  integrity sha512-HdqwyPkaSg2ZZhgGVrALLeIxGtQKEg3rIartnaxU+z7l2fIoVptl6885Fx2rVyXhI0jz+osv9iZfvVe6XtBoJw==
-
 v8-compile-cache@^2.0.3:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.1.0.tgz#e14de37b31a6d194f5690d67efc4e7f6fc6ab30e"
@@ -9125,11 +9120,6 @@ vue-router@^3.1.5:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.1.6.tgz#45f5a3a3843e31702c061dd829393554e4328f89"
   integrity sha512-GYhn2ynaZlysZMkFE5oCHRUTqE8BWs/a9YbKpNLi0i7xD6KG1EzDqpHQmv1F5gXjr8kL5iIVS8EOtRaVUEXTqA==
-
-vue-select@^3.9.6:
-  version "3.9.6"
-  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-3.9.6.tgz#ae3351cd2eddea024d2b2e9300a6da49c114aabc"
-  integrity sha512-12aXUcSIpmUQB67x2rj+rFwN1QuS5avG6f54e4LXq/z2eQtY3Q/k3X9J3NjhJ/9B85X9l2/9YKf+Ox6O/gq0gA==
 
 vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
   version "4.1.2"

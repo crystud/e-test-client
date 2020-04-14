@@ -11,6 +11,10 @@
       <app-create-button @click="showSync = true">Синхронізувати спеціальності</app-create-button>
     </div>
 
+    <app-specialities-chart
+      class="specialities-chart"
+    ></app-specialities-chart>
+
     <div class="list">
       <app-specialty
         v-for="i in 15"
@@ -24,6 +28,7 @@
 import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
 import AppSpecialty from '@/components/templates/admin/AppSpecialty.vue'
 import AppSyncSpecialtys from '@/components/templates/admin/AppSyncSpecialtys.vue'
+import AppSpecialitiesChart from '@/components/templates/admin/AppSpecialitiesChart.vue'
 
 export default {
   data() {
@@ -36,6 +41,7 @@ export default {
     AppCreateButton,
     AppSpecialty,
     AppSyncSpecialtys,
+    AppSpecialitiesChart,
   },
 }
 </script>
@@ -62,6 +68,10 @@ export default {
         margin-bottom: 10px;
       }
     }
+  }
+
+  .specialities-chart {
+    margin-top: 20px;
   }
 
   .list {
