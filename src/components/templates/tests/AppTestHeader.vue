@@ -159,7 +159,6 @@ export default {
 
       .access-denied {
         color: var(--color-accent-red);
-        font-weight: 400;
       }
     }
   }

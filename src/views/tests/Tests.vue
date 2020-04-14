@@ -25,7 +25,7 @@ export default {
 <style lang="less" scoped>
 @small: ~"screen and (max-width: 680px)";
 @medium: ~"screen and (max-width: 1000px)";
-@large: ~"screen and (min-width: 1250px)";
+@large: ~"screen and (min-width: 1450px)";
 
 .app-tests {
   h1 {
@@ -37,18 +37,25 @@ export default {
   .list {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 30px;
+    grid-gap: 20px;
   }
 
   @media @small {
     .list {
       grid-template-columns: 1fr;
+      grid-gap: 10px;
+    }
+  }
+
+  @media screen and (max-width: 1450px) {
+    .list {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
   @media @large {
     .list {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 }

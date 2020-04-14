@@ -9,22 +9,23 @@
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, deserunt.
     </div>
 
-    <div class="data">
-      <div
-        class="item"
-        v-for="i in 3"
-        v-bind:key="i"
-      >
-        <div class="property">Макс. оцінка</div>
-        <div class="value">5</div>
-      </div>
-    </div>
+    <app-data-list
+      :data="[
+        ['Предмет', 'Програмування'],
+        ['Створено', '12.02.2020'],
+      ]"
+    ></app-data-list>
   </div>
 </template>
 
 <script>
+import AppDataList from '@/components/ui/AppDataList.vue'
+
 export default {
   name: 'AppTestsItem',
+  components: {
+    AppDataList,
+  },
   methods: {
     go() {
       this.$router.push({
@@ -53,17 +54,17 @@ export default {
     content: "";
 
     display: block;
-    width: 3px;
-    height: 25%;
+    width: 70px;
+    height: 2px;
 
     position: absolute;
-    top: 0;
     bottom: 0;
     left: 0;
+    right: 0;
 
     margin: auto;
 
-    background: #1CDE69;
+    background: #1ED6BA;
     border-radius: 10px;
   }
 
