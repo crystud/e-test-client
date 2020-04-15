@@ -6,6 +6,7 @@ import auth from './modules/auth'
 import college from './modules/college'
 import edbo from './modules/edbo'
 import subjects from './modules/subjects'
+import specialities from './modules/specialities'
 
 Vue.use(Vuex)
 
@@ -22,5 +23,6 @@ export default new Vuex.Store({
     college,
     edbo,
     subjects,
+    specialities,
   },
 })

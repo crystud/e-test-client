@@ -17,7 +17,7 @@
         v-for="({ daytime, parttime, name }, index) in list"
         v-bind:key="index"
       >
-        <div>
+        <div class="column">
           <div class="filling-bar">
             <div
               :style="{
@@ -26,11 +26,31 @@
             ></div>
           </div>
         </div>
-        <div>{{name}}</div>
-        <div>{{daytime + parttime}}</div>
-        <div>{{daytime}}</div>
-        <div>{{parttime}}</div>
-        <div>{{ Math.round(getPercentage(daytime + parttime)) }}%</div>
+
+        <div  class="column">
+          <div class="label">Спеціальність</div>
+          <div class="value">{{name}}</div>
+        </div>
+
+        <div  class="column">
+          <div class="label">Студентів</div>
+          <div class="value">{{daytime + parttime}}</div>
+        </div>
+
+        <div  class="column">
+          <div class="label">Денна</div>
+          <div class="value">{{daytime}}</div>
+        </div>
+
+        <div  class="column">
+          <div class="label">Заочна</div>
+          <div class="value">{{parttime}}</div>
+        </div>
+
+        <div  class="column">
+          <div class="label">% від усіх</div>
+          <div class="value">{{ Math.round(getPercentage(daytime + parttime)) }}%</div>
+        </div>
       </div>
     </div>
   </div>
@@ -89,6 +109,13 @@ export default {
         color: var(--color-font-dark);
       }
 
+      .label {
+        display: none;
+        color: var(--color-font-dark);
+
+        margin-right: 15px;
+      }
+
       display: grid;
       grid-template-columns: 1fr 150px 100px 100px 100px 100px;
       grid-gap: 20px;
@@ -108,6 +135,43 @@ export default {
           background: #1ED6BA;
           width: 30%;
           height: 100%;
+        }
+      }
+
+      @media screen and (max-width: 1300px) {
+        grid-template-columns: 1fr;
+        grid-gap: 10px;
+
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+
+        border-bottom: 1px solid var(--color-bg-main);
+
+        .filling-bar {
+          margin-bottom: 15px;
+        }
+
+        .column {
+          display: flex;
+
+          .label {
+            display: block;
+          }
+        }
+      }
+
+      @media screen and (max-width: 400px) {
+        .column {
+          display: block;
+
+          .label {
+            margin-bottom: 5px;
+            margin-right: 0;
+          }
+
+          .value {
+            margin-bottom: 10px;
+          }
         }
       }
     }

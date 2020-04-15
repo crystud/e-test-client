@@ -23,5 +23,18 @@ export default {
         return Promise.reject(e)
       }
     },
+    async editable() {
+      try {
+        const { data, status } = await axios.get('/colleges/editable')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
   },
 }
