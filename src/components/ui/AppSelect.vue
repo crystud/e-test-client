@@ -64,7 +64,11 @@
         v-bind:key="i"
         class="option"
         v-show="filterItem(label)"
-        @click="value = { value: optionValue, label }; isFocused = false"
+        @click="
+          value = { value: optionValue, label }
+          isFocused = false
+          $emit('change', value)
+        "
       >
         {{label}}
       </div>

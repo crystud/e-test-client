@@ -7,6 +7,7 @@ import college from './modules/college'
 import edbo from './modules/edbo'
 import subjects from './modules/subjects'
 import specialities from './modules/specialities'
+import groups from './modules/groups'
 
 Vue.use(Vuex)
 
@@ -24,5 +25,6 @@ export default new Vuex.Store({
     edbo,
     subjects,
     specialities,
+    groups,
   },
 })

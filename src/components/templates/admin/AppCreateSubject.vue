@@ -83,6 +83,10 @@ export default {
     create() {
       const { name } = this
 
+      if (!name) {
+        return
+      }
+
       this.showPreloader = true
       this.name = ''
 

@@ -32,26 +32,20 @@
           @change="newVal => educationFinish = newVal"
         ></app-datepicker>
 
-        <div class="details">
-          <app-select
-            class="app-select"
-            :hidePlaceholder="true"
-            label="Спеціальність"
-            :values="[
-              { label: 'Інженерія програмного забезпечення (П)', value: 1 },
-              { label: 'Маркетинг (МД)', value: 2 },
-              { label: 'Модельєри (МК)', value: 3 },
-              { label: 'Автоматизація (А)', value: 4 },
-            ]"
-          ></app-select>
+        <app-select
+          class="app-select"
+          :hidePlaceholder="true"
+          :sideBorder="true"
+          label="Спеціальність"
+          :values="[
+            { label: 'Інженерія програмного забезпечення (П)', value: 1 },
+            { label: 'Маркетинг (МД)', value: 2 },
+            { label: 'Модельєри (МК)', value: 3 },
+            { label: 'Автоматизація (А)', value: 4 },
+          ]"
+          @change="newVal => specialtyID = newVal"
+        ></app-select>
 
-          <app-input
-            placeholder="Номер групи"
-            appearance="secondary"
-            class="app-input form-input"
-            type="number"
-          ></app-input>
-        </div>
 
         <div class="btns">
           <app-button
@@ -63,6 +57,7 @@
           <app-button
             appearance="primary"
             class="sync-btn"
+            @click="create"
           >Створити групу</app-button>
         </div>
       </div>
@@ -71,10 +66,11 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import AppModalWindow from '../../ui/AppModalWindow.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 import AppButton from '../../ui/AppButton.vue'
-import AppInput from '../../ui/AppInput.vue'
 import AppDatepicker from '../../ui/AppDatepicker.vue'
 import AppSelect from '../../ui/AppSelect.vue'
 
@@ -85,14 +81,36 @@ export default {
     AppDataList,
     AppSelect,
     AppButton,
-    AppInput,
     AppDatepicker,
   },
   data() {
     return {
       educationStart: {},
       educationFinish: {},
+      specialtyID: null,
     }
+  },
+  methods: {
+    ...mapActions({
+      createGroup: 'groups/create',
+    }),
+    create() {
+      const {
+        educationStart: startEducation,
+        educationFinish: endEducation,
+        specialtyID: { value: specialtyID },
+      } = this
+
+      this.createGroup({
+        endEducation,
+        startEducation,
+        specialtyID,
+      }).then(() => {
+        this.$emit('done', { created: true })
+      }).catch(() => {
+        this.$emit('done', { created: false })
+      })
+    },
   },
   props: {
     show: {

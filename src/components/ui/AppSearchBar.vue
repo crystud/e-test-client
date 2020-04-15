@@ -62,6 +62,7 @@ export default {
 
   button {
     border-left: 1px solid var(--color-bg-main);
+    cursor: pointer;
   }
 
   @media screen and (max-width: 450px) {

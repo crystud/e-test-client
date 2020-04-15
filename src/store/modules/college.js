@@ -3,13 +3,49 @@ import axios from '../../tools/axios'
 export default {
   namespaced: true,
 
-  state: {},
+  state: {
+    list: [],
+  },
 
-  getters: {},
+  getters: {
+    list: ({ list }) => list,
+  },
 
-  mutations: {},
+  mutations: {
+    setList(state, list) {
+      state.list = list
+    },
+  },
 
   actions: {
+    async verificate(_, collegeID) {
+      try {
+        const { data, status } = await axios.post(`/colleges/confirm/${collegeID}`)
+
+        if (status !== 201) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
+    async fetch({ commit }, params) {
+      try {
+        const { status, data } = await axios.get('/colleges', { params })
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setList', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
     async sendRequest(_, postData) {
       try {
         const { data, status } = await axios.post('/colleges', postData)
