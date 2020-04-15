@@ -9,8 +9,10 @@
       @close="alert.show = false"
     ></app-alert>
 
+    <app-preloader :show="showPreloader"></app-preloader>
+
     <app-modal-window
-      :show="show && !alert.show"
+      :show="show && !alert.show && !showPreloader"
       :noPaddings="true"
       class="app-create-specialty"
     >
@@ -78,6 +80,7 @@ import AppModalWindow from '../../ui/AppModalWindow.vue'
 import AppInput from '../../ui/AppInput.vue'
 import AppButton from '../../ui/AppButton.vue'
 import AppAlert from '../../ui/AppAlert.vue'
+import AppPreloader from '../../ui/AppPreloader.vue'
 
 export default {
   props: {
@@ -96,6 +99,7 @@ export default {
       symbol: '',
       yearOfStudy: '',
       code: '',
+      showPreloader: false,
       alert: {
         title: '',
         text: '',
@@ -109,6 +113,7 @@ export default {
     AppModalWindow,
     AppInput,
     AppButton,
+    AppPreloader,
     AppAlert,
   },
   methods: {
@@ -136,6 +141,8 @@ export default {
         return
       }
 
+      this.showPreloader = true
+
       this.createSpecialty({
         name,
         symbol,
@@ -160,6 +167,8 @@ export default {
           show: true,
           isSuccess: false,
         }
+      }).finally(() => {
+        this.showPreloader = false
       })
     },
   },
