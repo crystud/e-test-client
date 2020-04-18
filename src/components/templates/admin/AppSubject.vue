@@ -38,7 +38,7 @@ export default {
 <style lang="less" scoped>
 .subject {
   padding: 30px;
-  font-weight: 100;
+  font-weight: 300;
 
   position: relative;
 

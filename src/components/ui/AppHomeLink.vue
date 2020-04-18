@@ -1,7 +1,6 @@
 <template>
 <div
   @click="go"
-  v-show="isAvailable"
   class="app-home-link"
   :class="`${role}-link`"
 >
@@ -23,6 +22,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'AppHomeLink',
   methods: {
@@ -42,15 +43,10 @@ export default {
       require: true,
     },
   },
-  data() {
-    return {
-      roles: ['admin', 'student', 'user', 'teacher', 'superadmin'],
-    }
-  },
   computed: {
-    isAvailable() {
-      return this.roles.includes(this.role)
-    },
+    ...mapGetters({
+      user: 'user/self',
+    }),
   },
 }
 </script>

@@ -196,7 +196,7 @@ export default {
     .section {
       .title {
         margin-bottom: 10px;
-        font-weight: 100;
+        font-weight: 300;
         font-size: 1.3em;
       }
     }

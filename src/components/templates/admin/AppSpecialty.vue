@@ -37,7 +37,7 @@ export default {
 <style lang="less" scoped>
 .specialty {
   padding: 30px;
-  font-weight: 100;
+  font-weight: 300;
 
   position: relative;
 

@@ -21,7 +21,7 @@
   display: flex;
   align-items: center;
 
-  font-weight: 100;
+  font-weight: 300;
 
   cursor: pointer;
 

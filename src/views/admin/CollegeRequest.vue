@@ -277,7 +277,7 @@ export default {
 
     h1 {
       margin-bottom: 30px;
-      font-weight: 100;
+      font-weight: 300;
       font-size: 1.5em;
 
       color: var(--color-font-main);

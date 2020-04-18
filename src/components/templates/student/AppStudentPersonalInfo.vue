@@ -9,7 +9,7 @@
 
     <div class="info">
       <div class="basic-info">
-        <div class="name">Прізвищевич Студент Студентович</div>
+        <div class="name">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</div>
         <div class="last-visit">Остання активність: 37 хвилин тому</div>
       </div>
 
@@ -29,12 +29,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import AppUserCard from './AppUserCard.vue'
 
 export default {
   name: 'AppStudentPersonalInfo',
   components: {
     AppUserCard,
+  },
+  computed: {
+    ...mapGetters({
+      user: 'user/self',
+    }),
   },
 }
 </script>
@@ -76,7 +83,7 @@ export default {
   }
 
   .info {
-    font-weight: 100;
+    font-weight: 300;
 
     .name {
       font-size: 1.3em;
@@ -89,7 +96,7 @@ export default {
 
     .additional {
       margin-top: 20px;
-      font-weight: 100;
+      font-weight: 300;
 
       .item {
         margin-bottom: 10px;

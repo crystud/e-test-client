@@ -116,7 +116,7 @@ export default {
   z-index: 2005;
 
   .app-settings {
-    font-weight: 100;
+    font-weight: 300;
     width: 80vw;
     max-width: 400px;
 

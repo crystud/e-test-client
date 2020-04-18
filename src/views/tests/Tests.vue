@@ -40,10 +40,9 @@ export default {
     grid-gap: 20px;
   }
 
-  @media @small {
+  @media @large {
     .list {
-      grid-template-columns: 1fr;
-      grid-gap: 10px;
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 
@@ -53,9 +52,10 @@ export default {
     }
   }
 
-  @media @large {
+  @media @small {
     .list {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr;
+      grid-gap: 10px;
     }
   }
 }

@@ -119,7 +119,7 @@ export default {
     justify-content: space-between;
     align-items: center;
 
-    font-weight: 100;
+    font-weight: 300;
 
     .title {
       font-size: 1.6em;

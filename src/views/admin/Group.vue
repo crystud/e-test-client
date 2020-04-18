@@ -102,7 +102,7 @@ export default {
 
     .name {
       font-size: 2em;
-      font-weight: 100;
+      font-weight: 300;
     }
 
     .select-other {

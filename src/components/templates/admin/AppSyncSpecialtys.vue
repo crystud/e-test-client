@@ -66,7 +66,7 @@ export default {
     padding: 0 !important;
 
     .app-sync-specialtys {
-      font-weight: 100;
+      font-weight: 300;
       max-width: 600px;
 
       .title, .content {

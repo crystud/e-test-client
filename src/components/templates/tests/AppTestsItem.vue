@@ -76,12 +76,12 @@ export default {
   .description {
     color: var(--color-font-dark);
     margin: 10px 0 20px;
-    font-weight: 100;
+    font-weight: 300;
   }
 
   .data {
     font-size: 1.1em;
-    font-weight: 100;
+    font-weight: 300;
     color: var(--color-font-main);
 
     .item {

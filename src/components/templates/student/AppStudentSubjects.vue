@@ -79,7 +79,7 @@ export default {
 
   .title {
     font-size: 1.5em;
-    font-weight: 100;
+    font-weight: 300;
   }
 
   .tests {

@@ -119,7 +119,7 @@ export default {
     padding: 0 !important;
 
     .app-create-subject {
-      font-weight: 100;
+      font-weight: 300;
       max-width: 600px;
 
       .title, .content {

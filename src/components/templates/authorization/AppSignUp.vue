@@ -243,12 +243,16 @@ export default {
   h2 {
     color: #fff;
     margin-bottom: 30px;
-    font-weight: 100;
+    font-weight: 300;
     text-align: center;
   }
 
   .app-form-field {
     margin-bottom: 20px;
+
+    input {
+      color: #fff !important;
+    }
   }
 
   .login-btn {

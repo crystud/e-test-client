@@ -131,7 +131,7 @@ export default {
 
   .label {
     font-size: 1.2em;
-    font-weight: 100;
+    font-weight: 300;
     margin-top: 30px;
 
     text-align: center;

@@ -8,6 +8,7 @@ import edbo from './modules/edbo'
 import subjects from './modules/subjects'
 import specialities from './modules/specialities'
 import groups from './modules/groups'
+import user from './modules/user'
 
 Vue.use(Vuex)
 
@@ -26,5 +27,6 @@ export default new Vuex.Store({
     subjects,
     specialities,
     groups,
+    user,
   },
 })

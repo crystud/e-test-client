@@ -83,7 +83,7 @@ export default {
 
   .title {
     font-size: 1.6em;
-    font-weight: 100;
+    font-weight: 300;
 
     margin-bottom: 20px;
   }

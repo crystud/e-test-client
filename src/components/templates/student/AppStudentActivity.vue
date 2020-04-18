@@ -53,7 +53,7 @@ export default {
 
 <style lang="less">
 .app-student-activity {
-  font-weight: 100;
+  font-weight: 300;
 
   .title {
     font-size: 1.5em;

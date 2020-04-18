@@ -170,7 +170,7 @@ export default {
       grid-area: history;
 
       h2 {
-        font-weight: 100;
+        font-weight: 300;
         margin-bottom: 10px;
       }
 

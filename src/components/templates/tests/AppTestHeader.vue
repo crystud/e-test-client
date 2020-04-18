@@ -134,7 +134,7 @@ export default {
       color: var(--color-font-dark);
       margin: 15px auto;
       font-size: 17px;
-      font-weight: 100;
+      font-weight: 300;
     }
 
     .start-btn {
@@ -208,7 +208,7 @@ export default {
 
     .questions {
       color: var(--color-font-dark);
-      font-weight: 100;
+      font-weight: 300;
     }
 
     .content {

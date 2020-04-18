@@ -217,14 +217,14 @@ export default {
     .label {
       color: var(--color-font-dark);
       font-size: 0.9em;
-      font-weight: 100;
+      font-weight: 300;
 
       margin-bottom: 5px;
     }
 
     .value {
       color: var(--color-font-main);
-      font-weight: 100;
+      font-weight: 300;
     }
 
     .filter {
@@ -240,7 +240,7 @@ export default {
 
         &::placeholder {
           color: var(--color-font-dark);
-          font-weight: 100;
+          font-weight: 300;
         }
       }
     }
@@ -281,7 +281,7 @@ export default {
         color: var(--color-font-dark);
         padding: 10px 15px;
 
-        font-weight: 100;
+        font-weight: 300;
       }
 
       &:hover {
