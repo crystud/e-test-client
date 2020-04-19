@@ -31,7 +31,7 @@ export default {
 <style lang="less" scoped>
 .app-college {
   display: grid;
-  grid-template-columns: 5fr 2fr;
+  grid-template-columns: 5fr 3fr;
   grid-gap: 20px;
 
   @media screen and (max-width: 1150px) {

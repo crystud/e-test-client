@@ -19,7 +19,7 @@ export default {
         ['IP', '195.95.147.51'],
         ['Локація', 'Kolomyia, UA'],
         ['Опер. сист.', 'Mac OS X'],
-        ['Вирішення екрану', '1920х1080'],
+        ['Вирішення екрану', `${window.screen.width}x${window.screen.height}`],
       ],
     }
   },

@@ -3,15 +3,12 @@
     <div class="title">Вчителі</div>
 
     <div class="data-list">
-      <div class="item">
-        <div class="property">Наразі у вас</div>
-        <div class="value">39 вчителів</div>
-      </div>
-
-      <div class="item">
-        <div class="property">Останній імпорт</div>
-        <div class="value">21.03.2020 13:47</div>
-      </div>
+      <app-data-list
+        :data="[
+          ['Наразі у вас', '39 вчителів'],
+          ['Останній імпорт', '21.03.2020 13:47'],
+        ]"
+      ></app-data-list>
     </div>
 
     <app-button
@@ -24,12 +21,14 @@
 <script>
 import AppCard from '../../ui/AppCard.vue'
 import AppButton from '../../ui/AppButton.vue'
+import AppDataList from '../../ui/AppDataList.vue'
 
 export default {
   name: 'AppCollegePeople',
   components: {
     AppCard,
     AppButton,
+    AppDataList,
   },
 }
 </script>

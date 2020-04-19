@@ -15,4 +15,12 @@ export default [
     },
     component: () => import('@/views/teacher/TestDataLive.vue'),
   },
+  {
+    name: 'teacher',
+    path: '/teacher/:id',
+    meta: {
+      title: 'Профіль вчителя',
+    },
+    component: () => import('@/views/teacher/Teacher.vue'),
+  },
 ]

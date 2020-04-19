@@ -5,6 +5,6 @@ export default [
     meta: {
       title: 'Домівка',
     },
-    component: () => import('@/views/student/SelfProfile.vue'),
+    component: () => import('@/views/student/Student.vue'),
   },
 ]

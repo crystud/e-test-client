@@ -146,7 +146,7 @@
         </span>
 
         <span class="username">
-          Студент студентович
+          {{user.lastName}} {{user.firstName}} {{user.patronymic}}
         </span>
       </div>
     </div>
@@ -476,8 +476,7 @@ export default {
     .max-width-container {
       max-width: 1320px;
       width: 100%;
-      margin: 0 auto;
-      overflow: hidden;
+      margin: 0 auto 30px;
     }
 
     @media @small {

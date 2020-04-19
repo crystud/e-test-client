@@ -21,7 +21,7 @@ export default {
 </script>
 
 <style lang="less">
-@import (css) url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
+@import (css) url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
 
 html,
 body {
@@ -68,7 +68,7 @@ body {
 }
 
 #app, button {
-  font-family: 'PT Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-weight: 300;
 }
 

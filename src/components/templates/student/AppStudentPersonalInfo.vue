@@ -13,35 +13,36 @@
         <div class="last-visit">Остання активність: 37 хвилин тому</div>
       </div>
 
-      <div class="additional">
-        <div class="item">
-          <div class="property">Номер залiкової книжки</div>
-          <div class="value">1212</div>
-        </div>
-
-        <div class="item">
-          <div class="property">Номер за списком факультету</div>
-          <div class="value">12</div>
-        </div>
-      </div>
+      <app-data-list
+        v-if="data.length"
+        class="additional"
+        :data="data"
+      ></app-data-list>
     </div>
   </app-user-card>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 import AppUserCard from './AppUserCard.vue'
+import AppDataList from '../../ui/AppDataList.vue'
 
 export default {
   name: 'AppStudentPersonalInfo',
   components: {
     AppUserCard,
+    AppDataList,
   },
-  computed: {
-    ...mapGetters({
-      user: 'user/self',
-    }),
+  props: {
+    data: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    user: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
   },
 }
 </script>
@@ -96,6 +97,7 @@ export default {
 
     .additional {
       margin-top: 20px;
+      margin-bottom: 0;
       font-weight: 300;
 
       .item {
