@@ -6221,6 +6221,11 @@ no-case@^2.2.0:
   dependencies:
     lower-case "^1.1.1"
 
+node-async-loop@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/node-async-loop/-/node-async-loop-1.2.2.tgz#c5870299bf6477b780c88b431aa5b37733f55a3d"
+  integrity sha1-xYcCmb9kd7eAyItDGqWzdzP1Wj0=
+
 node-environment-flags@1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/node-environment-flags/-/node-environment-flags-1.0.5.tgz#fa930275f5bf5dae188d6192b24b4c8bbac3d76a"

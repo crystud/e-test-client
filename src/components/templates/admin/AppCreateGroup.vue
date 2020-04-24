@@ -46,7 +46,6 @@
           @change="newVal => specialtyID = newVal"
         ></app-select>
 
-
         <div class="btns">
           <app-button
             appearance="neutral"
@@ -66,7 +65,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import AppModalWindow from '../../ui/AppModalWindow.vue'
 import AppDataList from '../../ui/AppDataList.vue'
@@ -82,6 +81,11 @@ export default {
     AppSelect,
     AppButton,
     AppDatepicker,
+  },
+  computed: {
+    ...mapGetters({
+      specialties: 'specialty',
+    }),
   },
   data() {
     return {

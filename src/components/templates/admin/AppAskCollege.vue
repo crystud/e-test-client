@@ -83,6 +83,7 @@ export default {
     padding: 20px;
     text-align: center;
     font-size: 1.2em;
+    color: var(--color-font-main);
     border-bottom: 1px solid var(--color-bg-main);
   }
 

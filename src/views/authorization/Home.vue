@@ -100,25 +100,6 @@
           <app-home-link role="student" link="homeUser">Домівка</app-home-link>
           <app-home-link role="student" link="tests">Тести</app-home-link>
 
-          <!-- ====== -->
-
-          <div v-if="user.roles.includes('admin')">
-            <div class="divider">God</div>
-
-            <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
-            <app-home-link role="superadmin" link="statsGlobal">Статистика</app-home-link>
-          </div>
-
-          <!-- ====== -->
-
-          <div v-if="user.roles.includes('teacher')">
-            <div class="divider">Вчитель</div>
-
-            <app-home-link role="teacher" link="createTest">Створити тест</app-home-link>
-          </div>
-
-          <!-- ====== -->
-
           <div class="divider">Адміністратор</div>
 
           <app-home-link role="admin" link="request">Заявка</app-home-link>
@@ -132,6 +113,19 @@
             <app-home-link role="admin" link="students">Студенти</app-home-link>
           </div>
 
+          <div>
+            <div class="divider">Вчитель</div>
+
+            <app-home-link role="teacher" link="homeTeacher">Домівка вчителя</app-home-link>
+            <app-home-link role="teacher" link="createTest">Створити тест</app-home-link>
+          </div>
+
+          <div v-if="user.roles.includes('admin')">
+            <div class="divider">God</div>
+
+            <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
+            <app-home-link role="superadmin" link="statsGlobal">Статистика</app-home-link>
+          </div>
         </div>
       </div>
 

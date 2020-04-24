@@ -14,14 +14,14 @@
 
       <div
         class="row"
-        v-for="({ daytime, parttime, name }, index) in list"
+        v-for="({ daytime, parttime, name }, index) in specialities"
         v-bind:key="index"
       >
         <div class="column">
           <div class="filling-bar">
             <div
               :style="{
-                'width': getPercentage(daytime + parttime) + '%',
+                width: '0%',
               }"
             ></div>
           </div>
@@ -34,22 +34,22 @@
 
         <div  class="column">
           <div class="label">Студентів</div>
-          <div class="value">{{daytime + parttime}}</div>
+          <div class="value">{{(daytime || 0) + (parttime || 0)}}</div>
         </div>
 
         <div  class="column">
           <div class="label">Денна</div>
-          <div class="value">{{daytime}}</div>
+          <div class="value">{{daytime || '-'}}</div>
         </div>
 
         <div  class="column">
           <div class="label">Заочна</div>
-          <div class="value">{{parttime}}</div>
+          <div class="value">{{parttime || '-'}}</div>
         </div>
 
         <div  class="column">
           <div class="label">% від усіх</div>
-          <div class="value">{{ Math.round(getPercentage(daytime + parttime)) }}%</div>
+          <div class="value">-</div>
         </div>
       </div>
     </div>
@@ -58,18 +58,12 @@
 
 <script>
 export default {
-  data() {
-    return {
-      list: [
-        { name: 'Автоматизація', daytime: 53, parttime: 41 },
-        { name: 'Бухгалтери', daytime: 24, parttime: 12 },
-        { name: 'Маркетинг', daytime: 63, parttime: 53 },
-        { name: 'Економісти', daytime: 43, parttime: 23 },
-        { name: 'Модельєри', daytime: 12, parttime: 52 },
-        { name: 'Програмісти', daytime: 152, parttime: 64 },
-        { name: 'Механіки', daytime: 73, parttime: 42 },
-      ],
-    }
+  props: {
+    specialities: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
   },
   methods: {
     getPercentage(studentsCount) {

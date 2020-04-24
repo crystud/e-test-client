@@ -23,4 +23,12 @@ export default [
     },
     component: () => import('@/views/teacher/Teacher.vue'),
   },
+  {
+    name: 'homeTeacher',
+    path: '/home/teacher',
+    meta: {
+      title: 'Домівка вчителя',
+    },
+    component: () => import('@/views/teacher/Teacher.vue'),
+  },
 ]

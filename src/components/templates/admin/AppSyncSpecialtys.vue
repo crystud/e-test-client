@@ -31,6 +31,7 @@
           <app-button
             appearance="primary"
             class="sync-btn"
+            @click="sync"
           >Синхронізувати зараз</app-button>
         </div>
       </div>
@@ -55,6 +56,11 @@ export default {
       type: Boolean,
       required: true,
       default: () => false,
+    },
+  },
+  methods: {
+    sync() {
+      this.$router.push({ name: 'specialtysSync' })
     },
   },
 }

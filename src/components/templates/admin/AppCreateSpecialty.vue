@@ -158,7 +158,10 @@ export default {
           isSuccess: true,
         }
 
-        this.$emit('close')
+        setTimeout(() => {
+          this.$emit('created')
+          this.$emit('close')
+        }, 1300)
       }).catch(() => {
         this.alert = {
           title: 'Перевірте свої дані',

@@ -17,6 +17,7 @@
         :show="showCreate"
         :college="editingCollege"
         @close="showCreate = false"
+        @created="specialtyCreated"
       ></app-create-specialty>
 
       <div class="header">
@@ -49,6 +50,7 @@
       <app-specialities-chart
         v-if="specialities.length"
         class="specialities-chart"
+        :specialities="specialities"
       ></app-specialities-chart>
 
       <div
@@ -58,8 +60,9 @@
 
       <div class="list">
         <app-specialty
-          v-for="(_, i) in specialities"
+          v-for="(specialty, i) in specialities"
           v-bind:key="i"
+          :specialty="specialty"
         ></app-specialty>
       </div>
     </div>
@@ -106,6 +109,13 @@ export default {
     ...mapActions({
       getSpecialties: 'specialities/get',
     }),
+    specialtyCreated() {
+      this.showPreloader = true
+
+      this.getSpecialties(this.editingCollege.id).finally(() => {
+        this.showPreloader = false
+      })
+    },
     selected(college) {
       this.editingCollege = college
       this.showAskCollege = false

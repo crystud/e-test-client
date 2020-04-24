@@ -1,11 +1,11 @@
 <template>
   <app-card class="specialty">
-    <div class="title">Інженерія програмного забезпечення</div>
+    <div class="title">{{specialty.name}}</div>
 
     <app-data-list
       :data="[
-        ['Скорочена назва', 'П'],
-        ['Студентів', '169'],
+        ['Скорочена назва', specialty.symbol || '-'],
+        ['Код', specialty.code],
       ]"
     ></app-data-list>
 
@@ -13,7 +13,7 @@
       :to="{
         name: 'assigning',
         params: {
-          specialtyID: 1,
+          specialtyID: specialty.id,
         },
       }"
       class="study-plan"
@@ -30,6 +30,13 @@ export default {
   components: {
     AppCard,
     AppDataList,
+  },
+  props: {
+    specialty: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
   },
 }
 </script>
