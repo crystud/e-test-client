@@ -3,18 +3,36 @@
     id="app"
     :class="isDark ? 'dark' : 'light'"
   >
+    <app-alert
+      :title="alert.title"
+      :text="alert.text"
+      :delay="alert.delay"
+      :isSuccess="alert.isSuccess"
+      :show="alert.show"
+      @close="closeAlert"
+    ></app-alert>
+
     <router-view />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+
+import AppAlert from '@/components/ui/AppAlert.vue'
 
 export default {
   name: 'App',
+  components: { AppAlert },
   computed: {
     ...mapGetters({
       isDark: 'theme/isDarkTheme',
+      alert: 'alert/alert',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      closeAlert: 'alert/close',
     }),
   },
 }
@@ -67,7 +85,7 @@ body {
   --color-font-gray: #55636E;
 }
 
-#app, button {
+#app, button, input {
   font-family: 'Open Sans', sans-serif;
   font-weight: 300;
 }

@@ -17,7 +17,12 @@
       <div v-if="editingSpeciality.id">
         <app-create-group
           :show="showCreateGroup"
+          :speciality="editingSpeciality"
           @close="showCreateGroup = false"
+          @done="
+            showCreateGroup = false
+            updateGroups()
+          "
         ></app-create-group>
 
         <div class="header">
@@ -56,7 +61,8 @@
               v-bind:key="index"
               :id="group.id"
               :name="group.name"
-              selection="01.09.2016"
+              :educationStart="group.startEducation"
+              :educationEnd="group.endEducation"
             ></app-group>
           </div>
         </div>
@@ -100,6 +106,7 @@ export default {
   methods: {
     ...mapActions({
       getGroups: 'groups/get',
+      getSpeciality: 'specialities/getByID',
     }),
     specialitySelected(speciality) {
       this.editingSpeciality = speciality
@@ -109,6 +116,17 @@ export default {
       this.getGroups(speciality.groups).then(() => {
         this.showPreloader = false
       })
+    },
+    async updateGroups() {
+      const { editingSpeciality: { id } } = this
+
+      this.showPreloader = true
+
+      const { groups } = await this.getSpeciality(id) || {}
+
+      await this.getGroups(groups)
+
+      this.showPreloader = false
     },
   },
 }
@@ -130,7 +148,7 @@ export default {
       }
 
       .college {
-        margin-top: 5px;
+        margin-top: 10px;
         color: var(--color-font-dark);
 
         .icon {
@@ -150,7 +168,7 @@ export default {
 
     @media screen and (max-width: 500px) {
       flex-direction: column;
-      justify-items: center;
+      align-items: flex-start;
 
       .title {
         margin-bottom: 10px;

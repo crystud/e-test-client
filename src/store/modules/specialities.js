@@ -57,6 +57,19 @@ export default {
         return Promise.reject(e)
       }
     },
+    async getByID(_, specialityID) {
+      try {
+        const { data, status } = await axios.get(`/specialties/${specialityID}`)
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        return data
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
     async create(_, postData) {
       try {
         const { data, status } = await axios.post('/specialties', postData)

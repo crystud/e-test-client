@@ -8,8 +8,8 @@
     </div>
 
     <div class="data">
-      <div class="name">Студент студентович</div>
-      <div class="last-visit">активний 03.02.2020</div>
+      <div class="name">{{student.lastName}} {{student.firstName}} {{student.patronymic}}</div>
+      <div class="last-visit">{{student.email}}</div>
     </div>
 
     <div class="more">
@@ -20,7 +20,7 @@
 
     <div class="additional-actions">
       <div
-        v-if="id"
+        v-if="student.id"
         class="action view-profile"
         @click="viewProfile"
       >
@@ -29,11 +29,11 @@
         ></font-awesome-icon>
       </div>
 
-      <div class="action remove-user">
+      <!-- <div class="action remove-user">
         <font-awesome-icon
           icon="user-times"
         ></font-awesome-icon>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -41,15 +41,15 @@
 <script>
 export default {
   props: {
-    id: {
-      type: Number,
+    student: {
+      type: Object,
       required: true,
-      default: () => 0,
+      default: () => {},
     },
   },
   methods: {
     viewProfile() {
-      const { id } = this
+      const { student: { id } } = this
 
       if (id) {
         this.$router.push({

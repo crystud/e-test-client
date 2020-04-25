@@ -5,46 +5,33 @@
     :noPaddings="true"
   >
     <div class="app-create-subject">
-      <div class="title">Створення предмету</div>
+      <div class="title">Створення групи</div>
 
       <div class="content">
         <div class="text">
-          Щоб створити групу вам потрібно вказати спеціальність, номер та роки навчання.
+          Щоб створити групу вам потрібно вказати роки навчання.
         </div>
 
         <app-data-list
           class="data-list"
           :data="[
-            ['Наразі у вас', '18 груп'],
-            ['Останню групу створено', '28.02.2020 13:45'],
+            ['Спеціальність', speciality.name],
+            ['Років навчання', speciality.yearOfStudy],
+            ['Код спеціальності', speciality.code],
           ]"
         ></app-data-list>
 
         <app-datepicker
           class="form-input"
           placeholder="Початок навчання"
-          @change="newVal => educationStart = newVal"
+          @change="newVal => educationStart = `${newVal}T00:00:00.000Z`"
         ></app-datepicker>
 
         <app-datepicker
           class="form-input"
           placeholder="Кінець навчання"
-          @change="newVal => educationFinish = newVal"
+          @change="newVal => educationFinish = `${newVal}T00:00:00.000Z`"
         ></app-datepicker>
-
-        <app-select
-          class="app-select"
-          :hidePlaceholder="true"
-          :sideBorder="true"
-          label="Спеціальність"
-          :values="[
-            { label: 'Інженерія програмного забезпечення (П)', value: 1 },
-            { label: 'Маркетинг (МД)', value: 2 },
-            { label: 'Модельєри (МК)', value: 3 },
-            { label: 'Автоматизація (А)', value: 4 },
-          ]"
-          @change="newVal => specialtyID = newVal"
-        ></app-select>
 
         <div class="btns">
           <app-button
@@ -65,33 +52,25 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 import AppModalWindow from '../../ui/AppModalWindow.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 import AppButton from '../../ui/AppButton.vue'
 import AppDatepicker from '../../ui/AppDatepicker.vue'
-import AppSelect from '../../ui/AppSelect.vue'
 
 export default {
-  name: 'AppSyncSpecialtys',
+  name: 'AppCreateGroup',
   components: {
     AppModalWindow,
     AppDataList,
-    AppSelect,
     AppButton,
     AppDatepicker,
   },
-  computed: {
-    ...mapGetters({
-      specialties: 'specialty',
-    }),
-  },
   data() {
     return {
-      educationStart: {},
-      educationFinish: {},
-      specialtyID: null,
+      educationStart: null,
+      educationFinish: null,
     }
   },
   methods: {
@@ -102,13 +81,13 @@ export default {
       const {
         educationStart: startEducation,
         educationFinish: endEducation,
-        specialtyID: { value: specialtyID },
+        speciality: { id: speciality },
       } = this
 
       this.createGroup({
         endEducation,
         startEducation,
-        specialtyID,
+        speciality,
       }).then(() => {
         this.$emit('done', { created: true })
       }).catch(() => {
@@ -121,6 +100,11 @@ export default {
       type: Boolean,
       required: true,
       default: () => false,
+    },
+    speciality: {
+      type: Object,
+      required: true,
+      default: () => null,
     },
   },
 }

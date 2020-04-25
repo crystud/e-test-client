@@ -10,7 +10,10 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-modal-window
-      :show="show && !showPreloader && !showCreateSpeciality"
+      :show="
+        show
+        && !showPreloader
+        && !showCreateSpeciality"
       :noPaddings="true"
     >
       <div class="app-ask-speciality">
@@ -90,7 +93,7 @@ export default {
       default: () => false,
     },
     college: {
-      type: Number,
+      type: Object,
       required: true,
       default: () => null,
     },
@@ -121,7 +124,7 @@ export default {
   }
 
   .list {
-    max-height: 70vh;
+    max-height: 65vh;
     overflow-y: auto;
 
     .speciality {

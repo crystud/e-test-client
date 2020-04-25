@@ -1,12 +1,14 @@
 <template>
   <div class="group-view">
+    <app-preloader :show="showPreloader"></app-preloader>
+
     <app-filters
       :show="showFilters"
       @close="showFilters = false"
     ></app-filters>
 
     <div class="header">
-      <div class="name">П-42</div>
+      <div class="name">{{group.name}}</div>
 
       <router-link
         :to="{ name: 'groups' }"
@@ -19,15 +21,25 @@
         <div class="title">Студенти в групі</div>
 
         <div class="list">
+          <div
+            class="no-result"
+            v-if="group.students.length === 0"
+          >
+            В групі немає студентів...
+          </div>
+
           <app-group-student
-            v-for="i in 14"
-            v-bind:key="i"
-            :id="i"
+            v-for="(student, index) in students"
+            :key="index"
+            :student="student"
             class="app-group-student"
           ></app-group-student>
         </div>
 
-        <div class="save-section">
+        <div
+          class="save-section"
+          v-show="false"
+        >
           <app-button
             appereance="neutral"
             class="save"
@@ -42,25 +54,54 @@
 
       <div class="selection">
         <div class="search-section">
-          <div
-            class="filters"
-            @click="showFilters = true"
-          >
-            <font-awesome-icon icon="filter"></font-awesome-icon>
-          </div>
+          <div class="search-fields">
+            <input
+              type="text"
+              placeholder="Прізвище"
+              v-model="lastName"
+            />
 
-          <app-search-bar class="search-bar"></app-search-bar>
+            <input
+              type="text"
+              placeholder="Ім'я"
+              v-model="firstName"
+            />
+
+            <input
+              type="text"
+              placeholder="По-батькові"
+              v-model="patronymic"
+            />
+
+            <button @click="search">
+              <font-awesome-icon icon="search"></font-awesome-icon>
+            </button>
+          </div>
         </div>
 
         <div class="results">
-          <div class="title">Знайдено 25 студентів</div>
+          <div
+            class="no-results"
+            v-show="searchLaunched && results.length === 0"
+          >Нікого не знайдено...</div>
 
-          <div class="list">
-            <app-search-student
-              v-for="i in 10"
-              v-bind:key="i"
-              :isSelected="true"
-            ></app-search-student>
+          <div
+            class="no-results"
+            v-show="!searchLaunched"
+          >Введіть пошуковий запит</div>
+
+          <div v-show="searchLaunched">
+            <div class="title">Знайдено {{results.length}} осіб</div>
+
+            <div class="list">
+              <app-search-student
+                v-for="(user, index) in results"
+                :key="index"
+                :user="user"
+                :isSelected="group.students.includes(user.id)"
+                @addStudent="addStudent(user.id)"
+              ></app-search-student>
+            </div>
           </div>
         </div>
       </div>
@@ -69,24 +110,124 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 import AppGroupStudent from '@/components/templates/admin/AppGroupStudent.vue'
 import AppSearchStudent from '@/components/templates/admin/AppSearchStudent.vue'
 import AppFilters from '@/components/templates/admin/AppFilters.vue'
-import AppSearchBar from '@/components/ui/AppSearchBar.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
   components: {
     AppGroupStudent,
     AppSearchStudent,
-    AppSearchBar,
     AppButton,
     AppFilters,
+    AppPreloader,
   },
   data() {
     return {
       showFilters: false,
+      showPreloader: false,
+      firstName: '',
+      lastName: '',
+      patronymic: '',
+      searchLaunched: false,
+      students: [],
     }
+  },
+  computed: {
+    ...mapGetters({
+      group: 'groups/group',
+      results: 'user/searchResults',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      getGroupByID: 'groups/getByID',
+      addStudentToGroup: 'groups/addStudent',
+      searchUsers: 'user/search',
+      setAlert: 'alert/set',
+      getUsers: 'user/getUsers',
+    }),
+    async addStudent(studentID) {
+      const { group: { id: groupID } } = this
+
+      try {
+        this.showPreloader = true
+
+        await this.addStudentToGroup({ studentID, groupID })
+        await this.loadGroup(groupID)
+
+        this.setAlert({
+          title: 'Студента додано',
+          isSuccess: true,
+          text: '',
+          show: true,
+        })
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка...',
+          text: 'Нам не вдалось додати студента до групи',
+          isSuccess: false,
+          show: true,
+        })
+      } finally {
+        this.showPreloader = false
+      }
+    },
+    async loadGroup(groupID) {
+      try {
+        this.showPreloader = true
+
+        const group = await this.getGroupByID(groupID)
+        const students = await this.getUsers(group.students)
+
+        this.students = students
+      } catch (e) {
+        this.setAlert({
+          title: 'Неочікувана помилка',
+          text: 'Нам не вдалось отримати інформацію... Спробуйте пізніше',
+          delay: 3000,
+          isSuccess: false,
+          show: true,
+        })
+      } finally {
+        this.showPreloader = false
+      }
+    },
+    async search() {
+      const { firstName, lastName, patronymic } = this
+
+      if (!firstName && !lastName && !patronymic) {
+        return this.setAlert({
+          title: 'Помилка пошуку',
+          text: 'Вкажіть дані для пошуку (ім\'я, прізвище та по-батькові)',
+          delay: 2000,
+          isSuccess: false,
+          show: true,
+        })
+      }
+
+      const searchData = {}
+
+      if (firstName) searchData.firstName = firstName
+      if (lastName) searchData.lastName = lastName
+      if (patronymic) searchData.patronymic = patronymic
+
+      this.showPreloader = true
+
+      return this.searchUsers(searchData).then(() => {
+        this.showPreloader = false
+        this.searchLaunched = true
+      })
+    },
+  },
+  async created() {
+    const { $route: { params: { id } } } = this
+
+    await this.loadGroup(id)
   },
 }
 </script>
@@ -119,6 +260,14 @@ export default {
     grid-template-columns: 350px 1fr;
     grid-gap: 20px;
 
+    .no-result {
+      text-align: center;
+      font-size: 1.3em;
+      color: var(--color-font-dark);
+
+      margin: 40px 20px;
+    }
+
     .students {
       background: var(--color-bg-dark);
       border-radius: 10px;
@@ -136,6 +285,7 @@ export default {
       .list {
         margin-top: 10px;
         padding: 0 20px;
+        height: 100%;
 
         .app-group-student {
           margin-bottom: 15px;
@@ -184,26 +334,53 @@ export default {
 
     .selection {
       .search-section {
-        display: grid;
-        grid-template-columns: 50px 1fr;
-        grid-gap: 10px;
+        .search-fields {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr 50px;
+          grid-gap: 10px;
 
-        .search-bar {
-          background: var(--color-bg-dark);
-        }
+          input {
+            background: var(--color-bg-dark);
+            padding: 20px 10px;
+            border: 0;
+            border-radius: 10px;
+            font-size: 1em;
 
-        .filters {
-          color: var(--color-font-dark);
-          cursor: pointer;
+            color: var(--color-font-main);
 
-          height: 100%;
+            &::placeholder {
+              color: var(--color-font-dark);
+            }
+          }
 
-          background: var(--color-bg-dark);
-          border-radius: 10px;
+          button {
+            color: var(--color-font-dark);
+            cursor: pointer;
 
-          display: flex;
-          justify-content: center;
-          align-items: center;
+            height: 100%;
+
+            background: var(--color-bg-dark);
+            border-radius: 10px;
+            border: 0;
+            padding: 20px 10px;
+            font-size: 1em;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &:hover {
+              color: var(--color-font-main);
+            }
+          }
+
+          @media screen and (max-width: 750px) {
+            grid-template-columns: 1fr 1fr;
+          }
+
+          @media screen and (max-width: 450px) {
+            grid-template-columns: 1fr;
+          }
         }
       }
 

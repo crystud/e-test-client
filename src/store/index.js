@@ -9,6 +9,7 @@ import subjects from './modules/subjects'
 import specialities from './modules/specialities'
 import groups from './modules/groups'
 import user from './modules/user'
+import alert from './modules/alert'
 
 Vue.use(Vuex)
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    alert,
     theme,
     auth,
     college,
