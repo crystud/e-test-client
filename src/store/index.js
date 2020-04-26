@@ -10,6 +10,7 @@ import specialities from './modules/specialities'
 import groups from './modules/groups'
 import user from './modules/user'
 import alert from './modules/alert'
+import tests from './modules/tests'
 
 Vue.use(Vuex)
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
   },
   modules: {
     alert,
+    tests,
     theme,
     auth,
     college,

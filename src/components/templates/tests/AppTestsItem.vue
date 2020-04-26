@@ -3,22 +3,25 @@
     class="app-tests-item"
     @click="go"
   >
-    <div class="title">Title</div>
+    <div class="title">{{test.title}}</div>
 
     <div class="description">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, deserunt.
+      {{test.description}}
     </div>
 
     <app-data-list
+      class="data-list"
       :data="[
-        ['Предмет', 'Програмування'],
-        ['Створено', '12.02.2020'],
+        ['Предмет', test.subject.name || '-'],
+        ['Опубліковано', test.isPublic ? 'Так' : 'Ні'],
       ]"
     ></app-data-list>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import AppDataList from '@/components/ui/AppDataList.vue'
 
 export default {
@@ -26,9 +29,30 @@ export default {
   components: {
     AppDataList,
   },
+  props: {
+    test: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
+  },
   methods: {
+    ...mapActions({
+      setAlert: 'alert/set',
+    }),
     go() {
-      this.$router.push({
+      const { test: { id } } = this
+
+      if (!id) {
+        return this.setAlert({
+          title: 'ID тесту не оприділено...',
+          text: 'Нам не вдалось оприділити ID тесту. Спробуйте пізніше',
+          isSuccess: false,
+          show: true,
+        })
+      }
+
+      return this.$router.push({
         name: 'testPreview',
         params: {
           id: 1,
@@ -42,6 +66,7 @@ export default {
 <style lang="less" scoped>
 .app-tests-item {
   background: var(--color-bg-dark);
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
 
   padding: 20px;
   border-radius: 10px;
@@ -55,7 +80,7 @@ export default {
 
     display: block;
     width: 70px;
-    height: 2px;
+    height: 3px;
 
     position: absolute;
     bottom: 0;
@@ -79,26 +104,8 @@ export default {
     font-weight: 300;
   }
 
-  .data {
-    font-size: 1.1em;
-    font-weight: 300;
-    color: var(--color-font-main);
-
-    .item {
-      display: grid;
-      grid-template-columns: 130px 1fr;
-
-      margin-bottom: 10px;
-
-      .property {
-        color: var(--color-font-dark);
-      }
-
-      .value {
-        font-weight: 400;
-        color: var(--color-font-main);
-      }
-    }
+  .data-list {
+    margin-bottom: 0;
   }
 }
 </style>

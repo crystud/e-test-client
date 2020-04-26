@@ -31,4 +31,12 @@ export default [
     },
     component: () => import('@/views/teacher/Teacher.vue'),
   },
+  {
+    path: '/tests/own',
+    name: 'TeacherOwnTests',
+    meta: {
+      title: 'Тести у авторській розробці',
+    },
+    component: () => import('@/views/teacher/Tests.vue'),
+  },
 ]

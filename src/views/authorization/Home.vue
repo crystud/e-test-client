@@ -98,7 +98,13 @@
           <div class="divider">Загальне</div>
 
           <app-home-link role="student" link="homeUser">Домівка</app-home-link>
-          <app-home-link role="student" link="tests">Тести</app-home-link>
+
+          <div>
+            <div class="divider">Вчитель</div>
+
+            <app-home-link role="teacher" link="homeTeacher">Домівка вчителя</app-home-link>
+            <app-home-link role="teacher" link="TeacherOwnTests">Авторська розробка</app-home-link>
+          </div>
 
           <div class="divider">Адміністратор</div>
 
@@ -111,13 +117,6 @@
             <app-home-link role="admin" link="classes">Пари</app-home-link>
             <app-home-link role="admin" link="subjects">Предмети</app-home-link>
             <app-home-link role="admin" link="students">Студенти</app-home-link>
-          </div>
-
-          <div>
-            <div class="divider">Вчитель</div>
-
-            <app-home-link role="teacher" link="homeTeacher">Домівка вчителя</app-home-link>
-            <app-home-link role="teacher" link="createTest">Створити тест</app-home-link>
           </div>
 
           <div v-if="user.roles.includes('admin')">

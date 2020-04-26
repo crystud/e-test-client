@@ -66,7 +66,7 @@ body {
   --color-accent-orange: #FC7136;
   --color-accent-blue: #0E8DEA;
   --color-accent-red: #FF1E1E;
-  --color-accent-green: #1fe361;
+  --color-accent-green: #1BAD97;
   --color-font-main: #ffffff;
   --color-font-dark: #55636E;
   --color-font-gray: #55636E;
@@ -79,7 +79,7 @@ body {
   --color-accent-orange: #FC7136;
   --color-accent-blue: #0E8DEA;
   --color-accent-red: #FF1E1E;
-  --color-accent-green: #1fe361;
+  --color-accent-green: #1BAD97;
   --color-font-main: #000000;
   --color-font-dark: #55636E;
   --color-font-gray: #55636E;
