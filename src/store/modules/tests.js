@@ -7,15 +7,29 @@ export default {
 
   state: {
     userTests: [],
+    test: {
+      id: 0,
+      title: '',
+      description: '',
+      isPublic: null,
+      creator: null,
+      levels: [],
+      subject: null,
+      colleges: [],
+    },
   },
 
   getters: {
     userTests: ({ userTests }) => userTests,
+    test: ({ test }) => test,
   },
 
   mutations: {
     setUserTests(state, tests) {
       state.userTests = tests
+    },
+    setTest(state, test) {
+      state.test = test
     },
   },
 
@@ -33,7 +47,7 @@ export default {
         return Promise.reject(e)
       }
     },
-    async getTestByID(_, testID) {
+    async getTestByID({ commit }, testID) {
       try {
         const { data, status } = await axios.get(`/tests/${testID}`)
 
@@ -41,12 +55,14 @@ export default {
           return Promise.reject()
         }
 
+        commit('setTest', data)
+
         return Promise.resolve(data)
       } catch (e) {
         return Promise.reject(e)
       }
     },
-    getByIDs({ commit }, testsIDs) {
+    getByIDs({ commit, dispatch }, testsIDs) {
       return new Promise((resolve, reject) => {
         if (testsIDs.length === 0) return resolve([])
 
@@ -60,7 +76,7 @@ export default {
               return next({ error: 'Status is not 200' })
             }
 
-            // test.subject = await dispatch('subjects/getByID', test.subject, { root: true })
+            test.subject = await dispatch('subjects/getByID', test.subject, { root: true })
 
             tests.push(test)
 

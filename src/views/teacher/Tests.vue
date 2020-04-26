@@ -110,15 +110,9 @@ export default {
     grid-gap: 20px;
   }
 
-  @media @large {
+  @media screen and (max-width: 1550px) {
     .list {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  @media screen and (max-width: 1450px) {
-    .list {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 

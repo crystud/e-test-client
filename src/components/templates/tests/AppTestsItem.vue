@@ -14,6 +14,7 @@
       :data="[
         ['Предмет', test.subject.name || '-'],
         ['Опубліковано', test.isPublic ? 'Так' : 'Ні'],
+        ['К-сть рівнів', test.levels.length],
       ]"
     ></app-data-list>
   </div>
@@ -53,10 +54,8 @@ export default {
       }
 
       return this.$router.push({
-        name: 'testPreview',
-        params: {
-          id: 1,
-        },
+        name: 'testDevelop',
+        params: { id },
       })
     },
   },

@@ -8,6 +8,14 @@ export default [
     component: () => import('@/views/tests/TestPreview.vue'),
   },
   {
+    path: '/test/:id/develop',
+    name: 'testDevelop',
+    meta: {
+      title: 'Розробка тесту',
+    },
+    component: () => import('@/views/tests/Develop.vue'),
+  },
+  {
     path: '/test/pass/:id',
     name: 'testPass',
     meta: {
