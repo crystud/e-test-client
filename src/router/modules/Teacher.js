@@ -39,4 +39,12 @@ export default [
     },
     component: () => import('@/views/teacher/Tests.vue'),
   },
+  {
+    path: '/questions/bank',
+    name: 'questionsBank',
+    meta: {
+      title: 'Банк питань',
+    },
+    component: () => import('@/views/teacher/QuestionsBank.vue'),
+  },
 ]

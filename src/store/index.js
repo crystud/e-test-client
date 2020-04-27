@@ -12,6 +12,7 @@ import user from './modules/user'
 import alert from './modules/alert'
 import tests from './modules/tests'
 import levels from './modules/levels'
+import studies from './modules/studies'
 
 Vue.use(Vuex)
 
@@ -23,6 +24,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    studies,
     levels,
     alert,
     tests,
