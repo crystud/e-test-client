@@ -168,7 +168,7 @@ export default {
   }
 
   .levels-list-wrap {
-    max-height: 60vh;
+    max-height: 50vh;
     overflow-y: auto;
 
     .no-levels {
@@ -205,6 +205,8 @@ export default {
   .btns {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'leave create';
+
     border-top: 1px solid var(--color-bg-main);
 
     margin-top: 60px;
@@ -222,11 +224,21 @@ export default {
 
       &.leave {
         color: var(--color-font-dark);
+        grid-area: leave;
       }
 
       &.create  {
         color: var(--color-accent-green);
+        grid-area: create;
       }
+    }
+  }
+
+  @media screen and (max-width: 400px) {
+    .btns {
+      margin-top: 0;
+      grid-template-columns: 1fr;
+      grid-template-areas: 'create' 'leave';
     }
   }
 }

@@ -55,12 +55,13 @@ export default {
         return Promise.reject(e)
       }
     },
-    async search({ commit }, { name, confirmed }) {
+    async search({ commit }, { name, confirmed, subject }) {
       try {
         const params = {}
 
         if (name) params.name = name
         if (confirmed) params.confirmed = confirmed
+        if (subject) params.subject = subject
 
         const { data, status } = await axios.get('/topics', { params })
 

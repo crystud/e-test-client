@@ -79,7 +79,7 @@ export default {
     box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.72);
     border-radius: 10px;
 
-    max-height: 90vh;
+    max-height: 95vh;
     overflow: auto;
 
     transform: scale(0.9);

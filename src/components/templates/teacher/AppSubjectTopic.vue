@@ -1,6 +1,9 @@
 <template>
   <div
     class="app-subject-topic"
+    :class="{
+      confirmed: topic.confirmed,
+    }"
     @click="visit"
   >
     <div class="name">{{topic.name}}</div>
@@ -9,10 +12,6 @@
       class="data-list"
       :data="[
         ['Підтверджена', topic.confirmed ? 'Так' : 'Ні'],
-        [
-          'Створено',
-          topic.creator.id ? `${topic.creator.firstName} ${topic.creator.lastName}` : 'Невідомо',
-        ],
       ]"
     ></app-data-list>
   </div>
@@ -89,7 +88,11 @@ export default {
     right: 0;
     margin: auto;
 
-    background: var(--color-accent-green);
+    background: var(--color-accent-red);
+
+    &.confirmed {
+      background: var(--color-accent-green);
+    }
   }
 }
 </style>

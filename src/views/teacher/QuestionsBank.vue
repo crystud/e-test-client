@@ -4,12 +4,7 @@
 
     <app-ask-subject
       :show="!subject.id"
-      @selected="
-        selectedSubject => {
-          subject = selectedSubject
-          getTopicsList(selectedSubject.topics)
-        }
-      "
+      @selected="selectedSubject => subject = selectedSubject"
     ></app-ask-subject>
 
     <div v-if="subject.id">
@@ -50,6 +45,19 @@
         ></app-search-bar>
       </div>
 
+      <div
+        class="search-tip"
+        v-show="!search.searched || search.searched && !topics.length"
+      >
+        <div
+          v-if="!search.searched"
+        >Введіть пошуковий запит та натисність шукати</div>
+
+        <div
+          v-if="search.searched && !topics.length"
+        >За вашим запитом нічого не знайдено...</div>
+      </div>
+
       <div class="list">
         <app-subject-topic
           v-for="(topic, index) in (topics || [])"
@@ -88,6 +96,7 @@ export default {
       search: {
         words: '',
         confirmed: true,
+        searched: false,
       },
     }
   },
@@ -98,8 +107,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTopics: 'topics/getByIDs',
-      getSubject: 'subjects/getByID',
       setAlert: 'alert/set',
       searchTopicsAction: 'topics/search',
     }),
@@ -108,40 +115,57 @@ export default {
 
       this.showPreloader = true
 
-      this.searchTopicsAction({
-        name,
-        confirmed,
-      })
+      this.search.words = name
+      this.search.searched = true
 
-      this.showPreloader = false
-    },
-    async getTopicsList(topics) {
+      if (!name) {
+        this.setAlert({
+          title: 'Вкажіть назву теми...',
+          isSuccess: false,
+          show: true,
+          delay: 1000,
+        })
+
+        return
+      }
+
       try {
-        this.showPreloader = true
-
-        await this.getTopics(topics)
+        await this.searchTopicsAction({
+          name,
+          confirmed,
+        })
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
-          text: 'Нам не вдалось отримати список тем...',
-          delay: 1500,
-          show: true,
+          text: 'Нам не вдалось здійснити пошук... Спробуйте пізніше',
           isSuccess: false,
+          show: true,
+          delay: 1000,
         })
       } finally {
         this.showPreloader = false
+        this.search.searched = true
       }
     },
     async refreshSubject() {
-      const { subject: { id } } = this
+      const {
+        subject: { id },
+        search: {
+          confirmed,
+          words: name,
+        },
+      } = this
 
       if (!id) return
 
       this.showPreloader = true
+      this.search.searched = true
 
-      const subject = await this.getSubject(id)
-
-      await this.getTopics(subject.topics)
+      await this.searchTopicsAction({
+        confirmed,
+        name,
+        subject: id,
+      })
 
       this.showPreloader = false
     },
@@ -156,6 +180,7 @@ export default {
 
     display: grid;
     grid-template-columns: auto auto;
+    grid-gap: 20px;
 
     justify-content: space-between;
     align-items: center;
@@ -163,6 +188,10 @@ export default {
     .title {
       font-size: 1.5em;
       font-weight: 400;
+    }
+
+    @media screen and (max-width: 500px) {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -201,10 +230,35 @@ export default {
     }
   }
 
+  .search-tip {
+    text-align: center;
+    margin: 50px;
+    color: var(--color-font-dark);
+    font-size: 1.5em;
+  }
+
   .list {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
+  }
+
+  @media screen and (max-width: 650px) {
+    .list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (max-width: 450px) {
+    .search {
+      grid-template-columns: 1fr;
+
+      button {
+        border: 0;
+        border-bottom: 1px solid var(--color-bg-main) !important;
+        padding: 20px !important;
+      }
+    }
   }
 }
 </style>
