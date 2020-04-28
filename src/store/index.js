@@ -13,6 +13,7 @@ import alert from './modules/alert'
 import tests from './modules/tests'
 import levels from './modules/levels'
 import studies from './modules/studies'
+import topics from './modules/topics'
 
 Vue.use(Vuex)
 
@@ -24,6 +25,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    topics,
     studies,
     levels,
     alert,

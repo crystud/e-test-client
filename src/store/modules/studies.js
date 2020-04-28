@@ -20,7 +20,7 @@ export default {
   },
 
   actions: {
-    getAll({ dispatch, rootGetters }) {
+    getAll({ dispatch, rootGetters, commit }) {
       return new Promise((resolve, reject) => {
         try {
           dispatch('user/fetchSelf', null, { root: true })
@@ -32,7 +32,7 @@ export default {
           const subjects = []
 
           return AsyncLoop(teachSubjects, async (subjectID, next) => {
-            const { data, status } = await axios.get(`/subject/${subjectID}`)
+            const { data, status } = await axios.get(`/subjects/${subjectID}`)
 
             if (status !== 200) {
               return next({ error: 'Status was not 200' })
@@ -43,6 +43,8 @@ export default {
             return next()
           }, (err) => {
             if (err) return reject(err)
+
+            commit('setList', subjects)
 
             return resolve(subjects)
           })
