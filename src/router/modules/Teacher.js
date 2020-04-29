@@ -47,4 +47,12 @@ export default [
     },
     component: () => import('@/views/teacher/QuestionsBank.vue'),
   },
+  {
+    path: '/topic/:id',
+    name: 'topic',
+    meta: {
+      title: 'Сторінка теми',
+    },
+    component: () => import('@/views/teacher/Topic.vue'),
+  },
 ]

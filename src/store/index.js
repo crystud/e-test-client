@@ -14,6 +14,7 @@ import tests from './modules/tests'
 import levels from './modules/levels'
 import studies from './modules/studies'
 import topics from './modules/topics'
+import questions from './modules/questions'
 
 Vue.use(Vuex)
 
@@ -25,6 +26,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    questions,
     topics,
     studies,
     levels,

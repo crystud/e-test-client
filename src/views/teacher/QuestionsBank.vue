@@ -29,7 +29,7 @@
 
       <div class="search">
         <button
-          @click="search.confirmed = !search.confirmed"
+          @click="search.confirmed = search.confirmed === 1 ? 0 : 1"
           class="is-verified"
           :class="{
             'verified': search.confirmed,
@@ -95,7 +95,7 @@ export default {
       showPreloader: false,
       search: {
         words: '',
-        confirmed: true,
+        confirmed: 1,
         searched: false,
       },
     }

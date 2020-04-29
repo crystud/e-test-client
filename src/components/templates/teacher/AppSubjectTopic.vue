@@ -89,10 +89,10 @@ export default {
     margin: auto;
 
     background: var(--color-accent-red);
+  }
 
-    &.confirmed {
-      background: var(--color-accent-green);
-    }
+  &.confirmed::before {
+    background: var(--color-accent-green);
   }
 }
 </style>

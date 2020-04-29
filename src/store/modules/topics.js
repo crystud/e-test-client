@@ -60,7 +60,7 @@ export default {
         const params = {}
 
         if (name) params.name = name
-        if (confirmed) params.confirmed = confirmed
+        if (confirmed.length !== 0) params.confirmed = confirmed
         if (subject) params.subject = subject
 
         const { data, status } = await axios.get('/topics', { params })
