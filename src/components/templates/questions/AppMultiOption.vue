@@ -1,6 +1,6 @@
 <template>
   <div class="app-single-option">
-    <div class="title">Варіанти відповіді</div>
+    <div class="title">Варіанти відповідей</div>
 
     <div
       class="no-options"
@@ -50,6 +50,7 @@
         type="text"
         placeholder="Текст варіанту відповіді..."
         v-model="optionValue"
+        v-on:keyup="({ keyCode }) => (keyCode === 13 ? addOption() : null)"
       >
 
       <button

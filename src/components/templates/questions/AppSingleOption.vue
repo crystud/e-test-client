@@ -50,6 +50,7 @@
         type="text"
         placeholder="Текст варіанту відповіді..."
         v-model="optionValue"
+        v-on:keyup="({ keyCode }) => (keyCode === 13 ? addOption() : null)"
       >
 
       <button

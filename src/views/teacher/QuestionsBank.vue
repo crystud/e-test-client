@@ -113,11 +113,6 @@ export default {
     async searchTopics(name) {
       const { search: { confirmed } } = this
 
-      this.showPreloader = true
-
-      this.search.words = name
-      this.search.searched = true
-
       if (!name) {
         this.setAlert({
           title: 'Вкажіть назву теми...',
@@ -130,6 +125,11 @@ export default {
       }
 
       try {
+        this.search.words = name
+        this.search.searched = true
+
+        this.showPreloader = true
+
         await this.searchTopicsAction({
           name,
           confirmed,

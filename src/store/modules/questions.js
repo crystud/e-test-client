@@ -32,13 +32,13 @@ export default {
         return AsyncLoop(questions, async (questionInfo, next) => {
           const {
             question: text,
-            score = 0,
+            correct = false,
             position = 0,
           } = questionInfo
 
           const { data, status } = await axios.post('/answers', {
             text,
-            score,
+            correct,
             position,
             task: test,
           })

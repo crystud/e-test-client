@@ -60,7 +60,10 @@
           @change="options => optionsState = options"
         ></app-text-input-option>
 
-        <app-dragging-option v-if="type === 'numbering'"></app-dragging-option>
+        <app-dragging-option
+          v-if="type === 'numbering'"
+          @change="options => optionsState = options"
+        ></app-dragging-option>
       </div>
 
       <div class="btns">
