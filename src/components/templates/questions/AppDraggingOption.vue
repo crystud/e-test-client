@@ -1,6 +1,6 @@
 <template>
   <div class="app-single-option">
-    <div class="title">Логічна послідовність</div>
+    <div class="title">Визначити послідовність</div>
 
     <div
       class="no-options"

@@ -111,7 +111,10 @@ export default {
       searchTopicsAction: 'topics/search',
     }),
     async searchTopics(name) {
-      const { search: { confirmed } } = this
+      const {
+        search: { confirmed },
+        subject: { id: subject },
+      } = this
 
       if (!name) {
         this.setAlert({
@@ -133,6 +136,7 @@ export default {
         await this.searchTopicsAction({
           name,
           confirmed,
+          subject,
         })
       } catch (e) {
         this.setAlert({

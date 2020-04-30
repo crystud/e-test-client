@@ -48,5 +48,18 @@ export default {
         })
       })
     },
+    async getByID(_, levelID) {
+      try {
+        const { data, status } = await axios.get(`/levels/${levelID}`)
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
   },
 }

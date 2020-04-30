@@ -74,8 +74,8 @@
             v-for="(task, index) in questions"
             :key="index"
           >
-            <div class="col">{{task.ask}}</div>
-            <div class="col">{{taskTypes[task.type] || '-'}}</div>
+            <div class="col title">{{task.ask}}</div>
+            <div class="col type">{{taskTypes[task.type] || '-'}}</div>
           </div>
         </div>
       </div>
@@ -139,7 +139,7 @@ export default {
         single_choice: 'Один варіант',
         multy_choice: 'Декілька варіантів',
         text_input: 'Ввести значення',
-        numbering: 'Перетягнути',
+        numbering: 'Визначити послідовність',
       },
     }
   },
@@ -234,7 +234,28 @@ export default {
 
         &.header-row {
           color: var(--color-font-dark);
+          border-bottom: 1px solid var(--color-bg-main);
+          padding-bottom: 20px;
         }
+      }
+    }
+  }
+
+  @media screen and (max-width: 650px) {
+    .header {
+      grid-template-columns: 1fr;
+    }
+
+    .table .row {
+      grid-template-columns: 1fr !important;
+
+      .title {
+        font-size: 1.2em;
+      }
+
+      .type {
+        margin-top: 10px;
+        color: var(--color-font-dark);
       }
     }
   }

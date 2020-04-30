@@ -3,7 +3,7 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-modal-window
-      :show="show && !showPreloader"
+      :show="show && !showPreloader && !alert.show"
       :noPaddings="true"
     >
       <div class="title">Оберіть предмет</div>
@@ -65,6 +65,7 @@ export default {
   computed: {
     ...mapGetters({
       subjects: 'studies/list',
+      alert: 'alert/alert',
     }),
   },
   data() {
