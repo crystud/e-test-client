@@ -96,5 +96,24 @@ export default {
         return Promise.reject()
       }
     },
+    async getGroups({ dispatch }, specialties) {
+      return new Promise((resolve) => {
+        if (!specialties.length) return resolve([])
+
+        let groups = []
+
+        return AsyncLoop(specialties, async (specialtyID, next) => {
+          const speciality = await dispatch('getByID', specialtyID)
+
+          if (!speciality.groups) {
+            return next()
+          }
+
+          groups = [...groups, ...speciality.groups]
+
+          return next()
+        }, () => resolve(groups))
+      })
+    },
   },
 }

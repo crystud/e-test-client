@@ -15,6 +15,7 @@ import levels from './modules/levels'
 import studies from './modules/studies'
 import topics from './modules/topics'
 import questions from './modules/questions'
+import permissions from './modules/permissions'
 
 Vue.use(Vuex)
 
@@ -26,6 +27,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    permissions,
     questions,
     topics,
     studies,

@@ -11,6 +11,7 @@
       <app-edit-studies
         :show="editStudies.show"
         :speciality="editStudies.speciality"
+        @close="editStudies.show = false"
       ></app-edit-studies>
 
       <app-sync-specialtys

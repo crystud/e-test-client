@@ -52,7 +52,7 @@
             @click="addStudy(study.id)"
             class="study"
             :class="{
-              selected: speciality.studies.includes(study.id),
+              selected: [...speciality.studies, ...addedStudies].includes(study.id),
             }"
           >
             <div class="icon">
@@ -71,8 +71,10 @@
       </div>
 
       <div class="btns">
-        <button class="leave">Скасувати</button>
-        <button class="action">Додати пари групі</button>
+        <button
+          class="leave"
+          @click="$emit('close')"
+        >Закрити</button>
       </div>
     </app-modal-window>
   </div>
@@ -126,14 +128,14 @@ export default {
 
         this.addedStudies.push(study)
 
-        this
+        this.setAlert({
+          title: 'Предмет додано',
+          delay: 1500,
+          show: true,
+          isSuccess: true,
+        })
 
-          .this.setAlert({
-            title: 'Предмет додано',
-            delay: 1500,
-            show: true,
-            isSuccess: true,
-          })
+        await this.loadStudies()
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -330,13 +332,12 @@ export default {
   }
 
   .btns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-
     border-top: 1px solid var(--color-bg-main);
     box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.2);
 
     button {
+      width: 100%;
+
       font-size: 1em;
       background: transparent;
       border: 0;
@@ -349,11 +350,7 @@ export default {
       }
 
       &.leave {
-        color: var(--color-accent-red);
-      }
-
-      &.action {
-        color: var(--color-accent-green);
+        color: var(--color-font-dark);
       }
     }
   }
