@@ -83,5 +83,18 @@ export default {
         return Promise.reject()
       }
     },
+    async assignStudy(_, { speciality, study }) {
+      try {
+        const { data, status } = await axios.post(`/specialties/${speciality}/study`, { study })
+
+        if (status !== 201) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
   },
 }

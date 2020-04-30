@@ -8,6 +8,11 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <div v-if="editingCollege.id && !showPreloader">
+      <app-edit-studies
+        :show="editStudies.show"
+        :speciality="editStudies.speciality"
+      ></app-edit-studies>
+
       <app-sync-specialtys
         :show="showSync"
         @close="showSync = false"
@@ -41,7 +46,7 @@
           >Створити спеціальність</app-button>
 
           <app-button
-            appearance="brand"
+            appearance="primary"
             @click="showSync = true"
           >Синхронізувати</app-button>
         </div>
@@ -60,9 +65,10 @@
 
       <div class="list">
         <app-specialty
-          v-for="(specialty, i) in specialities"
+          v-for="(speciality, i) in specialities"
           v-bind:key="i"
-          :specialty="specialty"
+          :specialty="speciality"
+          @editStudies="editStudies = { speciality, show: true }"
         ></app-specialty>
       </div>
     </div>
@@ -73,12 +79,13 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import AppButton from '@/components/ui/AppButton.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppSpecialty from '@/components/templates/admin/AppSpecialty.vue'
 import AppSyncSpecialtys from '@/components/templates/admin/AppSyncSpecialtys.vue'
 import AppSpecialitiesChart from '@/components/templates/admin/AppSpecialitiesChart.vue'
 import AppAskCollege from '@/components/templates/admin/AppAskCollege.vue'
 import AppCreateSpecialty from '@/components/templates/admin/AppCreateSpecialty.vue'
-import AppPreloader from '../../components/ui/AppPreloader.vue'
+import AppEditStudies from '@/components/templates/admin/AppEditStudies.vue'
 
 export default {
   data() {
@@ -88,6 +95,10 @@ export default {
       editingCollege: {},
       showAskCollege: true,
       showPreloader: false,
+      editStudies: {
+        show: false,
+        speciality: {},
+      },
     }
   },
   name: 'specialtys',
@@ -99,6 +110,7 @@ export default {
     AppSpecialitiesChart,
     AppCreateSpecialty,
     AppPreloader,
+    AppEditStudies,
   },
   computed: {
     ...mapGetters({

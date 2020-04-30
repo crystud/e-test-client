@@ -135,6 +135,7 @@ export default {
       .name {
         font-size: 1.3em;
         margin-bottom: 5px;
+        font-weight: 400;
       }
 
       .is-verified {

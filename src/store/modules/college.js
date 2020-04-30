@@ -72,5 +72,18 @@ export default {
         return Promise.reject(e)
       }
     },
+    async getByID(_, collegeID) {
+      try {
+        const { data, status } = await axios.get(`/colleges/${collegeID}`)
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
   },
 }

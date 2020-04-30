@@ -55,4 +55,12 @@ export default [
     },
     component: () => import('@/views/teacher/Topic.vue'),
   },
+  {
+    path: '/permissions',
+    name: 'permissions',
+    meta: {
+      title: 'Дозволи на проходження',
+    },
+    component: () => import('@/views/teacher/Permissions.vue'),
+  },
 ]

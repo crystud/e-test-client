@@ -105,6 +105,7 @@
             <app-home-link role="teacher" link="homeTeacher">Домівка вчителя</app-home-link>
             <app-home-link role="teacher" link="TeacherOwnTests">Авторська розробка</app-home-link>
             <app-home-link role="teacher" link="questionsBank">Банк питань</app-home-link>
+            <app-home-link role="teacher" link="permissions">Дозволи на проходження</app-home-link>
           </div>
 
           <div class="divider">Адміністратор</div>

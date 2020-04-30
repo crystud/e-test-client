@@ -185,6 +185,7 @@ export default {
         display: inline-block;
         background: var(--color-accent-green);
         border-radius: 0 15px 15px 0;
+        color: #fff;
 
         padding: 10px 30px;
       }

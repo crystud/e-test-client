@@ -6,18 +6,15 @@
       :data="[
         ['Скорочена назва', specialty.symbol || '-'],
         ['Код', specialty.code],
+        ['К-сть груп', specialty.groups.length],
+        ['Закріплено пар', specialty.studies.length],
       ]"
     ></app-data-list>
 
-    <router-link
-      :to="{
-        name: 'assigning',
-        params: {
-          specialtyID: specialty.id,
-        },
-      }"
+    <div
+      @click="$emit('editStudies')"
       class="study-plan"
-    >Навчальний план</router-link>
+    >Закріплені пари</div>
   </app-card>
 </template>
 
@@ -75,6 +72,7 @@ export default {
     position: relative;
 
     color: var(--color-font-main);
+    cursor: pointer;
 
     &::before {
       content: "";
@@ -95,7 +93,7 @@ export default {
     }
 
     &:hover {
-      color: var(--color-font-dark) !important;
+      text-decoration: underline;
     }
   }
 }
