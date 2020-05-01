@@ -116,17 +116,6 @@ export default {
         subject: { id: subject },
       } = this
 
-      if (!name) {
-        this.setAlert({
-          title: 'Вкажіть назву теми...',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
-
-        return
-      }
-
       try {
         this.search.words = name
         this.search.searched = true

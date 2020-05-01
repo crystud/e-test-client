@@ -2,15 +2,6 @@
   <app-user-card class="subjects-info">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-warn-passing
-      :show="showWarnPassing"
-      :ticket="passingTicket"
-      @cancel="
-        passingTicket = {}
-        showWarnPassing = false
-      "
-    ></app-warn-passing>
-
     <div class="title">Дозволи на проходження</div>
 
     <div class="tests">
@@ -21,22 +12,19 @@
 
       <div
         class="row cursor-pointer"
-        v-for="(ticket, index) in tickets"
+        v-for="(result, index) in results"
         :key="index"
-        @click="
-          showWarnPassing = true
-          passingTicket = ticket
-        "
+        @click="$router.push({
+          params: { id },
+          name: 'testResults',
+        })"
       >
-        <div class="name">{{ticket.title}}</div>
+        <div class="name">{{result}}</div>
 
         <div
-          class="permission"
-          :class="{
-            'closed': ticket.used,
-            'opened': !ticket.used,
-          }"
-        >{{ticket.used ? 'Використаний' : 'Невикористаний'}}</div>
+          class="permission result-score"
+          :class="getResultClasses(result.persents)"
+        >Результат: {{result.persents}}%</div>
       </div>
     </div>
   </app-user-card>
@@ -47,7 +35,6 @@ import { mapGetters, mapActions } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
-import AppWarnPassing from './AppWarnPassing.vue'
 import AppUserCard from './AppUserCard.vue'
 
 export default {
@@ -55,7 +42,6 @@ export default {
   components: {
     AppUserCard,
     AppPreloader,
-    AppWarnPassing,
   },
   computed: {
     ...mapGetters({
@@ -64,39 +50,35 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTicketsByIDs: 'tickets/getByIDs',
-      setAlert: 'alert/set',
+      getResults: 'results/getByIDs',
       fetchSelf: 'user/fetchSelf',
     }),
-    async loadTickets() {
-      try {
-        this.showPreloader = true
-
-        await this.fetchSelf()
-        this.tickets = await this.getTicketsByIDs(this.self.tickets || [])
-      } catch (e) {
-        this.setAlert({
-          title: 'Помилка',
-          text: 'Не вдалось завантажити дозволи...',
-          delay: 2000,
-          show: true,
-          isSuccess: false,
-        })
-      } finally {
-        this.showPreloader = false
+    getResultClasses(result) {
+      return result !== null ? {
+        bad: result < 60,
+        warning: result >= 60 && result <= 70,
+        good: result > 70,
+      } : {
+        neutral: true,
       }
+    },
+    async loadResults() {
+      this.showPreloader = false
+
+      await this.fetchSelf()
+      this.results = await this.getResults(this.self.results) || []
+
+      this.showPreloader = false
     },
   },
   data() {
     return {
       showPreloader: false,
-      showWarnPassing: false,
-      passingTicket: {},
-      tickets: [],
+      results: [],
     }
   },
   async created() {
-    await this.loadTickets()
+    await this.loadResults()
 
     this.showPreloader = false
   },
@@ -117,7 +99,7 @@ export default {
 
     .row {
       display: grid;
-      grid-template-columns: 1fr 100px 100px;
+      grid-template-columns: 1fr 150px;
 
       padding: 7px 0;
 
@@ -133,23 +115,6 @@ export default {
 
       &.header-title {
         color: var(--color-font-dark);
-      }
-
-      .result {
-        &.bad { color: #E01616 }
-        &.warning { color: #FC7136 }
-        &.good { color: #1ED6BA }
-        &.neutral { color: var(--color-font-dark) }
-      }
-
-      .permission {
-        &.closed {
-          color: #E01616;
-        }
-
-        &.opened {
-          color: #1ED6BA;
-        }
       }
 
       @media screen and (max-width: 500px) {
@@ -169,6 +134,13 @@ export default {
         }
       }
     }
+  }
+
+  .result-score {
+    &.bad { color: #E01616 }
+    &.warning { color: #FC7136 }
+    &.good { color: #1ED6BA }
+    &.neutral { color: var(--color-font-dark) }
   }
 }
 </style>

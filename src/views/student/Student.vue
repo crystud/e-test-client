@@ -26,10 +26,8 @@
       class="sections"
     >
       <div>
-        <app-student-subjects
-          v-for="i in 3"
-          v-bind:key="i"
-        ></app-student-subjects>
+        <app-student-subjects></app-student-subjects>
+        <app-student-results></app-student-results>
       </div>
 
       <app-student-messages
@@ -45,6 +43,7 @@ import { mapGetters, mapActions } from 'vuex'
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
 import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
+import AppStudentResults from '@/components/templates/student/AppStudentResults.vue'
 import AppStudentTestsHistory from '@/components/templates/student/AppStudentTestsHistory.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
@@ -58,6 +57,7 @@ export default {
     AppStudentTestsHistory,
     AppStudentMessages,
     AppPreloader,
+    AppStudentResults,
   },
   computed: {
     ...mapGetters({
@@ -149,6 +149,8 @@ export default {
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-gap: 20px;
+
+    align-items: flex-start;
   }
 
   .mobile {

@@ -132,6 +132,7 @@ export default {
       const groups = await this.getGroups(specialties)
 
       this.showSelectGroup = true
+      this.showPreloader = false
       this.studyID = id
       this.groupsList = groups
     },
@@ -185,6 +186,8 @@ export default {
         display: grid;
         grid-template-columns: 1fr 200px 200px 200px 70px;
         grid-gap: 20px;
+
+        align-items: center;
 
         margin-bottom: 15px;
         color: var(--color-font-main);

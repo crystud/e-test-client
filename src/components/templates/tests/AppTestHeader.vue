@@ -18,17 +18,16 @@
 
     <div class="content">
       <div class="maximized" v-if="!isMinimized">
-        <div class="title">Назва тесту</div>
+        <div class="title">{{test.title}}</div>
 
         <div class="description">
-          дуже дуже дуже довгий опис тесту, який повинен
-          буде доволі довгим, щоб було видно як воно буде
-          виглядати в реальній ситуації, коли вчитель
-          тикне цілу книжку сюди, описуючи, що знаходиться
-          в цьому тесті.
+          {{test.description}}
         </div>
 
-        <div class="questions">25 запитань</div>
+        <div
+          class="questions"
+          v-if="test.levels"
+        >{{test.levels.length}} рівнів</div>
 
         <div
           v-if="showStart"
@@ -51,8 +50,11 @@
       </div>
 
       <div class="minimized" v-if="isMinimized">
-        <div class="title">Назва тесту</div>
-        <div class="questions">25 запитань</div>
+        <div class="title">{{test.title}}</div>
+
+        <div
+          v-if="test.levels"
+          class="questions">{{test.levels.length}} рівнів</div>
       </div>
     </div>
 
@@ -71,6 +73,11 @@ export default {
     showMinimize: {
       type: Boolean,
       default: () => false,
+    },
+    test: {
+      type: Object,
+      required: false,
+      default: () => {},
     },
   },
   data() {
@@ -172,8 +179,8 @@ export default {
 
     margin: auto;
 
-    width: 20%;
-    height: 5px;
+    width: 100px;
+    height: 3px;
 
     background: #1ED6BA;
     border-radius: 10px;

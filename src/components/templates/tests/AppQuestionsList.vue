@@ -1,15 +1,14 @@
 <template>
   <div class="questions-list">
     <div
-      v-for="i in 30"
-      v-bind:key="i"
-
-      @click="$emit('setQuestion', i)"
+      v-for="(taskID, index) in tasksList"
+      :key="index"
+      @click="$emit('setQuestion', taskID)"
       class="question"
       :class="{
-        'current': currentQuestion === i,
+        'current': currentQuestion === taskID,
       }"
-    >{{i}}</div>
+    >{{index+1}}</div>
 
     <button
       class="finish-test"
@@ -30,6 +29,10 @@ export default {
       type: [Number, null],
       required: false,
       default: () => null,
+    },
+    tasksList: {
+      type: Array,
+      required: true,
     },
   },
 }

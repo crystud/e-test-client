@@ -16,6 +16,9 @@ import studies from './modules/studies'
 import topics from './modules/topics'
 import questions from './modules/questions'
 import permissions from './modules/permissions'
+import tickets from './modules/tickets'
+import attempts from './modules/attempts'
+import results from './modules/results'
 
 Vue.use(Vuex)
 
@@ -27,6 +30,9 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    results,
+    attempts,
+    tickets,
     permissions,
     questions,
     topics,
