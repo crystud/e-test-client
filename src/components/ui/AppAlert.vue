@@ -150,7 +150,7 @@ export default {
     .text {
       font-size: 1.05em;
       color: #555;
-      font-weight: 100;
+      font-weight: 300;
     }
   }
 }

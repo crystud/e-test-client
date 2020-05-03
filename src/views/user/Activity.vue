@@ -10,7 +10,7 @@
         </div>
 
         <div class="data">
-          <div class="name">Студент студентович</div>
+          <div class="name">{{self.firstName}} {{self.lastName}}</div>
           <div class="online">В мережі</div>
         </div>
       </div>
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import AppUserLastSessions from '@/components/templates/user/AppUserLastSessions.vue'
 import AppUserCurrentSession from '@/components/templates/user/AppUserCurrentSession.vue'
 import AppUserLocations from '@/components/templates/user/AppUserLocations.vue'
@@ -64,6 +66,11 @@ export default {
     AppUserLastSessions,
     AppUserCurrentSession,
     AppUserLocations,
+  },
+  computed: {
+    ...mapGetters({
+      self: 'user/self',
+    }),
   },
 }
 </script>
@@ -196,7 +203,7 @@ export default {
     .section {
       .title {
         margin-bottom: 10px;
-        font-weight: 100;
+        font-weight: 300;
         font-size: 1.3em;
       }
     }

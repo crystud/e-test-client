@@ -1,7 +1,14 @@
 <template>
   <div class="app-student">
+    <app-preloader :show="showPreloader"></app-preloader>
+
     <div class="student-info">
-      <app-student-personal-info></app-student-personal-info>
+      <app-student-personal-info
+        :user="user"
+        :data="[
+          ['E-mail', user.email],
+        ]"
+      ></app-student-personal-info>
 
       <app-student-activity
         :data="studentActivity"
@@ -19,10 +26,8 @@
       class="sections"
     >
       <div>
-        <app-student-subjects
-          v-for="i in 3"
-          v-bind:key="i"
-        ></app-student-subjects>
+        <app-student-subjects></app-student-subjects>
+        <app-student-results></app-student-results>
       </div>
 
       <app-student-messages
@@ -33,11 +38,15 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
 import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
+import AppStudentResults from '@/components/templates/student/AppStudentResults.vue'
 import AppStudentTestsHistory from '@/components/templates/student/AppStudentTestsHistory.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
   name: 'AppStudent',
@@ -47,14 +56,27 @@ export default {
     AppStudentSubjects,
     AppStudentTestsHistory,
     AppStudentMessages,
+    AppPreloader,
+    AppStudentResults,
+  },
+  computed: {
+    ...mapGetters({
+      user: 'user/user',
+      self: 'user/self',
+    }),
   },
   methods: {
+    ...mapActions({
+      getUser: 'user/getUser',
+      fetchSelf: 'user/fetchSelf',
+    }),
     setFullHistory(isOpened) {
       this.fullIsOpened = isOpened
     },
   },
   data() {
     return {
+      showPreloader: false,
       fullIsOpened: false,
       studentActivity: [
         ['Останній тест пройдено', '03.03.2020 (87%)'],
@@ -85,6 +107,31 @@ export default {
       ],
     }
   },
+  async created() {
+    this.showPreloader = true
+
+    const {
+      $route: {
+        params: { id },
+      },
+    } = this
+
+    if (!id) {
+      await this.fetchSelf()
+
+      document.title = 'Ваш профіль -  CRYSTUD'
+    }
+
+    await this.getUser(id || this.self.id)
+
+    const { user } = this
+
+    if (id) {
+      document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
+    }
+
+    this.showPreloader = false
+  },
 }
 </script>
 
@@ -102,6 +149,8 @@ export default {
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-gap: 20px;
+
+    align-items: flex-start;
   }
 
   .mobile {

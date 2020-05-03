@@ -43,6 +43,8 @@ import {
   faUser,
   faAddressCard,
   faFilter,
+  faChevronRight,
+  faUserPlus,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -97,6 +99,8 @@ library.add(faUser)
 library.add(faEllipsisV)
 library.add(faAddressCard)
 library.add(faFilter)
+library.add(faChevronRight)
+library.add(faUserPlus)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

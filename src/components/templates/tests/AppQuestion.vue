@@ -5,7 +5,7 @@
       alt="question image"
       :width="200"
       :height="200"
-      v-if="Math.random() > 0.5"
+      v-if="false"
       class="image"
     ></app-image>
 
@@ -13,10 +13,12 @@
       <div class="title">Запитання</div>
 
       <div class="text">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-        Non tempora et voluptatibus distinctio architecto expedita
-        cum iste magnam. Temporibus alias, assumenda officia totam
-        a nisi eum molestiae quis deleniti id?
+        <div class="base">{{question.ask}}</div>
+
+        <div
+          class="additional"
+          v-if="question.description"
+        >Додатково: {{question.description}}</div>
       </div>
     </div>
   </div>
@@ -29,6 +31,12 @@ export default {
   name: 'AppQuestion',
   components: {
     AppImage,
+  },
+  props: {
+    question: {
+      type: Object,
+      required: true,
+    },
   },
 }
 </script>
@@ -44,6 +52,12 @@ export default {
 
   .content {
     color: var(--color-font-main);
+    background: var(--color-bg-dark);
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+
+    width: 100%;
 
     .title {
       font-size: .95em;
@@ -51,8 +65,16 @@ export default {
     }
 
     .text {
-      font-size: 1.1em;
+      margin-top: 15px;
+    }
+
+    .base {
+      font-size: 1.3em;
+    }
+
+    .additional {
       margin-top: 5px;
+      color: var(--color-font-dark);
     }
   }
 

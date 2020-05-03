@@ -19,7 +19,7 @@ export default {
 <style lang="less" scoped>
 .app-college-basic-info {
   padding: 20px;
-  font-weight: 100;
+  font-weight: 300;
 
   .name {
     font-size: 1.5em;

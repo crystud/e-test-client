@@ -80,11 +80,11 @@
 
       .name {
         font-size: 1.3em;
-        font-weight: 100;
+        font-weight: 300;
       }
 
       .current-data {
-        font-weight: 100;
+        font-weight: 300;
 
         margin: 10px 0;
 

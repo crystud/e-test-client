@@ -71,7 +71,7 @@
     </div>
 
     <div class="load-list">
-      <div class="title">Топ 10 нагрузка по навчальним закладам</div>
+      <div class="title">Топ 10 нагрузка від користувачів НЗ</div>
 
       <div class="table">
         <div class="row header">

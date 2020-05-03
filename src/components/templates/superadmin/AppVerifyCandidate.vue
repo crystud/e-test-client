@@ -3,22 +3,29 @@
     class="app-verify-candidate"
     @click="go"
   >
-    <div class="name">Коломийський політехнічний коледж</div>
+    <div class="name">{{college.name}}</div>
 
     <app-data-list
       :data="[
-        ['Директор', 'Ляшеник Андрій Васильович'],
-        ...(isVerificated ? [
-          ['Заявку прийнято', '28 червня 2020 о 18:23'],
-          ['Студентів', '364'],
-          ['Вчителів', '114'],
-        ] : [
-          ['Заявку подано', '26 червня 2020 о 17:45'],
-          ['Файлів прикріплено', '3']
-        ]),
+        ['E-mail', college.email],
+        ['Адреса', college.address],
+        ['Веб-сайт', college.site],
+        ['ЄДЕБО', college.EDBO],
       ]"
       class="list"
     ></app-data-list>
+
+    <div class="is-verificated">
+      <span
+        v-if="college.confirmed"
+        class="verificated"
+      >НЗ верифікований</span>
+
+      <span
+        v-if="!college.confirmed"
+        class="not-verificated"
+      >НЗ не верифікований</span>
+    </div>
   </div>
 </template>
 
@@ -30,6 +37,11 @@ export default {
     AppDataList,
   },
   props: {
+    college: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
     isVerificated: {
       type: Boolean,
       required: true,
@@ -38,13 +50,8 @@ export default {
   },
   methods: {
     go() {
-      if (!this.isVerificated) {
-        return this.$router.push({
-          name: 'verifyRequest',
-          params: {
-            requestID: 1,
-          },
-        })
+      if (!this.college.confirmed) {
+        return this.$emit('click')
       }
 
       return this.$router.push({
@@ -93,6 +100,18 @@ export default {
 
   .list {
     margin: 15px 0 0;
+  }
+
+  .is-verificated {
+    margin-top: 20px;
+
+    .verificated {
+      color: #0EEAA6;
+    }
+
+    .not-verificated {
+      color: #E01616;
+    }
   }
 }
 </style>

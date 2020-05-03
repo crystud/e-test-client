@@ -1,13 +1,5 @@
 export default [
   {
-    path: '/tests',
-    name: 'tests',
-    meta: {
-      title: 'Тести',
-    },
-    component: () => import('@/views/tests/Tests.vue'),
-  },
-  {
     path: '/test/:id',
     name: 'testPreview',
     meta: {
@@ -16,7 +8,15 @@ export default [
     component: () => import('@/views/tests/TestPreview.vue'),
   },
   {
-    path: '/test/pass/:id',
+    path: '/test/:id/develop',
+    name: 'testDevelop',
+    meta: {
+      title: 'Розробка тесту',
+    },
+    component: () => import('@/views/tests/Develop.vue'),
+  },
+  {
+    path: '/test/pass/:testID/:attemptID',
     name: 'testPass',
     meta: {
       title: 'Проходження тесту',

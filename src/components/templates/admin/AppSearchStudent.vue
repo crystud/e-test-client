@@ -14,13 +14,17 @@
     </div>
 
     <div class="data">
-      <div class="name">Студент студентович</div>
-      <div class="last-visit">активний 03.02.2020 14:45</div>
+      <div class="name">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</div>
+      <div class="last-visit">E-mail: {{user.email}}</div>
     </div>
 
-    <div class="toggle-btn">
+    <div
+      class="toggle-btn"
+      @click="$emit('addStudent')"
+      v-if="!isSelected"
+    >
       <font-awesome-icon
-        icon="user-times"
+        :icon="isSelected ? 'user-times' : 'user-plus'"
         class="icon"
       ></font-awesome-icon>
     </div>
@@ -34,6 +38,11 @@ export default {
       type: Boolean,
       required: true,
       default: () => false,
+    },
+    user: {
+      type: Object,
+      required: true,
+      default: () => {},
     },
   },
 }
@@ -94,13 +103,41 @@ export default {
     height: 50px;
 
     border-radius: 50px 0 10px 0;
+    cursor: pointer;
 
     .icon {
       margin-left: 20px;
       margin-top: 20px;
     }
 
-    transition: all .3s;
+    &, .icon {
+      transition: all .2s;
+    }
+
+    &:hover {
+      width: 60px;
+      height: 60px;
+
+      .icon {
+        margin-left: 25px;
+        margin-top: 25px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    grid-template-columns: 1fr;
+    padding: 30px;
+    text-align: center;
+
+    .image {
+      width: 100%;
+      height: 100%;
+      max-width: 150px;
+      max-height: 150px;
+
+      margin: 0 auto;
+    }
   }
 }
 </style>

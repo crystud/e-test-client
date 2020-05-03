@@ -37,7 +37,7 @@ export default {
     grid-gap: 15px;
 
     .property {
-      color: var(--color-font-dark);
+      color: var(--color-font-dark) !important;
       margin-right: 10px;
     }
 

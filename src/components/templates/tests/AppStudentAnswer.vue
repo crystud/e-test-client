@@ -45,7 +45,7 @@ export default {
 
   color: var(--color-font-main);
 
-  font-weight: 100;
+  font-weight: 300;
 
   position: relative;
 

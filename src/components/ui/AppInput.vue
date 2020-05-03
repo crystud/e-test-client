@@ -64,7 +64,7 @@ export default {
     font: 1em 'Lato', Tahoma, Arial;
 
     &::placeholder {
-      font-weight: 100;
+      font-weight: 300;
       color: var(--color-font-dark);
     }
   }

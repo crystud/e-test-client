@@ -31,6 +31,7 @@
           <app-button
             appearance="primary"
             class="sync-btn"
+            @click="sync"
           >Синхронізувати зараз</app-button>
         </div>
       </div>
@@ -57,6 +58,11 @@ export default {
       default: () => false,
     },
   },
+  methods: {
+    sync() {
+      this.$router.push({ name: 'specialtysSync' })
+    },
+  },
 }
 </script>
 
@@ -66,7 +72,7 @@ export default {
     padding: 0 !important;
 
     .app-sync-specialtys {
-      font-weight: 100;
+      font-weight: 300;
       max-width: 600px;
 
       .title, .content {

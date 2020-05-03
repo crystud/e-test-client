@@ -8,12 +8,20 @@ export default [
     component: () => import('@/views/admin/College.vue'),
   },
   {
-    path: '/admin/specialtys',
+    path: '/admin/specialities',
     name: 'specialtys',
     meta: {
       title: 'Спеціальності',
     },
     component: () => import('@/views/admin/Specialtys.vue'),
+  },
+  {
+    path: '/admin/specialities/sync',
+    name: 'specialtysSync',
+    meta: {
+      title: 'Синхронізація спеціальностей',
+    },
+    component: () => import('@/views/admin/SpecialitiesSync.vue'),
   },
   {
     path: '/admin/classes',

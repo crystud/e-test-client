@@ -28,7 +28,7 @@ export default {
 <style lang="less" scoped>
 .app-last-visitors {
   padding: 20px;
-  font-weight: 100;
+  font-weight: 300;
 
   .title {
     font-size: 1.1em;

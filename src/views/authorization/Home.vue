@@ -1,6 +1,6 @@
 <template>
   <app-screen>
-    <app-preloader :show="false"></app-preloader>
+    <app-preloader :show="showPreloader"></app-preloader>
 
     <app-settings
       :show="settingsOpen"
@@ -38,12 +38,12 @@
             />
           </div>
 
-          <div class="name">Студент студентович</div>
+          <div class="name">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</div>
         </div>
 
         <div class="roles">
           <div
-              v-for="(role, index) in roles"
+              v-for="(role, index) in user.roles"
               :key="index"
               class="role"
               :class="[`role-${role}`]"
@@ -98,32 +98,35 @@
           <div class="divider">Загальне</div>
 
           <app-home-link role="student" link="homeUser">Домівка</app-home-link>
-          <app-home-link role="student" link="tests">Тести</app-home-link>
 
-          <!-- ====== -->
+          <div>
+            <div class="divider">Вчитель</div>
 
-          <div class="divider">God</div>
-
-          <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
-          <app-home-link role="superadmin" link="statsGlobal">Статистика</app-home-link>
-
-          <!-- ====== -->
-
-          <div class="divider">Вчитель</div>
-
-          <app-home-link role="teacher" link="createTest">Створити тест</app-home-link>
-
-          <!-- ====== -->
+            <app-home-link role="teacher" link="homeTeacher">Домівка вчителя</app-home-link>
+            <app-home-link role="teacher" link="TeacherOwnTests">Авторська розробка</app-home-link>
+            <app-home-link role="teacher" link="questionsBank">Банк питань</app-home-link>
+            <app-home-link role="teacher" link="permissions">Дозволи на проходження</app-home-link>
+          </div>
 
           <div class="divider">Адміністратор</div>
 
-          <app-home-link role="admin" link="groups">Групи</app-home-link>
           <app-home-link role="admin" link="request">Заявка</app-home-link>
-          <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
-          <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
-          <app-home-link role="admin" link="classes">Пари</app-home-link>
-          <app-home-link role="admin" link="subjects">Предмети</app-home-link>
-          <app-home-link role="admin" link="students">Студенти</app-home-link>
+
+          <div v-if="user.editableColleges.length">
+            <app-home-link role="admin" link="groups">Групи</app-home-link>
+            <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
+            <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
+            <app-home-link role="admin" link="classes">Пари</app-home-link>
+            <app-home-link role="admin" link="subjects">Предмети</app-home-link>
+            <app-home-link role="admin" link="students">Студенти</app-home-link>
+          </div>
+
+          <div v-if="user.roles.includes('admin')">
+            <div class="divider">God</div>
+
+            <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
+            <app-home-link role="superadmin" link="statsGlobal">Статистика</app-home-link>
+          </div>
         </div>
       </div>
 
@@ -138,23 +141,27 @@
         </span>
 
         <span class="username">
-          Студент студентович
+          {{user.lastName}} {{user.firstName}} {{user.patronymic}}
         </span>
       </div>
     </div>
 
     <div class="content">
-      <app-confirm-email
-        :show="false"
-        :showSend="true"
-      ></app-confirm-email>
+      <div class="max-width-container">
+        <app-confirm-email
+          :show="false"
+          :showSend="true"
+        ></app-confirm-email>
 
-      <router-view></router-view>
+        <router-view></router-view>
+      </div>
     </div>
   </app-screen>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 import AppScreen from '@/components/ui/AppScreen.vue'
 import AppHomeLink from '@/components/ui/AppHomeLink.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
@@ -170,8 +177,8 @@ export default {
       sidebar: {
         opened: false,
       },
+      showPreloader: false,
       settingsOpen: false,
-      roles: ['student', 'teacher', 'admin', 'superadmin'],
       localization: {
         role: {
           user: 'Користувач',
@@ -183,7 +190,15 @@ export default {
       },
     }
   },
+  computed: {
+    ...mapGetters({
+      user: 'user/self',
+    }),
+  },
   methods: {
+    ...mapActions({
+      fetchSelf: 'user/fetchSelf',
+    }),
     exit() {
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
@@ -198,6 +213,13 @@ export default {
     AppPreloader,
     AppSettings,
   },
+  async created() {
+    this.showPreloader = true
+
+    await this.fetchSelf()
+
+    this.showPreloader = false
+  },
 }
 </script>
 
@@ -211,7 +233,6 @@ export default {
 
   height: 100vh;
 
-  grid-template-rows: 1fr;
   grid-template-columns: 360px 1fr;
   grid-template-areas: 'name .';
 
@@ -238,7 +259,7 @@ export default {
     padding: 10px;
     padding-left: 45px;
     font-size: 1.1em;
-    font-weight: 100;
+    font-weight: 300;
     color: var(--color-font-dark);
   }
 
@@ -444,16 +465,17 @@ export default {
     padding: 20px 45px 80px;
     position: relative;
 
-    max-width: 1320px;
-    width: 100%;
-
-    margin: 0 auto;
-
     max-height: 100vh;
     overflow-y: auto;
 
+    .max-width-container {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto 30px;
+    }
+
     @media @small {
-      padding: 10px;
+      padding: 20px;
     }
   }
 }

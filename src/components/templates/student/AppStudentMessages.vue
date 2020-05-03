@@ -1,6 +1,6 @@
 <template>
   <div class="app-student-messages">
-    <div class="card header">Повідомлення для вас</div>
+    <div class="card header">{{title}}</div>
 
     <div
       v-if="!messages || messages.length === 0"
@@ -33,6 +33,11 @@ export default {
       type: Array,
       required: true,
       default: () => [],
+    },
+    title: {
+      type: String,
+      required: false,
+      default: () => 'Повідомлення для вас',
     },
   },
 }

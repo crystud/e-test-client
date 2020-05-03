@@ -7,8 +7,7 @@
     }"
   >
     <div class="text">
-      Lorem, ipsum dolor sit amet consectetur
-      adipisicing elit. Recusandae quos
+      {{text}}
     </div>
 
     <div class="line"></div>
@@ -23,6 +22,10 @@ export default {
       type: Boolean,
       required: true,
       default: () => false,
+    },
+    text: {
+      type: String,
+      required: true,
     },
   },
 }

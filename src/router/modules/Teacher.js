@@ -15,4 +15,52 @@ export default [
     },
     component: () => import('@/views/teacher/TestDataLive.vue'),
   },
+  {
+    name: 'teacher',
+    path: '/teacher/:id',
+    meta: {
+      title: 'Профіль вчителя',
+    },
+    component: () => import('@/views/teacher/Teacher.vue'),
+  },
+  {
+    name: 'homeTeacher',
+    path: '/home/teacher',
+    meta: {
+      title: 'Домівка вчителя',
+    },
+    component: () => import('@/views/teacher/Teacher.vue'),
+  },
+  {
+    path: '/tests/own',
+    name: 'TeacherOwnTests',
+    meta: {
+      title: 'Тести у авторській розробці',
+    },
+    component: () => import('@/views/teacher/Tests.vue'),
+  },
+  {
+    path: '/questions/bank',
+    name: 'questionsBank',
+    meta: {
+      title: 'Банк питань',
+    },
+    component: () => import('@/views/teacher/QuestionsBank.vue'),
+  },
+  {
+    path: '/topic/:id',
+    name: 'topic',
+    meta: {
+      title: 'Сторінка теми',
+    },
+    component: () => import('@/views/teacher/Topic.vue'),
+  },
+  {
+    path: '/permissions',
+    name: 'permissions',
+    meta: {
+      title: 'Дозволи на проходження',
+    },
+    component: () => import('@/views/teacher/Permissions.vue'),
+  },
 ]

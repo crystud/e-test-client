@@ -157,7 +157,7 @@ export default {
       text-align: center;
 
       font-size: 1.2em;
-      font-weight: 100;
+      font-weight: 300;
 
       .label {
         color: var(--color-font-dark);

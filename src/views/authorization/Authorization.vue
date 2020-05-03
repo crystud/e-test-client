@@ -152,7 +152,7 @@ export default {
 
           .description {
             margin: 0;
-            font-weight: 100;
+            font-weight: 300;
             color: rgba(255, 255, 255, 0.67);
           }
         }

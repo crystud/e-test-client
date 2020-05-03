@@ -3,35 +3,59 @@
     class="app-tests-item"
     @click="go"
   >
-    <div class="title">Title</div>
+    <div class="title">{{test.title}}</div>
 
     <div class="description">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, deserunt.
+      {{test.description}}
     </div>
 
-    <div class="data">
-      <div
-        class="item"
-        v-for="i in 3"
-        v-bind:key="i"
-      >
-        <div class="property">Макс. оцінка</div>
-        <div class="value">5</div>
-      </div>
-    </div>
+    <app-data-list
+      class="data-list"
+      :data="[
+        ['Предмет', test.subject.name || '-'],
+        ['Опубліковано', test.isPublic ? 'Так' : 'Ні'],
+        ['К-сть рівнів', test.levels.length],
+      ]"
+    ></app-data-list>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
+import AppDataList from '@/components/ui/AppDataList.vue'
+
 export default {
   name: 'AppTestsItem',
+  components: {
+    AppDataList,
+  },
+  props: {
+    test: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
+  },
   methods: {
+    ...mapActions({
+      setAlert: 'alert/set',
+    }),
     go() {
-      this.$router.push({
-        name: 'testPreview',
-        params: {
-          id: 1,
-        },
+      const { test: { id } } = this
+
+      if (!id) {
+        return this.setAlert({
+          title: 'ID тесту не оприділено...',
+          text: 'Нам не вдалось оприділити ID тесту. Спробуйте пізніше',
+          isSuccess: false,
+          show: true,
+        })
+      }
+
+      return this.$router.push({
+        name: 'testDevelop',
+        params: { id },
       })
     },
   },
@@ -41,6 +65,7 @@ export default {
 <style lang="less" scoped>
 .app-tests-item {
   background: var(--color-bg-dark);
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
 
   padding: 20px;
   border-radius: 10px;
@@ -53,17 +78,17 @@ export default {
     content: "";
 
     display: block;
-    width: 3px;
-    height: 25%;
+    width: 70px;
+    height: 3px;
 
     position: absolute;
-    top: 0;
     bottom: 0;
     left: 0;
+    right: 0;
 
     margin: auto;
 
-    background: #1CDE69;
+    background: #1ED6BA;
     border-radius: 10px;
   }
 
@@ -75,29 +100,11 @@ export default {
   .description {
     color: var(--color-font-dark);
     margin: 10px 0 20px;
-    font-weight: 100;
+    font-weight: 300;
   }
 
-  .data {
-    font-size: 1.1em;
-    font-weight: 100;
-    color: var(--color-font-main);
-
-    .item {
-      display: grid;
-      grid-template-columns: 130px 1fr;
-
-      margin-bottom: 10px;
-
-      .property {
-        color: var(--color-font-dark);
-      }
-
-      .value {
-        font-weight: 400;
-        color: var(--color-font-main);
-      }
-    }
+  .data-list {
+    margin-bottom: 0;
   }
 }
 </style>

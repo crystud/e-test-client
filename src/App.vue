@@ -3,24 +3,44 @@
     id="app"
     :class="isDark ? 'dark' : 'light'"
   >
+    <app-alert
+      :title="alert.title"
+      :text="alert.text"
+      :delay="alert.delay"
+      :isSuccess="alert.isSuccess"
+      :show="alert.show"
+      @close="closeAlert"
+    ></app-alert>
+
     <router-view />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+
+import AppAlert from '@/components/ui/AppAlert.vue'
 
 export default {
   name: 'App',
+  components: { AppAlert },
   computed: {
     ...mapGetters({
       isDark: 'theme/isDarkTheme',
+      alert: 'alert/alert',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      closeAlert: 'alert/close',
     }),
   },
 }
 </script>
 
 <style lang="less">
+@import (css) url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+
 html,
 body {
   height: 100vh;
@@ -46,7 +66,7 @@ body {
   --color-accent-orange: #FC7136;
   --color-accent-blue: #0E8DEA;
   --color-accent-red: #FF1E1E;
-  --color-accent-green: #1fe361;
+  --color-accent-green: #1BAD97;
   --color-font-main: #ffffff;
   --color-font-dark: #55636E;
   --color-font-gray: #55636E;
@@ -59,15 +79,15 @@ body {
   --color-accent-orange: #FC7136;
   --color-accent-blue: #0E8DEA;
   --color-accent-red: #FF1E1E;
-  --color-accent-green: #1fe361;
+  --color-accent-green: #1BAD97;
   --color-font-main: #000000;
   --color-font-dark: #55636E;
   --color-font-gray: #55636E;
 }
 
-#app, button {
-  font-family: 'Lato', sans-serif;
-  font-weight: 100;
+#app, button, input {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
 }
 
 #app {

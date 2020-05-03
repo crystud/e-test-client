@@ -9,32 +9,40 @@
 
     <div class="info">
       <div class="basic-info">
-        <div class="name">Прізвищевич Студент Студентович</div>
+        <div class="name">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</div>
         <div class="last-visit">Остання активність: 37 хвилин тому</div>
       </div>
 
-      <div class="additional">
-        <div class="item">
-          <div class="property">Номер залiкової книжки</div>
-          <div class="value">1212</div>
-        </div>
-
-        <div class="item">
-          <div class="property">Номер за списком факультету</div>
-          <div class="value">12</div>
-        </div>
-      </div>
+      <app-data-list
+        v-if="data.length"
+        class="additional"
+        :data="data"
+      ></app-data-list>
     </div>
   </app-user-card>
 </template>
 
 <script>
 import AppUserCard from './AppUserCard.vue'
+import AppDataList from '../../ui/AppDataList.vue'
 
 export default {
   name: 'AppStudentPersonalInfo',
   components: {
     AppUserCard,
+    AppDataList,
+  },
+  props: {
+    data: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    user: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
   },
 }
 </script>
@@ -76,7 +84,7 @@ export default {
   }
 
   .info {
-    font-weight: 100;
+    font-weight: 300;
 
     .name {
       font-size: 1.3em;
@@ -89,7 +97,8 @@ export default {
 
     .additional {
       margin-top: 20px;
-      font-weight: 100;
+      margin-bottom: 0;
+      font-weight: 300;
 
       .item {
         margin-bottom: 10px;

@@ -1,41 +1,144 @@
 <template>
   <div class="app-specialtys">
-    <app-sync-specialtys
-      :show="showSync"
-      @close="showSync = false"
-    ></app-sync-specialtys>
+    <app-ask-college
+      :show="showAskCollege"
+      @selected="selected"
+    ></app-ask-college>
 
-    <div class="header">
-      <div class="title">Спеціальності</div>
+    <app-preloader :show="showPreloader"></app-preloader>
 
-      <app-create-button @click="showSync = true">Синхронізувати спеціальності</app-create-button>
-    </div>
+    <div v-if="editingCollege.id && !showPreloader">
+      <app-edit-studies
+        :show="editStudies.show"
+        :speciality="editStudies.speciality"
+        @close="editStudies.show = false"
+      ></app-edit-studies>
 
-    <div class="list">
-      <app-specialty
-        v-for="i in 15"
-        v-bind:key="i"
-      ></app-specialty>
+      <app-sync-specialtys
+        :show="showSync"
+        @close="showSync = false"
+      ></app-sync-specialtys>
+
+      <app-create-specialty
+        :show="showCreate"
+        :college="editingCollege"
+        @close="showCreate = false"
+        @created="specialtyCreated"
+      ></app-create-specialty>
+
+      <div class="header">
+        <div class="title">
+          <div class="value">Спеціальності</div>
+
+          <div
+            class="subtitle"
+            @click="
+              editingCollege = {};
+              showAskCollege = true;
+            "
+          >{{editingCollege.name}}</div>
+        </div>
+
+        <div>
+          <app-button
+            appearance="neutral"
+            class="create-btn"
+            @click="showCreate = true"
+          >Створити спеціальність</app-button>
+
+          <app-button
+            appearance="primary"
+            @click="showSync = true"
+          >Синхронізувати</app-button>
+        </div>
+      </div>
+
+      <app-specialities-chart
+        v-if="specialities.length"
+        class="specialities-chart"
+        :specialities="specialities"
+      ></app-specialities-chart>
+
+      <div
+        v-show="!specialities.length"
+        class="no-result"
+      >Спеціальностей не знайдено...</div>
+
+      <div class="list">
+        <app-specialty
+          v-for="(speciality, i) in specialities"
+          v-bind:key="i"
+          :specialty="speciality"
+          @editStudies="editStudies = { speciality, show: true }"
+        ></app-specialty>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
+import { mapActions, mapGetters } from 'vuex'
+
+import AppButton from '@/components/ui/AppButton.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppSpecialty from '@/components/templates/admin/AppSpecialty.vue'
 import AppSyncSpecialtys from '@/components/templates/admin/AppSyncSpecialtys.vue'
+import AppSpecialitiesChart from '@/components/templates/admin/AppSpecialitiesChart.vue'
+import AppAskCollege from '@/components/templates/admin/AppAskCollege.vue'
+import AppCreateSpecialty from '@/components/templates/admin/AppCreateSpecialty.vue'
+import AppEditStudies from '@/components/templates/admin/AppEditStudies.vue'
 
 export default {
   data() {
     return {
       showSync: false,
+      showCreate: false,
+      editingCollege: {},
+      showAskCollege: true,
+      showPreloader: false,
+      editStudies: {
+        show: false,
+        speciality: {},
+      },
     }
   },
   name: 'specialtys',
   components: {
-    AppCreateButton,
+    AppButton,
+    AppAskCollege,
     AppSpecialty,
     AppSyncSpecialtys,
+    AppSpecialitiesChart,
+    AppCreateSpecialty,
+    AppPreloader,
+    AppEditStudies,
+  },
+  computed: {
+    ...mapGetters({
+      specialities: 'specialities/list',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      getSpecialties: 'specialities/get',
+    }),
+    specialtyCreated() {
+      this.showPreloader = true
+
+      this.getSpecialties(this.editingCollege.id).finally(() => {
+        this.showPreloader = false
+      })
+    },
+    selected(college) {
+      this.editingCollege = college
+      this.showAskCollege = false
+
+      this.showPreloader = true
+
+      this.getSpecialties(college.id).finally(() => {
+        this.showPreloader = false
+      })
+    },
   },
 }
 </script>
@@ -47,21 +150,44 @@ export default {
     justify-content: space-between;
     align-items: center;
 
-    font-weight: 100;
+    font-weight: 300;
 
     .title {
-      font-size: 1.6em;
-      color: var(--color-font-main);
+      .value {
+        font-size: 1.6em;
+        color: var(--color-font-main);
+      }
+
+      .subtitle {
+        color: var(--color-font-dark);
+        cursor: pointer;
+        font-size: 1.3em;
+        margin-top: 5px;
+      }
     }
 
-    @media screen and (max-width: 500px) {
+    .create-btn {
+      margin: 0 10px 10px 0;
+    }
+
+    @media screen and (max-width: 800px) {
       flex-direction: column;
-      justify-items: center;
+      align-items: flex-start;
 
       .title {
         margin-bottom: 10px;
       }
     }
+  }
+
+  .specialities-chart {
+    margin-top: 20px;
+  }
+
+  .no-result {
+    font-size: 1.7em;
+    text-align: center;
+    margin: 60px 0;
   }
 
   .list {

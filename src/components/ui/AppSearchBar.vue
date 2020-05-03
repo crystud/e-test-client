@@ -40,7 +40,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr 60px;
 
-  font-weight: 100;
+  font-weight: 300;
 
   width: 100%;
 
@@ -56,12 +56,13 @@ export default {
   input::placeholder {
     color: var(--color-font-dark);
 
-    font-weight: 100;
+    font-weight: 300;
     font-family: 'Lato', Tahoma, Arial;
   }
 
   button {
     border-left: 1px solid var(--color-bg-main);
+    cursor: pointer;
   }
 
   @media screen and (max-width: 450px) {

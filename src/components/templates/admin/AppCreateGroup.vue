@@ -5,53 +5,33 @@
     :noPaddings="true"
   >
     <div class="app-create-subject">
-      <div class="title">Створення предмету</div>
+      <div class="title">Створення групи</div>
 
       <div class="content">
         <div class="text">
-          Щоб створити групу вам потрібно вказати спеціальність, номер та роки навчання.
+          Щоб створити групу вам потрібно вказати роки навчання.
         </div>
 
         <app-data-list
           class="data-list"
           :data="[
-            ['Наразі у вас', '18 груп'],
-            ['Останню групу створено', '28.02.2020 13:45'],
+            ['Спеціальність', speciality.name],
+            ['Років навчання', speciality.yearOfStudy],
+            ['Код спеціальності', speciality.code],
           ]"
         ></app-data-list>
 
         <app-datepicker
           class="form-input"
           placeholder="Початок навчання"
-          @change="newVal => educationStart = newVal"
+          @change="newVal => educationStart = `${newVal}T00:00:00.000Z`"
         ></app-datepicker>
 
         <app-datepicker
           class="form-input"
           placeholder="Кінець навчання"
-          @change="newVal => educationFinish = newVal"
+          @change="newVal => educationFinish = `${newVal}T00:00:00.000Z`"
         ></app-datepicker>
-
-        <div class="details">
-          <app-select
-            class="app-select"
-            :hidePlaceholder="true"
-            label="Спеціальність"
-            :values="[
-              { label: 'Інженерія програмного забезпечення (П)', value: 1 },
-              { label: 'Маркетинг (МД)', value: 2 },
-              { label: 'Модельєри (МК)', value: 3 },
-              { label: 'Автоматизація (А)', value: 4 },
-            ]"
-          ></app-select>
-
-          <app-input
-            placeholder="Номер групи"
-            appearance="secondary"
-            class="app-input form-input"
-            type="number"
-          ></app-input>
-        </div>
 
         <div class="btns">
           <app-button
@@ -63,6 +43,7 @@
           <app-button
             appearance="primary"
             class="sync-btn"
+            @click="create"
           >Створити групу</app-button>
         </div>
       </div>
@@ -71,34 +52,59 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import AppModalWindow from '../../ui/AppModalWindow.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 import AppButton from '../../ui/AppButton.vue'
-import AppInput from '../../ui/AppInput.vue'
 import AppDatepicker from '../../ui/AppDatepicker.vue'
-import AppSelect from '../../ui/AppSelect.vue'
 
 export default {
-  name: 'AppSyncSpecialtys',
+  name: 'AppCreateGroup',
   components: {
     AppModalWindow,
     AppDataList,
-    AppSelect,
     AppButton,
-    AppInput,
     AppDatepicker,
   },
   data() {
     return {
-      educationStart: {},
-      educationFinish: {},
+      educationStart: null,
+      educationFinish: null,
     }
+  },
+  methods: {
+    ...mapActions({
+      createGroup: 'groups/create',
+    }),
+    create() {
+      const {
+        educationStart: startEducation,
+        educationFinish: endEducation,
+        speciality: { id: speciality },
+      } = this
+
+      this.createGroup({
+        endEducation,
+        startEducation,
+        speciality,
+      }).then(() => {
+        this.$emit('done', { created: true })
+      }).catch(() => {
+        this.$emit('done', { created: false })
+      })
+    },
   },
   props: {
     show: {
       type: Boolean,
       required: true,
       default: () => false,
+    },
+    speciality: {
+      type: Object,
+      required: true,
+      default: () => null,
     },
   },
 }
@@ -110,7 +116,7 @@ export default {
     padding: 0 !important;
 
     .app-create-subject {
-      font-weight: 100;
+      font-weight: 300;
       max-width: 600px;
 
       .title, .content {

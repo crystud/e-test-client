@@ -1,74 +1,104 @@
 <template>
   <app-user-card class="subjects-info">
-    <div class="title">Українська мова (за професiйним спрямуванням)</div>
+    <app-preloader :show="showPreloader"></app-preloader>
+
+    <app-warn-passing
+      :show="showWarnPassing"
+      :ticket="passingTicket"
+      @cancel="
+        passingTicket = {}
+        showWarnPassing = false
+      "
+    ></app-warn-passing>
+
+    <div class="title">Дозволи на проходження</div>
 
     <div class="tests">
       <div class="row header-title">
         <div class="name">Назва</div>
-        <div class="result">Результат</div>
-        <div class="permission">Доступ</div>
+        <div class="permission">Дозвіл</div>
       </div>
 
       <div
         class="row cursor-pointer"
-        v-for="({ name, result, permission }, index) in tests"
-        v-bind:key="index"
-        @click="$router.push({ name: 'testPreview', params: { id: index } })"
+        v-for="(ticket, index) in tickets"
+        :key="index"
+        @click="
+          showWarnPassing = true
+          passingTicket = ticket
+        "
       >
-        <div class="name">{{name}}</div>
-
-        <div
-          class="result"
-          :class="getResultClasses(result)"
-        >
-          <span v-if="result !== null">
-            {{result}}%
-          </span>
-
-          <span v-else-if="result === null">-</span>
-        </div>
+        <div class="name">{{ticket.title}}</div>
 
         <div
           class="permission"
           :class="{
-            'closed': !permission,
-            'opened': permission,
+            'closed': ticket.used,
+            'opened': !ticket.used,
           }"
-        >{{permission ? 'Відкритий' : 'Закритий'}}</div>
+        >{{ticket.used ? 'Використаний' : 'Невикористаний'}}</div>
       </div>
     </div>
   </app-user-card>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
+import AppPreloader from '@/components/ui/AppPreloader.vue'
+
+import AppWarnPassing from './AppWarnPassing.vue'
 import AppUserCard from './AppUserCard.vue'
 
 export default {
   name: 'AppStudentSubjects',
   components: {
     AppUserCard,
+    AppPreloader,
+    AppWarnPassing,
+  },
+  computed: {
+    ...mapGetters({
+      self: 'user/self',
+    }),
   },
   methods: {
-    getResultClasses(result) {
-      return result !== null ? {
-        bad: result < 60,
-        warning: result >= 60 && result <= 70,
-        good: result > 70,
-      } : {
-        neutral: true,
+    ...mapActions({
+      getTicketsByIDs: 'tickets/getByIDs',
+      setAlert: 'alert/set',
+      fetchSelf: 'user/fetchSelf',
+    }),
+    async loadTickets() {
+      try {
+        this.showPreloader = true
+
+        await this.fetchSelf()
+        this.tickets = await this.getTicketsByIDs(this.self.tickets || [])
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось завантажити дозволи...',
+          delay: 2000,
+          show: true,
+          isSuccess: false,
+        })
+      } finally {
+        this.showPreloader = false
       }
     },
   },
   data() {
     return {
-      tests: [
-        { name: 'Проміжний контроль 1', result: 93, permission: false },
-        { name: 'Проміжний контроль 2', result: null, permission: true },
-        { name: 'Проміжний контроль 3', result: null, permission: true },
-        { name: 'Проміжний контроль 4', result: null, permission: false },
-        { name: 'Проміжний контроль 5', result: null, permission: false },
-      ],
+      showPreloader: false,
+      showWarnPassing: false,
+      passingTicket: {},
+      tickets: [],
     }
+  },
+  async created() {
+    await this.loadTickets()
+
+    this.showPreloader = false
   },
 }
 </script>
@@ -79,7 +109,7 @@ export default {
 
   .title {
     font-size: 1.5em;
-    font-weight: 100;
+    font-weight: 300;
   }
 
   .tests {

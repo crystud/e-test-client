@@ -1,23 +1,20 @@
 <template>
   <app-card class="specialty">
-    <div class="title">Інженерія програмного забезпечення</div>
+    <div class="title">{{specialty.name}}</div>
 
     <app-data-list
       :data="[
-        ['Скорочена назва', 'П'],
-        ['Студентів', '169'],
+        ['Скорочена назва', specialty.symbol || '-'],
+        ['Код', specialty.code],
+        ['К-сть груп', specialty.groups.length],
+        ['Закріплено пар', specialty.studies.length],
       ]"
     ></app-data-list>
 
-    <router-link
-      :to="{
-        name: 'assigning',
-        params: {
-          specialtyID: 1,
-        },
-      }"
+    <div
+      @click="$emit('editStudies')"
       class="study-plan"
-    >Навчальний план</router-link>
+    >Закріплені пари</div>
   </app-card>
 </template>
 
@@ -31,13 +28,20 @@ export default {
     AppCard,
     AppDataList,
   },
+  props: {
+    specialty: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
+  },
 }
 </script>
 
 <style lang="less" scoped>
 .specialty {
   padding: 30px;
-  font-weight: 100;
+  font-weight: 300;
 
   position: relative;
 
@@ -68,6 +72,7 @@ export default {
     position: relative;
 
     color: var(--color-font-main);
+    cursor: pointer;
 
     &::before {
       content: "";
@@ -88,7 +93,7 @@ export default {
     }
 
     &:hover {
-      color: var(--color-font-dark) !important;
+      text-decoration: underline;
     }
   }
 }
