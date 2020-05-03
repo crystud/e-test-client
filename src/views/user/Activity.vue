@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      self: 'user/self',
+      self: 'user/info',
     }),
   },
 }

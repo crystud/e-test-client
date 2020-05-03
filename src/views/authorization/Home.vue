@@ -112,7 +112,7 @@
 
           <app-home-link role="admin" link="request">Заявка</app-home-link>
 
-          <div v-if="user.editableColleges.length">
+          <div v-if="user.editableColleges || []">
             <app-home-link role="admin" link="groups">Групи</app-home-link>
             <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
             <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
@@ -121,7 +121,7 @@
             <app-home-link role="admin" link="students">Студенти</app-home-link>
           </div>
 
-          <div v-if="user.roles.includes('admin')">
+          <div v-if="(user.roles || []).includes('admin')">
             <div class="divider">God</div>
 
             <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
@@ -148,11 +148,6 @@
 
     <div class="content">
       <div class="max-width-container">
-        <app-confirm-email
-          :show="false"
-          :showSend="true"
-        ></app-confirm-email>
-
         <router-view></router-view>
       </div>
     </div>
@@ -160,13 +155,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import AppScreen from '@/components/ui/AppScreen.vue'
 import AppHomeLink from '@/components/ui/AppHomeLink.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
-import AppConfirmEmail from '@/components/templates/authorization/AppConfirmEmail.vue'
 import AppSettings from '@/components/templates/settings/AppSettings.vue'
 
 export default {
@@ -192,13 +186,10 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: 'user/self',
+      user: 'user/info',
     }),
   },
   methods: {
-    ...mapActions({
-      fetchSelf: 'user/fetchSelf',
-    }),
     exit() {
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
@@ -209,16 +200,8 @@ export default {
   components: {
     AppScreen,
     AppHomeLink,
-    AppConfirmEmail,
     AppPreloader,
     AppSettings,
-  },
-  async created() {
-    this.showPreloader = true
-
-    await this.fetchSelf()
-
-    this.showPreloader = false
   },
 }
 </script>

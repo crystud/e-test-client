@@ -10,29 +10,17 @@
         ]"
       ></app-student-personal-info>
 
-      <app-student-activity
-        :data="studentActivity"
-        :fullIsOpened="fullIsOpened"
-        @setFullHistory="setFullHistory"
-      ></app-student-activity>
+      <app-student-activity :data="studentActivity"></app-student-activity>
     </div>
 
-    <div v-show="fullIsOpened">
-      <app-student-tests-history></app-student-tests-history>
-    </div>
-
-    <div
-      v-show="!fullIsOpened"
-      class="sections"
-    >
+    <div class="sections">
       <div>
-        <app-student-subjects></app-student-subjects>
-        <app-student-results></app-student-results>
+        <app-student-subjects v-if="user.roles.includes('student')"></app-student-subjects>
+
+        <app-student-results v-if="user.roles.includes('student')" ></app-student-results>
       </div>
 
-      <app-student-messages
-        :messages="exampleMessages"
-      ></app-student-messages>
+      <app-student-messages :messages="exampleMessages"></app-student-messages>
     </div>
   </div>
 </template>
@@ -44,7 +32,6 @@ import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPer
 import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
 import AppStudentResults from '@/components/templates/student/AppStudentResults.vue'
-import AppStudentTestsHistory from '@/components/templates/student/AppStudentTestsHistory.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
@@ -54,30 +41,24 @@ export default {
     AppStudentPersonalInfo,
     AppStudentActivity,
     AppStudentSubjects,
-    AppStudentTestsHistory,
     AppStudentMessages,
     AppPreloader,
     AppStudentResults,
   },
   computed: {
     ...mapGetters({
-      user: 'user/user',
-      self: 'user/self',
+      self: 'user/info',
     }),
   },
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
-      fetchSelf: 'user/fetchSelf',
     }),
-    setFullHistory(isOpened) {
-      this.fullIsOpened = isOpened
-    },
   },
   data() {
     return {
+      user: {},
       showPreloader: false,
-      fullIsOpened: false,
       studentActivity: [
         ['Останній тест пройдено', '03.03.2020 (87%)'],
         ['Середній результат', '78%'],
@@ -108,25 +89,23 @@ export default {
     }
   },
   async created() {
-    this.showPreloader = true
-
     const {
       $route: {
-        params: { id },
+        params: { id: userID },
       },
     } = this
 
-    if (!id) {
-      await this.fetchSelf()
+    this.showPreloader = true
+
+    if (!userID) {
+      this.user = this.self
 
       document.title = 'Ваш профіль -  CRYSTUD'
-    }
+    } else {
+      this.user = await this.getUser(userID)
 
-    await this.getUser(id || this.self.id)
+      const { user } = this
 
-    const { user } = this
-
-    if (id) {
       document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
     }
 

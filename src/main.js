@@ -45,6 +45,7 @@ import {
   faFilter,
   faChevronRight,
   faUserPlus,
+  faRedo,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -101,6 +102,7 @@ library.add(faAddressCard)
 library.add(faFilter)
 library.add(faChevronRight)
 library.add(faUserPlus)
+library.add(faRedo)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

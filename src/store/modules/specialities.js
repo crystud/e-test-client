@@ -30,29 +30,9 @@ export default {
           return Promise.reject()
         }
 
-        if (specialties.length === 0) {
-          commit('setSpecialities', [])
+        commit('setSpecialities', specialties)
 
-          return Promise.resolve([])
-        }
-
-        const specialtiesList = []
-
-        return AsyncLoop(specialties, async (specialtyID, next) => {
-          const { data, status } = await axios.get(`/specialties/${specialtyID}`)
-
-          if (status !== 200) {
-            return Promise.reject()
-          }
-
-          specialtiesList.push(data)
-
-          return next()
-        }, () => {
-          commit('setSpecialities', specialtiesList)
-
-          return Promise.resolve(specialtiesList)
-        })
+        return Promise.resolve(specialties)
       } catch (e) {
         return Promise.reject(e)
       }

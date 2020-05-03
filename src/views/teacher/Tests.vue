@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 import AppTestsItem from '@/components/templates/tests/AppTestsItem.vue'
 import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
@@ -43,24 +43,16 @@ export default {
     AppPreloader,
     AppCreateTest,
   },
-  computed: {
-    ...mapGetters({
-      user: 'user/self',
-      tests: 'tests/userTests',
-    }),
-  },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
-      fetchSelf: 'user/fetchSelf',
-      getTestsByIDs: 'tests/getByIDs',
+      getOwnTests: 'user/getOwnTests',
     }),
     async loadTests() {
       try {
         this.showPreloader = true
 
-        await this.fetchSelf()
-        await this.getTestsByIDs(this.user.tests)
+        this.tests = await this.getOwnTests()
       } catch (e) {
         this.setAlert({
           title: 'Неочікувана помилка',
@@ -77,6 +69,7 @@ export default {
     return {
       showCreateTest: false,
       showPreloader: false,
+      tests: [],
     }
   },
   async created() {

@@ -48,6 +48,8 @@
     <div class="content">
       <div class="title">Ви надали {{grantedPermissions.length}} дозволів</div>
 
+      {{grantedPermissions}}
+
       <div class="list">
         <div class="row header-row">
           <div class="test">Назва тесту</div>
@@ -57,7 +59,7 @@
           <div class="members">К-сть учасників</div>
         </div>
 
-        <div
+        <!-- <div
           v-for="(permission, index) in grantedPermissions"
           :key="index"
           class="row"
@@ -67,14 +69,14 @@
           <div class="start">{{getNormalDate(permission.startTime)}}</div>
           <div class="end">{{getNormalDate(permission.endTime)}}</div>
           <div class="members">{{permission.groups.length}}</div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -96,16 +98,10 @@ export default {
       grantedPermissions: [],
     }
   },
-  computed: {
-    ...mapGetters({
-      self: 'user/self',
-    }),
-  },
   methods: {
     ...mapActions({
       getGroups: 'specialities/getGroups',
-      fetchSelf: 'user/fetchSelf',
-      getPermissionsByIDs: 'permissions/getByIDs',
+      getSelfPermissions: 'user/getPermissions',
     }),
     getNormalDate(time) {
       if (!time) return ''
@@ -120,9 +116,7 @@ export default {
     async loadPermissions() {
       this.showPreloader = true
 
-      await this.fetchSelf()
-
-      this.grantedPermissions = await this.getPermissionsByIDs(this.self.permissions || [])
+      this.grantedPermissions = await this.getSelfPermissions()
 
       this.showPreloader = false
     },

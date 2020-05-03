@@ -10,21 +10,21 @@
 
       <div class="content">
         <div
-          v-if="!subjects.length"
+          v-if="!studies.length"
           class="no-subjects"
         >Вам не призначено жодного предмету...</div>
 
         <div class="list">
           <div
-            v-for="(study, index) in subjects"
+            v-for="(study, index) in studies"
             :key="index"
             class="subject"
             @click="$emit('selected', study)"
           >
-            <div class="name">{{study.subjectName}}</div>
+            <div class="name">{{study.subject.name}}</div>
 
             <div class="additional">
-              {{study.specialties.length}} спеціальностей
+              {{study.college.name}}
             </div>
           </div>
         </div>
@@ -58,8 +58,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      subjects: 'studies/studies',
       alert: 'alert/alert',
+      studies: 'user/studies',
     }),
   },
   data() {
@@ -69,8 +69,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTeacherSubjects: 'studies/getAllStudies',
-      fetchSelf: 'user/fetchSelf',
+      getStudies: 'user/getStudies',
     }),
     async checkCurrentState() {
       const { show } = this
@@ -78,8 +77,7 @@ export default {
       if (show) {
         this.showPreloader = true
 
-        await this.fetchSelf()
-        await this.getTeacherSubjects()
+        await this.getStudies()
 
         this.showPreloader = false
       }

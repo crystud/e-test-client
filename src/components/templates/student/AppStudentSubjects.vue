@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
@@ -57,23 +57,16 @@ export default {
     AppPreloader,
     AppWarnPassing,
   },
-  computed: {
-    ...mapGetters({
-      self: 'user/self',
-    }),
-  },
   methods: {
     ...mapActions({
-      getTicketsByIDs: 'tickets/getByIDs',
       setAlert: 'alert/set',
-      fetchSelf: 'user/fetchSelf',
+      getTickets: 'user/getTickets',
     }),
     async loadTickets() {
       try {
         this.showPreloader = true
 
-        await this.fetchSelf()
-        this.tickets = await this.getTicketsByIDs(this.self.tickets || [])
+        this.tickets = await this.getTickets()
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
