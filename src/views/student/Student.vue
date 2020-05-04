@@ -15,9 +15,9 @@
 
     <div class="sections">
       <div>
-        <app-student-subjects v-if="user.roles.includes('student')"></app-student-subjects>
+        <app-student-subjects v-if="user.roles.includes('user')"></app-student-subjects>
 
-        <app-student-results v-if="user.roles.includes('student')" ></app-student-results>
+        <app-student-results v-if="user.roles.includes('user')" ></app-student-results>
       </div>
 
       <app-student-messages :messages="exampleMessages"></app-student-messages>

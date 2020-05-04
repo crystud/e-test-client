@@ -4,7 +4,7 @@
 
     <div class="title">Результати</div>
 
-    <div class="tests">
+    <div class="tests" v-if="results.length">
       <div class="row header-title">
         <div class="name">Назва тесту</div>
         <div class="permission">Результат</div>

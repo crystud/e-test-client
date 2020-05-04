@@ -33,7 +33,7 @@
             v-if="test.levels.length"
           >
             <div
-              v-for="(level, index) in levelsList"
+              v-for="(level, index) in test.levels"
               :key="index"
               class="level"
               @click="$emit('selected', level)"
@@ -115,10 +115,6 @@ export default {
         this.showPreloader = true
 
         await this.getTestByID(testID)
-
-        const { test: { levels } } = this
-
-        this.levelsList = await this.getLevelsByIDs(levels)
       } catch (e) {
         this.setAlert({
           title: 'Помилка',

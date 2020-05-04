@@ -11,23 +11,7 @@ export default {
     studies: [],
     groups: [],
     subjects: [],
-    self: {
-      notEvaluated: true,
-      firstName: '',
-      lastName: '',
-      patronymic: '',
-      roles: [],
-      email: '',
-      createAt: '',
-      editableColleges: [],
-      groups: [],
-      ownColleges: [],
-      createSubjectRequests: [],
-      createTopicRequests: [],
-      teachSubjects: [],
-      studies: [],
-      tests: [],
-    },
+    info: jwtDecode(localStorage.accessToken || '').user,
     user: {
       notEvaluated: true,
       firstName: '',
@@ -58,7 +42,7 @@ export default {
     results: ({ results }) => results,
     tickets: ({ tickets }) => tickets,
     searchResults: ({ searchResults }) => searchResults,
-    info: () => jwtDecode(localStorage.accessToken || '').user,
+    info: ({ info }) => info,
   },
 
   mutations: {
@@ -88,6 +72,9 @@ export default {
     },
     setSubjects(state, subjects) {
       state.subjects = subjects
+    },
+    setInfo(state, info) {
+      state.info = info
     },
   },
 

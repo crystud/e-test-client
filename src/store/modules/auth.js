@@ -1,3 +1,5 @@
+import jwtDecode from 'jwt-decode'
+
 import axios from '../../tools/axios'
 
 export default {
@@ -52,6 +54,8 @@ export default {
         commit('setAccessToken', access)
         commit('setRefreshToken', refresh)
         commit('setAuthorized', true)
+
+        commit('user/setInfo', jwtDecode(access).user, { root: true })
 
         return Promise.resolve()
       } catch (e) {

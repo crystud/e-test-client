@@ -21,10 +21,10 @@
             class="subject"
             @click="$emit('selected', group)"
           >
-            <div class="name">{{group.name}}</div>
+            <div class="name">{{group.name || '-'}}</div>
 
             <div class="additional">
-              {{group.students.length}} студентів
+              {{group.course}} курс
             </div>
           </div>
         </div>
@@ -63,13 +63,13 @@ export default {
   },
   computed: {
     ...mapGetters({
-      groups: 'groups/list',
       alert: 'alert/alert',
     }),
   },
   data() {
     return {
       showPreloader: false,
+      groups: [],
     }
   },
   methods: {
@@ -80,11 +80,7 @@ export default {
       const { show, groupsList } = this
 
       if (show) {
-        this.showPreloader = true
-
-        await this.getGroupsByIDs(groupsList)
-
-        this.showPreloader = false
+        this.groups = groupsList
       }
     },
   },

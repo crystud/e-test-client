@@ -112,6 +112,8 @@
 
           <app-home-link role="admin" link="request">Заявка</app-home-link>
 
+          {{user.editableColleges}}
+
           <div v-if="user.editableColleges || []">
             <app-home-link role="admin" link="groups">Групи</app-home-link>
             <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>

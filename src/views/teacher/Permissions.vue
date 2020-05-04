@@ -56,20 +56,20 @@
           <div class="created">Час створення</div>
           <div class="start">Початок активності</div>
           <div class="end">Кінець активності</div>
-          <div class="members">К-сть учасників</div>
+          <div class="members">К-сть груп</div>
         </div>
 
-        <!-- <div
+        <div
           v-for="(permission, index) in grantedPermissions"
           :key="index"
           class="row"
         >
-          <div class="test">{{permission.test.title}}</div>
+          <div class="test">-</div>
           <div class="created">{{getNormalDate(permission.createAt)}}</div>
           <div class="start">{{getNormalDate(permission.startTime)}}</div>
           <div class="end">{{getNormalDate(permission.endTime)}}</div>
           <div class="members">{{permission.groups.length}}</div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -123,7 +123,7 @@ export default {
     async studySelected({ specialties, id }) {
       this.showPreloader = true
 
-      const groups = await this.getGroups(specialties)
+      const groups = await this.getGroups(specialties.map(({ id: specialityID }) => specialityID))
 
       this.showSelectGroup = true
       this.showPreloader = false

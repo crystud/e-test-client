@@ -41,7 +41,10 @@
 
           <div
             class="change"
-            @click="cancelQuestionAdding"
+            @click="
+              cancelQuestionAdding()
+              editingLevel = {}
+            "
           >Редагувати інший рівень</div>
         </div>
 
@@ -193,9 +196,10 @@ export default {
 
       .change {
         color: var(--color-font-dark);
-        cursor: pointer;
-
         margin-top: 5px;
+
+        cursor: pointer;
+        user-select: none;
       }
     }
   }
