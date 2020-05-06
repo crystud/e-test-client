@@ -35,7 +35,7 @@
           <div
             class="close"
             @click="$router.push({ name: 'specialtys' })"
-          >Перейти спеціальностей</div>
+          >Перейти до спеціальностей</div>
 
           <div
             class="create"

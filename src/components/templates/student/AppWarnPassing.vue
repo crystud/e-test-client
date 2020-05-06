@@ -13,8 +13,7 @@
         v-if="ticket.id"
       >
         <div class="test">
-          <div class="name">{{ticket.test.title}}</div>
-          <div class="description">{{ticket.test.description}}</div>
+          <div class="name">{{ticket.title || '-'}}</div>
         </div>
       </div>
 
@@ -65,21 +64,17 @@ export default {
       useTicket: 'tickets/use',
     }),
     async pass() {
-      const {
-        ticket,
-        ticket: { test: { id: testID } },
-      } = this
+      const { ticket } = this
 
       try {
         this.showPreloader = true
 
-        const { attempts: [attemptID] } = await this.useTicket(ticket.id)
+        const { attempts: [attempt] } = await this.useTicket(ticket.id)
 
         this.$router.push({
           name: 'testPass',
           params: {
-            attemptID,
-            testID,
+            attemptID: attempt.id,
           },
         })
       } catch (e) {
@@ -126,6 +121,7 @@ export default {
       .name {
         color: var(--color-font-main);
         font-size: 1.3em;
+        font-weight: 100;
         margin-bottom: 10px;
       }
 

@@ -1,4 +1,5 @@
 import AsyncLoop from 'node-async-loop'
+import jwtDecode from 'jwt-decode'
 
 import axios from '../../tools/axios'
 
@@ -6,23 +7,11 @@ export default {
   namespaced: true,
 
   state: {
-    self: {
-      notEvaluated: true,
-      firstName: '',
-      lastName: '',
-      patronymic: '',
-      roles: [],
-      email: '',
-      createAt: '',
-      editableColleges: [],
-      groups: [],
-      ownColleges: [],
-      createSubjectRequests: [],
-      createTopicRequests: [],
-      teachSubjects: [],
-      studies: [],
-      tests: [],
-    },
+    permissions: [],
+    studies: [],
+    groups: [],
+    subjects: [],
+    info: jwtDecode(localStorage.accessToken || '').user,
     user: {
       notEvaluated: true,
       firstName: '',
@@ -46,7 +35,14 @@ export default {
   getters: {
     self: ({ self }) => self,
     user: ({ user }) => user,
+    studies: ({ studies }) => studies,
+    tests: ({ tests }) => tests,
+    subjects: ({ subjects }) => subjects,
+    permissions: ({ permissions }) => permissions,
+    results: ({ results }) => results,
+    tickets: ({ tickets }) => tickets,
     searchResults: ({ searchResults }) => searchResults,
+    info: ({ info }) => info,
   },
 
   mutations: {
@@ -56,8 +52,29 @@ export default {
     setUser(state, user) {
       state.user = user
     },
-    setSearchResults(state, results) {
-      state.searchResults = results
+    setSearchResults(state, searchResults) {
+      state.searchResults = searchResults
+    },
+    setPermissions(state, permissions) {
+      state.permissions = permissions
+    },
+    setResults(state, results) {
+      state.results = results
+    },
+    setStudies(state, studies) {
+      state.studies = studies
+    },
+    setTickets(state, tickets) {
+      state.tickets = tickets
+    },
+    setTests(state, tests) {
+      state.tests = tests
+    },
+    setSubjects(state, subjects) {
+      state.subjects = subjects
+    },
+    setInfo(state, info) {
+      state.info = info
     },
   },
 
@@ -86,6 +103,96 @@ export default {
         }
 
         commit('setUser', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
+    async getPermissions({ commit }) {
+      try {
+        const { data, status } = await axios.get('/users/me/permissions')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setPermissions', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
+    async getStudies({ commit }) {
+      try {
+        const { data, status } = await axios.get('/users/me/studies')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setStudies', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
+    async getTickets({ commit }) {
+      try {
+        const { data, status } = await axios.get('/users/me/tickets')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setTickets', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
+    async getResults({ commit }) {
+      try {
+        const { data, status } = await axios.get('/users/me/results')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setResults', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
+    async getOwnTests({ commit }) {
+      try {
+        const { data, status } = await axios.get('/users/me/tests')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setTests', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
+    async getSubjects({ commit }) {
+      try {
+        const { data, status } = await axios.get('/users/me/subjects')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setSubjects', data)
 
         return Promise.resolve(data)
       } catch (e) {

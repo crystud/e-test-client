@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTests: 'tests/getByIDs',
+      getOwnTests: 'user/getOwnTests',
       setAlert: 'alert/set',
       createPermission: 'permissions/create',
     }),
@@ -189,12 +189,12 @@ export default {
   },
   watch: {
     async show() {
-      const { show, self } = this
+      const { show } = this
 
-      if (show && self.id) {
+      if (show) {
         this.showPreloader = true
 
-        this.testsList = await this.getTests(self.tests)
+        this.testsList = await this.getOwnTests()
 
         this.showPreloader = false
       }

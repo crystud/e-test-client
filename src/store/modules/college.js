@@ -5,15 +5,20 @@ export default {
 
   state: {
     list: [],
+    studies: [],
   },
 
   getters: {
     list: ({ list }) => list,
+    studies: ({ studies }) => studies,
   },
 
   mutations: {
     setList(state, list) {
       state.list = list
+    },
+    setStudies(state, studies) {
+      state.studies = studies
     },
   },
 
@@ -81,6 +86,23 @@ export default {
         }
 
         return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
+    async getStudies({ dispatch, commit }, collegeID) {
+      try {
+        const { studies = [] } = await dispatch('getByID', collegeID) || {}
+
+        if (!studies.length) {
+          return Promise.resolve([])
+        }
+
+        const studiesList = await dispatch('studies/getByIDs', studies.map(({ id }) => id), { root: true })
+
+        commit('setStudies', studiesList)
+
+        return Promise.resolve(studiesList)
       } catch (e) {
         return Promise.reject(e)
       }

@@ -1,5 +1,12 @@
 <template>
   <div class="app-specialtys">
+    <app-preloader :show="showPreloader"></app-preloader>
+
+    <app-ask-college
+      :show="!editingCollege.id"
+      @selected="collegeSelected"
+    ></app-ask-college>
+
     <app-create-class
       :show="showCreateClass"
       @close="showCreateClass = false"
@@ -11,6 +18,8 @@
       <app-create-button @click="showCreateClass = true">Створити пару</app-create-button>
     </div>
 
+    {{studies}}
+
     <div class="list">
       <app-class
         v-for="i in 15"
@@ -21,20 +30,47 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
 import AppClass from '@/components/templates/admin/AppClass.vue'
 import AppCreateClass from '@/components/templates/admin/AppCreateClass.vue'
+import AppAskCollege from '@/components/templates/admin/AppAskCollege.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
   name: 'classes',
   components: {
     AppCreateButton,
     AppCreateClass,
+    AppAskCollege,
+    AppPreloader,
     AppClass,
+  },
+  computed: {
+    ...mapGetters({
+      studies: 'college/studies',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      getStudies: 'college/getStudies',
+    }),
+    collegeSelected(college) {
+      this.editingCollege = college
+
+      this.showPreloader = true
+
+      this.getStudies(college.id)
+
+      this.showPreloader = false
+    },
   },
   data() {
     return {
       showCreateClass: false,
+      showPreloader: false,
+      editingCollege: {},
     }
   },
 }

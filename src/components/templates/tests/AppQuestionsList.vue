@@ -1,7 +1,7 @@
 <template>
   <div class="questions-list">
     <div
-      v-for="(taskID, index) in tasksList"
+      v-for="({ id: taskID }, index) in tasksList"
       :key="index"
       @click="$emit('setQuestion', taskID)"
       class="question"

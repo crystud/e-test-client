@@ -64,7 +64,6 @@ export default {
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
-      fetchSelf: 'user/fetchSelf',
     }),
     setFullHistory(isOpened) {
       this.fullIsOpened = isOpened
@@ -72,12 +71,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: 'user/user',
-      self: 'user/self',
+      self: 'user/info',
     }),
   },
   data() {
     return {
+      user: {},
       fullIsOpened: false,
       activity: [
         ['У авторській розробці', '5 тестів'],
@@ -100,23 +99,21 @@ export default {
 
     const {
       $route: {
-        params: { id },
+        params: { id: userID },
       },
     } = this
 
-    if (!id) {
-      await this.fetchSelf()
+    if (!userID) {
+      this.user = this.self
 
       document.title = 'Ваш профіль -  CRYSTUD'
+    } else {
+      this.user = await this.getUser(userID)
     }
-
-    await this.getUser(id || this.self.id)
 
     const { user } = this
 
-    if (id) {
-      document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
-    }
+    document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
 
     this.showPreloader = false
   },

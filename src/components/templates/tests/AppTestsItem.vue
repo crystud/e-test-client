@@ -9,12 +9,14 @@
       {{test.description}}
     </div>
 
+    {{test}}
+
     <app-data-list
       class="data-list"
       :data="[
         ['Предмет', test.subject.name || '-'],
         ['Опубліковано', test.isPublic ? 'Так' : 'Ні'],
-        ['К-сть рівнів', test.levels.length],
+        ['К-сть рівнів', test.levels ? test.levels.length : '-'],
       ]"
     ></app-data-list>
   </div>

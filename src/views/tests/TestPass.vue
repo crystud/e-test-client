@@ -8,17 +8,14 @@
       @finish="finish"
     ></app-finish-warning>
 
-    <app-test-header
-      :showMinimize="true"
-      :test="test"
-    ></app-test-header>
-
     <app-questions-list
       :currentQuestion="currentQuestion.id"
       @setQuestion="loadQuestion"
       @onStop="showWarning = true"
       :tasksList="attempt.tasks || []"
     ></app-questions-list>
+
+    {{attempt.tasks}}
 
     <div>
       <div style="margin: 10px 0">{{currentQuestion}}</div>
@@ -103,7 +100,6 @@
 <script>
 import { mapActions } from 'vuex'
 
-import AppTestHeader from '@/components/templates/tests/AppTestHeader.vue'
 import AppQuestionsList from '@/components/templates/tests/AppQuestionsList.vue'
 import AppQuestion from '@/components/templates/tests/AppQuestion.vue'
 import AppAnswerOption from '@/components/templates/tests/AppAnswerOption.vue'
@@ -113,7 +109,6 @@ import AppPreloader from '@/components/ui/AppPreloader.vue'
 export default {
   name: 'testPass',
   components: {
-    AppTestHeader,
     AppQuestionsList,
     AppQuestion,
     AppAnswerOption,
@@ -173,9 +168,7 @@ export default {
       } finally {
         this.showPreloader = false
 
-        this.$router.push({
-          name: 'homeStudent',
-        })
+        this.$router.push({ name: 'homeUser' })
       }
     },
     checkNumberingOptionSelected(optionID, index) {
@@ -333,12 +326,11 @@ export default {
     }
   },
   async created() {
-    const { testID, attemptID } = this.$route.params
+    const { attemptID } = this.$route.params
 
     this.showPreloader = true
 
     try {
-      this.test = await this.getTest(testID)
       this.attempt = await this.getAttempt(attemptID)
       this.tasks = await this.getTasks(attemptID)
     } catch (e) {

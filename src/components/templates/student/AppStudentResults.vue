@@ -2,12 +2,12 @@
   <app-user-card class="subjects-info">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <div class="title">Дозволи на проходження</div>
+    <div class="title">Результати</div>
 
-    <div class="tests">
+    <div class="tests" v-if="results.length">
       <div class="row header-title">
-        <div class="name">Назва</div>
-        <div class="permission">Дозвіл</div>
+        <div class="name">Назва тесту</div>
+        <div class="permission">Результат</div>
       </div>
 
       <div
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
@@ -43,15 +43,9 @@ export default {
     AppUserCard,
     AppPreloader,
   },
-  computed: {
-    ...mapGetters({
-      self: 'user/self',
-    }),
-  },
   methods: {
     ...mapActions({
-      getResults: 'results/getByIDs',
-      fetchSelf: 'user/fetchSelf',
+      getUserResults: 'user/getResults',
     }),
     getResultClasses(result) {
       return result !== null ? {
@@ -65,8 +59,7 @@ export default {
     async loadResults() {
       this.showPreloader = false
 
-      await this.fetchSelf()
-      this.results = await this.getResults(this.self.results) || []
+      this.results = await this.getUserResults() || []
 
       this.showPreloader = false
     },

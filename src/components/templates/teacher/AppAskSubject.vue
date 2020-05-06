@@ -6,7 +6,18 @@
       :show="show && !showPreloader && !alert.show"
       :noPaddings="true"
     >
-      <div class="title">Оберіть предмет</div>
+      <div class="title">
+        <div class="text">
+          Оберіть предмет
+        </div>
+
+        <div
+          class="refresh"
+          @click="checkCurrentState"
+        >
+          <font-awesome-icon icon="redo"></font-awesome-icon>
+        </div>
+      </div>
 
       <div class="content">
         <div
@@ -24,14 +35,12 @@
             <div class="name">{{subject.name}}</div>
 
             <div
-              class="is-verified"
+              class="confirmed"
               :class="{
-                'verified': subject.confirmed,
-                'not-verified': !subject.confirmed,
+                'is': subject.confirmed,
+                'is-not': !subject.confirmed,
               }"
-            >
-              {{subject.confirmed ? 'Верифікований предмет' : 'Неверифікований предмет'}}
-            </div>
+            >{{subject.confirmed ? 'Верифікований предмет' : 'Неверифікований предмет'}}</div>
           </div>
         </div>
       </div>
@@ -64,8 +73,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      subjects: 'studies/list',
       alert: 'alert/alert',
+      subjects: 'user/subjects',
     }),
   },
   data() {
@@ -75,8 +84,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTeacherSubjects: 'studies/getAll',
-      fetchSelf: 'user/fetchSelf',
+      getTeacherSubjects: 'user/getSubjects',
     }),
     async checkCurrentState() {
       const { show } = this
@@ -84,7 +92,6 @@ export default {
       if (show) {
         this.showPreloader = true
 
-        await this.fetchSelf()
         await this.getTeacherSubjects()
 
         this.showPreloader = false
@@ -110,9 +117,32 @@ export default {
   }
 
   .title {
-    font-size: 1.3em;
     border-bottom: 1px solid var(--color-bg-main);
     padding: 20px;
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    .text {
+      font-size: 1.3em;
+    }
+
+    .refresh {
+      font-size: 1.2em;
+      color: var(--color-font-dark);
+      text-align: center;
+      cursor: pointer;
+
+      transform: scale(1);
+      transition: all .15s;
+
+      &:hover {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, .3);
+
+        color: var(--color-font-main);
+        transform: scale(1.2);
+      }
+    }
   }
 
   .content {
@@ -134,17 +164,17 @@ export default {
 
       .name {
         font-size: 1.3em;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         font-weight: 400;
       }
 
-      .is-verified {
-        &.not-verified {
-          color: var(--color-accent-red);
+      .confirmed {
+        &.is {
+          color: var(--color-accent-green);
         }
 
-        &.verified {
-          color: var(--color-accent-green);
+        &.is-not {
+          color: var(--color-accent-red);
         }
       }
     }

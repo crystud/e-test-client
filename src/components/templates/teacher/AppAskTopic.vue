@@ -141,17 +141,6 @@ export default {
         subjectID: subject,
       } = this
 
-      if (!name) {
-        this.setAlert({
-          title: 'Вкажіть назву теми...',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
-
-        return
-      }
-
       try {
         this.search.words = name
         this.showPreloader = true
