@@ -16,15 +16,15 @@
             appearance="secondary"
             placeholder="Назва тесту"
             class="app-input"
-            @change="newVal => test.title = newVal"
+            @change="newVal => test.name = newVal"
           ></app-input>
 
           <app-select
-            :values="subjects.map(({ name, id }) => ({ label: name, value: id }))"
+            :values="subjects.map(({ subject: { name }, id }) => ({ label: name, value: id }))"
             class="app-select"
             :sideBorder="true"
             @change="({ value }) => test.subject = value"
-            label="Оберіть предмет..."
+            label="Предмет..."
           ></app-select>
 
           <div class="btns">
@@ -63,13 +63,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      subjects: 'subjects/subjects',
       alert: 'alert/alert',
     }),
   },
   methods: {
     ...mapActions({
-      getSubjects: 'subjects/fetch',
+      getSubjects: 'user/getSubjects',
       setAlert: 'alert/set',
       createTest: 'tests/create',
     }),
@@ -78,15 +77,13 @@ export default {
         this.showPreloader = true
 
         const {
-          test,
           test: {
-            title,
-            description,
+            name,
             subject,
           },
         } = this
 
-        if (!title || !description || !subject) {
+        if (!name || !subject) {
           this.setAlert({
             title: 'Помилка',
             text: 'Усі поля повинні бути заповнені',
@@ -97,8 +94,8 @@ export default {
         }
 
         const create = await this.createTest({
-          ...test,
-          isPublic: false,
+          name,
+          teacher: Number(subject),
         })
 
         if (create.id) {
@@ -131,9 +128,9 @@ export default {
   data() {
     return {
       showPreloader: false,
+      subjects: [],
       test: {
-        title: '',
-        description: '',
+        name: '',
         subject: null,
       },
     }
@@ -149,7 +146,9 @@ export default {
     try {
       this.showPreloader = true
 
-      await this.getSubjects()
+      const subjects = await this.getSubjects()
+
+      this.subjects = subjects
     } catch (e) {
       this.setAlert({
         title: 'Помилка',

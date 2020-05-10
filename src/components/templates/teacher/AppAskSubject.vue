@@ -27,20 +27,12 @@
 
         <div class="list">
           <div
-            v-for="(subject, index) in subjects"
+            v-for="({ subject }, index) in subjects"
             :key="index"
             class="subject"
             @click="$emit('selected', subject)"
           >
             <div class="name">{{subject.name}}</div>
-
-            <div
-              class="confirmed"
-              :class="{
-                'is': subject.confirmed,
-                'is-not': !subject.confirmed,
-              }"
-            >{{subject.confirmed ? 'Верифікований предмет' : 'Неверифікований предмет'}}</div>
           </div>
         </div>
       </div>
@@ -164,8 +156,7 @@ export default {
 
       .name {
         font-size: 1.3em;
-        margin-bottom: 10px;
-        font-weight: 400;
+        font-weight: 100;
       }
 
       .confirmed {

@@ -27,23 +27,10 @@
         >Створити тему</app-button>
       </div>
 
-      <div class="search">
-        <button
-          @click="search.confirmed = search.confirmed === 1 ? 0 : 1"
-          class="is-verified"
-          :class="{
-            'verified': search.confirmed,
-            'not-verified': !search.confirmed,
-          }"
-        >
-          {{search.confirmed ? 'Підтверджені' : 'Непідтверджені'}}
-        </button>
-
-        <app-search-bar
-          class="bar"
-          @search="searchTopics"
-        ></app-search-bar>
-      </div>
+      <app-search-bar
+        class="search"
+        @search="searchTopics"
+      ></app-search-bar>
 
       <div
         class="search-tip"
@@ -95,7 +82,6 @@ export default {
       showPreloader: false,
       search: {
         words: '',
-        confirmed: 1,
         searched: false,
       },
     }
@@ -112,7 +98,6 @@ export default {
     }),
     async searchTopics(name) {
       const {
-        search: { confirmed },
         subject: { id: subject },
       } = this
 
@@ -124,7 +109,6 @@ export default {
 
         await this.searchTopicsAction({
           name,
-          confirmed,
           subject,
         })
       } catch (e) {
@@ -143,10 +127,7 @@ export default {
     async refreshSubject() {
       const {
         subject: { id },
-        search: {
-          confirmed,
-          words: name,
-        },
+        search: { words: name },
       } = this
 
       if (!id) return
@@ -155,7 +136,6 @@ export default {
       this.search.searched = true
 
       await this.searchTopicsAction({
-        confirmed,
         name,
         subject: id,
       })
@@ -189,38 +169,8 @@ export default {
   }
 
   .search {
-    display: grid;
-    grid-template-columns: auto 1fr;
-
-    border-radius: 10px;
-    overflow: hidden;
-
     margin: 20px 0;
-
-    .is-verified,
-    .bar {
-      background: var(--color-bg-dark);
-    }
-
-    .is-verified {
-      padding: 10px 20px;
-      font-size: 1em;
-      border: 0;
-      border-right: 1px solid var(--color-bg-main);
-      cursor: pointer;
-
-      &.verified {
-        color: var(--color-accent-green);
-      }
-
-      &.not-verified {
-        color: var(--color-accent-red);
-      }
-    }
-
-    .bar {
-      border-radius: 0;
-    }
+    background: var(--color-bg-dark);
   }
 
   .search-tip {

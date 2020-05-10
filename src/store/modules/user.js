@@ -172,9 +172,11 @@ export default {
         return Promise.reject(e)
       }
     },
-    async getOwnTests({ commit }) {
+    async getOwnTests({ commit, getters }) {
       try {
-        const { data, status } = await axios.get('/users/me/tests')
+        const { info: { id: userID } } = getters
+
+        const { data, status } = await axios.get(`/tests/own/${userID}`)
 
         if (status !== 200) {
           return Promise.reject()
@@ -187,9 +189,11 @@ export default {
         return Promise.reject(e)
       }
     },
-    async getSubjects({ commit }) {
+    async getSubjects({ commit, getters }) {
       try {
-        const { data, status } = await axios.get('/users/me/subjects')
+        const { info: { id: userID } } = getters
+
+        const { data, status } = await axios.get(`/teachers/byUser/${userID}`)
 
         if (status !== 200) {
           return Promise.reject()

@@ -3,20 +3,12 @@
     class="app-tests-item"
     @click="go"
   >
-    <div class="title">{{test.title}}</div>
-
-    <div class="description">
-      {{test.description}}
-    </div>
-
-    {{test}}
+    <div class="title">{{test.name}}</div>
 
     <app-data-list
       class="data-list"
       :data="[
-        ['Предмет', test.subject.name || '-'],
-        ['Опубліковано', test.isPublic ? 'Так' : 'Ні'],
-        ['К-сть рівнів', test.levels ? test.levels.length : '-'],
+        ['Створив', `${test.creator.user.firstName} ${test.creator.user.lastName}` || '-'],
       ]"
     ></app-data-list>
   </div>

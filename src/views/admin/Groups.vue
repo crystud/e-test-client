@@ -3,7 +3,7 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-ask-speciality
-      :show="editingCollege.id && !editingSpeciality.id"
+      :show="!editingSpeciality.id"
       :college="editingCollege"
       @selected="specialitySelected"
     ></app-ask-speciality>
