@@ -2,11 +2,6 @@
   <div class="app-permissions">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-ask-study
-      :show="Boolean(showCreatePermission && !showSelectGroup)"
-      @selected="studySelected"
-    ></app-ask-study>
-
     <app-ask-group
       :show="Boolean(showSelectGroup && !group.id)"
       :groupsList="groupsList"
@@ -81,7 +76,6 @@ import { mapActions } from 'vuex'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 
-import AppAskStudy from '@/components/templates/teacher/AppAskStudy.vue'
 import AppAskGroup from '@/components/templates/teacher/AppAskGroup.vue'
 import AppCreatePermission from '@/components/templates/teacher/AppCreatePermission.vue'
 
@@ -133,7 +127,6 @@ export default {
   },
   components: {
     AppButton,
-    AppAskStudy,
     AppAskGroup,
     AppPreloader,
     AppCreatePermission,

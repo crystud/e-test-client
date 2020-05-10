@@ -11,7 +11,10 @@
       "
     ></app-create-test>
 
-    <div class="header">
+    <div
+      class="header"
+      v-if="false"
+    >
       <h1>Тести</h1>
 
       <app-create-button @click="showCreateTest = true">Створити тест</app-create-button>

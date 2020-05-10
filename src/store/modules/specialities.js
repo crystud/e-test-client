@@ -20,19 +20,17 @@ export default {
   },
 
   actions: {
-    async get({ commit }, collegeID) {
+    async get({ commit }) {
       try {
-        const college = await axios.get(`/colleges/${collegeID}`)
+        const { data, status } = await axios.get('/specialties')
 
-        const { specialties } = college.data
-
-        if (college.status !== 200 || !specialties) {
+        if (status !== 200) {
           return Promise.reject()
         }
 
-        commit('setSpecialities', specialties)
+        commit('setSpecialities', data)
 
-        return Promise.resolve(specialties)
+        return Promise.resolve(data)
       } catch (e) {
         return Promise.reject(e)
       }
@@ -53,19 +51,6 @@ export default {
     async create(_, postData) {
       try {
         const { data, status } = await axios.post('/specialties', postData)
-
-        if (status !== 201) {
-          return Promise.reject()
-        }
-
-        return Promise.resolve(data)
-      } catch (e) {
-        return Promise.reject()
-      }
-    },
-    async assignStudy(_, { speciality, study }) {
-      try {
-        const { data, status } = await axios.post(`/specialties/${speciality}/study`, { study })
 
         if (status !== 201) {
           return Promise.reject()

@@ -11,7 +11,10 @@ export default {
     studies: [],
     groups: [],
     subjects: [],
-    info: jwtDecode(localStorage.accessToken || '').user,
+    info: localStorage.accessToken ? ({
+      ...jwtDecode(localStorage.accessToken || '').user,
+      roles: jwtDecode(localStorage.accessToken || '').roles,
+    }) : {},
     user: {
       notEvaluated: true,
       firstName: '',

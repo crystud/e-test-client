@@ -24,14 +24,6 @@ export default [
     component: () => import('@/views/admin/SpecialitiesSync.vue'),
   },
   {
-    path: '/admin/classes',
-    name: 'classes',
-    meta: {
-      title: 'Пари/Уроки',
-    },
-    component: () => import('@/views/admin/Classes.vue'),
-  },
-  {
     path: '/admin/subjects',
     name: 'subjects',
     meta: {
@@ -54,14 +46,6 @@ export default [
       title: 'Призначення тестів',
     },
     component: () => import('@/views/admin/TestsAssigning.vue'),
-  },
-  {
-    path: '/request',
-    name: 'request',
-    meta: {
-      title: 'Заявка на створення навчального закладу',
-    },
-    component: () => import('@/views/admin/CollegeRequest.vue'),
   },
   {
     path: '/groups',

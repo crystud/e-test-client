@@ -2,11 +2,6 @@
   <div class="app-specialtys">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-ask-college
-      :show="!editingCollege.id"
-      @selected="collegeSelected"
-    ></app-ask-college>
-
     <app-create-class
       :show="showCreateClass"
       @close="showCreateClass = false"
@@ -35,7 +30,6 @@ import { mapGetters, mapActions } from 'vuex'
 import AppCreateButton from '@/components/templates/admin/AppCreateButton.vue'
 import AppClass from '@/components/templates/admin/AppClass.vue'
 import AppCreateClass from '@/components/templates/admin/AppCreateClass.vue'
-import AppAskCollege from '@/components/templates/admin/AppAskCollege.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
@@ -43,7 +37,6 @@ export default {
   components: {
     AppCreateButton,
     AppCreateClass,
-    AppAskCollege,
     AppPreloader,
     AppClass,
   },

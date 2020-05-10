@@ -14,15 +14,6 @@
           'mobile-opened': sidebar.opened,
         }"
       >
-        <div
-          class="settings-icon"
-          @click="settingsOpen = true"
-        >
-          <font-awesome-icon
-            icon="user-cog"
-          ></font-awesome-icon>
-        </div>
-
         <div class="header">
           <font-awesome-icon
             icon="times"
@@ -48,13 +39,6 @@
               class="role"
               :class="[`role-${role}`]"
           >{{ localization.role[role] }}</div>
-        </div>
-
-        <div class="logout">
-          <button
-            @click="exit"
-            class="btn"
-          >Вихід</button>
         </div>
 
         <div class="stats">
@@ -95,39 +79,29 @@
         </div>
 
         <div class="menu" @click="sidebar.opened = false">
-          <div class="divider">Загальне</div>
+          <div v-if="(user.roles || []).includes('student')">
+            <div class="divider">Студент</div>
 
-          <app-home-link role="student" link="homeUser">Домівка</app-home-link>
+            <app-home-link role="student" link="homeUser">Домівка</app-home-link>
+          </div>
 
-          <div>
+          <div v-if="(user.roles || []).includes('teacher')">
             <div class="divider">Вчитель</div>
 
             <app-home-link role="teacher" link="homeTeacher">Домівка вчителя</app-home-link>
-            <app-home-link role="teacher" link="TeacherOwnTests">Авторська розробка</app-home-link>
+            <app-home-link role="teacher" link="TeacherOwnTests">Мої тести</app-home-link>
             <app-home-link role="teacher" link="questionsBank">Банк питань</app-home-link>
             <app-home-link role="teacher" link="permissions">Дозволи на проходження</app-home-link>
           </div>
 
-          <div class="divider">Адміністратор</div>
+          <div v-if="(user.roles || []).includes('admin')">
+            <div class="divider">Адміністратор</div>
 
-          <app-home-link role="admin" link="request">Заявка</app-home-link>
-
-          {{user.editableColleges}}
-
-          <div v-if="user.editableColleges || []">
+            <app-home-link role="admin" link="statsCollege">Статистика нагрузки</app-home-link>
             <app-home-link role="admin" link="groups">Групи</app-home-link>
-            <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
             <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
-            <app-home-link role="admin" link="classes">Пари</app-home-link>
             <app-home-link role="admin" link="subjects">Предмети</app-home-link>
             <app-home-link role="admin" link="students">Студенти</app-home-link>
-          </div>
-
-          <div v-if="(user.roles || []).includes('admin')">
-            <div class="divider">God</div>
-
-            <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
-            <app-home-link role="superadmin" link="statsGlobal">Статистика</app-home-link>
           </div>
         </div>
       </div>
@@ -149,6 +123,43 @@
     </div>
 
     <div class="content">
+      <app-create-test
+        :show="showCreateTest"
+        @close="showCreateTest = false"
+        @created="showCreateTest = false"
+      ></app-create-test>
+
+      <div class="global-header">
+        <div class="page-title">
+          <font-awesome-icon
+            icon="map-marker-alt"
+            class="icon"
+          ></font-awesome-icon>
+
+          <span class="text">{{$route.meta.title}}</span>
+        </div>
+
+        <button
+          v-show="(user.roles || []).includes('teacher')"
+          @click="showCreateTest = true"
+          class="create-test"
+        >Створити тест</button>
+
+        <div
+          class="settings-icon"
+          @click="settingsOpen = true"
+        >
+          <font-awesome-icon
+            icon="user-cog"
+          ></font-awesome-icon>
+        </div>
+
+        <button
+          @click="exit"
+          class="logout"
+        >Вихід</button>
+      </div>
+
       <div class="max-width-container">
         <router-view></router-view>
       </div>
@@ -162,6 +173,7 @@ import { mapGetters } from 'vuex'
 import AppScreen from '@/components/ui/AppScreen.vue'
 import AppHomeLink from '@/components/ui/AppHomeLink.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
+import AppCreateTest from '@/components/templates/teacher/AppCreateTest.vue'
 
 import AppSettings from '@/components/templates/settings/AppSettings.vue'
 
@@ -173,6 +185,7 @@ export default {
       sidebar: {
         opened: false,
       },
+      showCreateTest: false,
       showPreloader: false,
       settingsOpen: false,
       localization: {
@@ -204,6 +217,7 @@ export default {
     AppHomeLink,
     AppPreloader,
     AppSettings,
+    AppCreateTest,
   },
 }
 </script>
@@ -212,6 +226,70 @@ export default {
 @small: ~"screen and (max-width: 799px)";
 @medium: ~"screen and (max-width: 1000px)";
 @large: ~"screen and (min-width: 1001px)";
+
+.global-header {
+  width: 100%;
+  background: var(--color-bg-dark);
+  padding: 20px;
+
+  display: grid;
+  grid-template-columns: 1fr repeat(3, auto);
+  justify-content: space-between;
+  align-items: center;
+  grid-gap: 20px;
+
+  border-left: 1px solid var(--color-bg-main);
+
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 105;
+
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+
+  .page-title {
+    font-weight: 400;
+
+    .text {
+      color: var(--color-font-main);
+      margin-left: 10px;
+      font-size: 1.3em;
+    }
+
+    .icon {
+      color: var(--color-font-dark);
+    }
+  }
+
+  .settings-icon {
+    cursor: pointer;
+
+    color: var(--color-font-dark);
+    font-size: 1.5em;
+  }
+
+  .create-test {
+    padding: 10px 15px;
+    background: var(--color-accent-green);
+    border: 0;
+    border-radius: 5px;
+    color: #fafafa;
+    cursor: pointer;
+    font-size: 1em;
+  }
+
+  .logout {
+    color: var(--color-font-main);
+    background: transparent;
+    border: 0;
+    font-size: 1em;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
 
 .app-screen {
   display: grid;
@@ -257,44 +335,12 @@ export default {
 
     position: relative;
 
-    .settings-icon {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-
-      cursor: pointer;
-
-      color: var(--color-font-dark);
-      font-size: 1.5em;
-    }
-
     .header {
       height: 15px;
       color: var(--color-font-gray);
       font-size: 30px;
       margin: 20px 0 0 20px;
       display: none;
-    }
-
-    .logout {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-
-      margin: 10px 0;
-
-      .btn {
-        background: transparent;
-        border: 0;
-        cursor: pointer;
-        color: var(--color-font-dark);
-        font-size: 1em;
-        margin: 10px 0;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
     }
 
     .user {
@@ -447,7 +493,6 @@ export default {
   }
 
   .content {
-    padding: 20px 45px 80px;
     position: relative;
 
     max-height: 100vh;
@@ -456,11 +501,12 @@ export default {
     .max-width-container {
       max-width: 1320px;
       width: 100%;
-      margin: 0 auto 30px;
-    }
+      margin: 0 auto;
+      padding: 30px 30px 20px;
 
-    @media @small {
-      padding: 20px;
+      @media @small {
+        padding: 20px;
+      }
     }
   }
 }

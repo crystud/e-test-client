@@ -2,20 +2,23 @@
   <div class="app-student">
     <div class="student-info">
       <app-student-personal-info
+        class="drop-shadow"
         :user="user"
         :data="[
           ['E-mail', user.email || 'Невідомо'],
-          ['Викладаєте у', 'Коломийський політехнічний коледж'],
         ]"
       ></app-student-personal-info>
 
-      <app-teacher-activity :data="activity"></app-teacher-activity>
+      <app-teacher-activity
+        class="drop-shadow"
+        :data="activity"
+      ></app-teacher-activity>
     </div>
 
     <div class="sections">
       <div class="tests">
         <app-teacher-tests-list
-          class="teacher-tests"
+          class="teacher-tests drop-shadow"
           title="Тести в розробці"
           :tests="[
             { name: 'Математика. Базовий рівень', questionsCount: 16 },
@@ -26,7 +29,7 @@
         ></app-teacher-tests-list>
 
         <app-teacher-tests-list
-          class="teacher-tests"
+          class="teacher-tests drop-shadow"
           title="Активні тести"
           :tests="[
             { name: 'Вища математика. Базовий рівень', questionsCount: 32 },
@@ -39,6 +42,7 @@
 
       <app-student-messages
         title="Ваші оголошення"
+        :showCreateMessage="true"
         :messages="exampleMessages"
       ></app-student-messages>
     </div>
@@ -80,8 +84,8 @@ export default {
       fullIsOpened: false,
       activity: [
         ['У авторській розробці', '5 тестів'],
-        ['Створено питань', '78%'],
-        ['Предметів', '6'],
+        ['Створено питань', '37'],
+        ['Предметів викладаєте', '3'],
       ],
       exampleMessages: [
         {

@@ -4,20 +4,30 @@
 
     <div class="student-info">
       <app-student-personal-info
+        class="drop-shadow"
         :user="user"
         :data="[
           ['E-mail', user.email],
         ]"
       ></app-student-personal-info>
 
-      <app-student-activity :data="studentActivity"></app-student-activity>
+      <app-student-activity
+        class="drop-shadow"
+        :data="studentActivity"
+      ></app-student-activity>
     </div>
 
     <div class="sections">
       <div>
-        <app-student-subjects v-if="user.roles.includes('user')"></app-student-subjects>
+        <app-student-subjects
+          class="drop-shadow"
+          v-if="(user.roles || []).includes('student')"
+        ></app-student-subjects>
 
-        <app-student-results v-if="user.roles.includes('user')" ></app-student-results>
+        <app-student-results
+          class="drop-shadow"
+          v-if="(user.roles || []).includes('student')"
+          ></app-student-results>
       </div>
 
       <app-student-messages :messages="exampleMessages"></app-student-messages>
@@ -53,6 +63,7 @@ export default {
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
+      setAlert: 'alert/set',
     }),
   },
   data() {
@@ -95,6 +106,27 @@ export default {
       },
     } = this
 
+    const roles = (this.self.roles || [])
+
+    if (!userID && !roles.includes('student')) {
+      if (roles.includes('teacher')) {
+        return this.$router.push({
+          name: 'homeTeacher',
+        })
+      }
+
+      if (roles.includes('admin')) {
+        return this.$router.push({ name: 'statsCollege' })
+      }
+
+      return this.setAlert({
+        title: 'Доступ заборонено',
+        isSuccess: false,
+        delay: 1500,
+        show: true,
+      })
+    }
+
     this.showPreloader = true
 
     if (!userID) {
@@ -110,6 +142,8 @@ export default {
     }
 
     this.showPreloader = false
+
+    return false
   },
 }
 </script>
@@ -122,6 +156,10 @@ export default {
     grid-gap: 20px;
 
     margin-bottom: 20px;
+  }
+
+  .drop-shadow {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, .3);
   }
 
   .sections {

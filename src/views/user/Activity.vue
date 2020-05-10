@@ -79,6 +79,7 @@ export default {
 .activity {
   .card {
     background: var(--color-bg-dark);
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.2);
     padding: 20px;
     border-radius: 10px;
 
@@ -183,7 +184,7 @@ export default {
   .base-data {
     display: grid;
     grid-template-areas: 'lastSessions currentSession' 'lastSessions locations';
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 7fr 3fr;
     grid-gap: 20px;
 
     margin-top: 20px;

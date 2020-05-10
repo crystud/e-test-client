@@ -1,6 +1,21 @@
 <template>
   <div class="app-student-messages">
-    <div class="card header">{{title}}</div>
+    <div
+      class="card header"
+      :class="{
+        'create-message': showCreateMessage,
+      }"
+    >
+      <span class="text">{{title}}</span>
+
+      <button
+        v-if="showCreateMessage"
+        class="action-btn"
+        title="Створити повідомлення"
+      >
+        <font-awesome-icon icon="plus"></font-awesome-icon>
+      </button>
+    </div>
 
     <div
       v-if="!messages || messages.length === 0"
@@ -39,6 +54,11 @@ export default {
       required: false,
       default: () => 'Повідомлення для вас',
     },
+    showCreateMessage: {
+      type: Boolean,
+      required: false,
+      default: () => false,
+    },
   },
 }
 </script>
@@ -50,6 +70,30 @@ export default {
   .header {
     font-weight: 400;
     font-size: 1.2em;
+
+    &.create-message {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-gap: 20px;
+      align-items: center;
+
+      padding: 0;
+
+      .text,
+      .action-btn {
+        padding: 18px;
+      }
+
+      .action-btn {
+        color: var(--color-accent-green);
+        background: #000;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.2);
+        border: 0;
+        border-radius: 0px 10px 10px 0;
+        font-size: 1.2em;
+      }
+    }
   }
 
   .header,
@@ -67,10 +111,11 @@ export default {
   }
 
   .card {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, .2);
     background: var(--color-bg-dark);
     border-radius: 10px;
 
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 
     &.message {
       position: relative;
@@ -88,7 +133,7 @@ export default {
         max-width: 60px;
         height: 3px;
 
-        background: #1ED6BA;
+        background: var(--color-accent-green);
         border-radius: 10px;
       }
     }

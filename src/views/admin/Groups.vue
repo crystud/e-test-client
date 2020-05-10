@@ -2,69 +2,62 @@
   <div class="groups-view">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-ask-college
-      @selected="college => editingCollege = college"
-      :show="!editingCollege.id"
-    ></app-ask-college>
+    <app-ask-speciality
+      :show="editingCollege.id && !editingSpeciality.id"
+      :college="editingCollege"
+      @selected="specialitySelected"
+    ></app-ask-speciality>
 
-    <div v-if="editingCollege.id">
-      <app-ask-speciality
-        :show="editingCollege.id && !editingSpeciality.id"
-        :college="editingCollege"
-        @selected="specialitySelected"
-      ></app-ask-speciality>
+    <div v-if="editingSpeciality.id">
+      <app-create-group
+        :show="showCreateGroup"
+        :speciality="editingSpeciality"
+        @close="showCreateGroup = false"
+        @done="
+          showCreateGroup = false
+          updateGroups()
+        "
+      ></app-create-group>
 
-      <div v-if="editingSpeciality.id">
-        <app-create-group
-          :show="showCreateGroup"
-          :speciality="editingSpeciality"
-          @close="showCreateGroup = false"
-          @done="
-            showCreateGroup = false
-            updateGroups()
-          "
-        ></app-create-group>
+      <div class="header">
+        <div class="title">
+          <div class="pagename">Групи</div>
 
-        <div class="header">
-          <div class="title">
-            <div class="pagename">Групи</div>
+          <div
+            class="college"
+            v-show="editingCollege.id && editingSpeciality.id"
+          >
+            <span
+              @click="
+                editingCollege = {}
+                editingSpeciality = {}
+              "
+            >{{editingCollege.name}}</span>
 
-            <div
-              class="college"
-              v-show="editingCollege.id && editingSpeciality.id"
-            >
-              <span
-                @click="
-                  editingCollege = {}
-                  editingSpeciality = {}
-                "
-              >{{editingCollege.name}}</span>
+            <font-awesome-icon
+              icon="chevron-right"
+              class="icon"
+            ></font-awesome-icon>
 
-              <font-awesome-icon
-                icon="chevron-right"
-                class="icon"
-              ></font-awesome-icon>
-
-              <span @click="editingSpeciality = {}">{{editingSpeciality.name}}</span>
-            </div>
+            <span @click="editingSpeciality = {}">{{editingSpeciality.name}}</span>
           </div>
-
-          <app-create-button
-            @click="showCreateGroup = true"
-          >Створити групу</app-create-button>
         </div>
 
-        <div class="selection">
-          <div class="list">
-            <app-group
-              v-for="(group, index) in groups"
-              v-bind:key="index"
-              :id="group.id"
-              :name="group.name"
-              :educationStart="group.startEducation"
-              :educationEnd="group.endEducation"
-            ></app-group>
-          </div>
+        <app-create-button
+          @click="showCreateGroup = true"
+        >Створити групу</app-create-button>
+      </div>
+
+      <div class="selection">
+        <div class="list">
+          <app-group
+            v-for="(group, index) in groups"
+            v-bind:key="index"
+            :id="group.id"
+            :name="group.name"
+            :educationStart="group.startEducation"
+            :educationEnd="group.endEducation"
+          ></app-group>
         </div>
       </div>
     </div>
@@ -77,7 +70,6 @@ import { mapGetters, mapActions } from 'vuex'
 import AppGroup from '../../components/templates/admin/AppGroup.vue'
 import AppCreateButton from '../../components/templates/admin/AppCreateButton.vue'
 import AppCreateGroup from '../../components/templates/admin/AppCreateGroup.vue'
-import AppAskCollege from '../../components/templates/admin/AppAskCollege.vue'
 import AppAskSpeciality from '../../components/templates/admin/AppAskSpeciality.vue'
 import AppPreloader from '../../components/ui/AppPreloader.vue'
 
@@ -86,7 +78,6 @@ export default {
     AppCreateButton,
     AppGroup,
     AppCreateGroup,
-    AppAskCollege,
     AppAskSpeciality,
     AppPreloader,
   },
@@ -99,7 +90,6 @@ export default {
     return {
       showCreateGroup: false,
       showPreloader: false,
-      editingCollege: {},
       editingSpeciality: {},
     }
   },

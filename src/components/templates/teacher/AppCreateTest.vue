@@ -19,16 +19,12 @@
             @change="newVal => test.title = newVal"
           ></app-input>
 
-          <app-text-area
-            placeholder="Опис тесту"
-            @change="newVal => test.description = newVal"
-          ></app-text-area>
-
           <app-select
             :values="subjects.map(({ name, id }) => ({ label: name, value: id }))"
             class="app-select"
             :sideBorder="true"
             @change="({ value }) => test.subject = value"
+            label="Оберіть предмет..."
           ></app-select>
 
           <div class="btns">
@@ -54,7 +50,6 @@ import { mapActions, mapGetters } from 'vuex'
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppInput from '@/components/ui/AppInput.vue'
-import AppTextArea from '@/components/ui/AppTextArea.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 
@@ -63,7 +58,6 @@ export default {
     AppPreloader,
     AppModalWindow,
     AppInput,
-    AppTextArea,
     AppButton,
     AppSelect,
   },
