@@ -2,87 +2,68 @@
   <div class="app-test-develop">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-test-ask-level
-      :testID="parseInt($route.params.id)"
-      :show="!editingLevel.id"
-      @selected="selected"
-    ></app-test-ask-level>
+    <app-ask-subject
+      :show="showAddQuestion"
+      @selected="subject => addQuestionSubject = subject"
+    ></app-ask-subject>
 
-    <div v-if="editingLevel.id">
-      <app-ask-subject
-        :show="showAddQuestion"
-        @selected="subject => addQuestionSubject = subject"
-      ></app-ask-subject>
+    <app-ask-topic
+      :show="Boolean(addQuestionSubject.id && !addQuestionTopic.id)"
+      @selected="topic => {
+        addQuestionTopic = topic
+        showAddQuestion = false
+      }"
+      :subjectID="addQuestionSubject.id || 0"
+    ></app-ask-topic>
 
-      <app-ask-topic
-        :show="Boolean(addQuestionSubject.id && !addQuestionTopic.id)"
-        @selected="topic => {
-          addQuestionTopic = topic
-          showAddQuestion = false
-        }"
-        :subjectID="addQuestionSubject.id || 0"
-      ></app-ask-topic>
+    <app-ask-questions
+      :show="Boolean(addQuestionSubject.id && addQuestionTopic.id)"
+      :topic="addQuestionTopic"
+      :levelID="editingLevel.id || 0"
+      @cancel="cancelQuestionAdding"
+      @added="cancelQuestionAdding"
+      :alreadyAdded="questions.map(({ id }) => id)"
+    ></app-ask-questions>
 
-      <app-ask-questions
-        :show="Boolean(addQuestionSubject.id && addQuestionTopic.id)"
-        :topic="addQuestionTopic"
-        :levelID="editingLevel.id || 0"
-        @cancel="cancelQuestionAdding"
-        @added="
-          cancelQuestionAdding()
-          updateLevelInfo()
-        "
-        :alreadyAdded="questions.map(({ id }) => id)"
-      ></app-ask-questions>
-
-      <div class="header">
-        <div class="title">
-          <div class="text">{{editingLevel.title}}</div>
-
-          <div
-            class="change"
-            @click="
-              cancelQuestionAdding()
-              editingLevel = {}
-            "
-          >Редагувати інший рівень</div>
-        </div>
-
-        <app-button
-          appearance="primary"
-          @click="
-            showAddQuestion = true
-            addQuestionSubject = {}
-            addQuestionTopic = {}
-          "
-        >Додати питання до рівню</app-button>
+    <div class="header">
+      <div class="title">
+        <div class="text">{Назва теста}</div>
       </div>
 
-      <div class="questions">
-        <div class="title">Список питань рівню</div>
+      <app-button
+        appearance="primary"
+        @click="
+          showAddQuestion = true
+          addQuestionSubject = {}
+          addQuestionTopic = {}
+        "
+      >Додати питання до теста</app-button>
+    </div>
+
+    <div class="questions">
+      <div class="title">Список питань</div>
+
+      <div
+        class="no-questions"
+        v-if="!questions.length"
+      >Запитань немає</div>
+
+      <div
+        class="list"
+        v-if="questions.length"
+      >
+        <div class="row header-row">
+          <div class="question">Запитання</div>
+          <div class="type">Тип</div>
+        </div>
 
         <div
-          class="no-questions"
-          v-if="!questions.length"
-        >Запитань у рівні немає</div>
-
-        <div
-          class="list"
-          v-if="questions.length"
+          v-for="(question, index) in questions"
+          :key="index"
+          class="row"
         >
-          <div class="row header-row">
-            <div class="question">Запитання</div>
-            <div class="type">Тип</div>
-          </div>
-
-          <div
-            v-for="(question, index) in questions"
-            :key="index"
-            class="row"
-          >
-            <div class="question">{{question.ask}}</div>
-            <div class="type">{{taskTypes[question.type]}}</div>
-          </div>
+          <div class="question">{{question.ask}}</div>
+          <div class="type">{{taskTypes[question.type]}}</div>
         </div>
       </div>
     </div>
@@ -91,8 +72,6 @@
 
 <script>
 import { mapActions } from 'vuex'
-
-import AppTestAskLevel from '@/components/templates/tests/AppTestAskLevel.vue'
 
 import AppAskSubject from '@/components/templates/teacher/AppAskSubject.vue'
 import AppAskTopic from '@/components/templates/teacher/AppAskTopic.vue'
@@ -103,7 +82,6 @@ import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
   components: {
-    AppTestAskLevel,
     AppButton,
     AppPreloader,
     AppAskSubject,
@@ -113,51 +91,12 @@ export default {
   methods: {
     ...mapActions({
       loadQuestions: 'questions/getByIDs',
-      loadLevel: 'levels/getByID',
       setAlert: 'alert/set',
     }),
     cancelQuestionAdding() {
       this.addQuestionSubject = {}
       this.addQuestionTopic = {}
       this.showAddQuestion = false
-    },
-    async selected(levelInfo) {
-      try {
-        this.editingLevel = levelInfo
-
-        this.showPreloader = true
-
-        this.questions = await this.loadQuestions(levelInfo.tasks) || []
-      } catch (e) {
-        this.setAlert({
-          title: 'Помилка',
-          text: 'Не вдалось отримати дані про запитання',
-          isSuccess: false,
-          show: true,
-        })
-      } finally {
-        this.showPreloader = false
-      }
-    },
-    async updateLevelInfo() {
-      const { editingLevel } = this
-
-      try {
-        this.showPreloader = true
-
-        const levelInfo = await this.loadLevel(editingLevel.id)
-
-        await this.selected(levelInfo)
-      } catch (e) {
-        this.setAlert({
-          title: 'Помилка',
-          text: 'Не вдалось оновити дані про рівень',
-          isSuccess: false,
-          show: true,
-        })
-      } finally {
-        this.showPreloader = false
-      }
     },
   },
   data() {
@@ -175,6 +114,10 @@ export default {
         numbering: 'Визначити послідовність',
       },
     }
+  },
+  async created() {
+    // const { $route: { params: { testID } } } = this
+    // this.questions = await this.loadQuestions()
   },
 }
 </script>

@@ -33,15 +33,15 @@ export default {
       required: false,
       default: () => null,
     },
-    educationStart: {
-      type: String,
+    startYear: {
+      type: Number,
       required: false,
-      default: () => '',
+      default: () => null,
     },
-    educationEnd: {
-      type: String,
+    course: {
+      type: Number,
       required: false,
-      default: () => '',
+      default: () => null,
     },
   },
   components: {
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     getData() {
-      const { studentsCount, educationStart, educationEnd } = this
+      const { studentsCount, startYear, course } = this
 
       const data = []
 
@@ -57,18 +57,12 @@ export default {
         data.push(['Студентів', studentsCount])
       }
 
-      if (educationStart) {
-        const educationStartDate = new Date(educationStart)
-        const educationStartString = `${educationStartDate.getDate()}/${educationStartDate.getMonth() + 1}/${educationStartDate.getFullYear()}`
-
-        data.push(['Початок навчання', educationStartString])
+      if (startYear) {
+        data.push(['Початок навчання', startYear])
       }
 
-      if (educationEnd) {
-        const educationEndDate = new Date(educationEnd)
-        const educationEndString = `${educationEndDate.getDate()}/${educationEndDate.getMonth() + 1}/${educationEndDate.getFullYear()}`
-
-        data.push(['Кінець навчання', educationEndString])
+      if (course) {
+        data.push(['Рік навчання', course])
       }
 
       return data

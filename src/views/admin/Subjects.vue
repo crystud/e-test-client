@@ -18,8 +18,6 @@
     ></app-create-subject>
 
     <div class="header">
-      <div class="title">Предмети</div>
-
       <app-create-button @click="showCreateSubject = true">Створити предмет</app-create-button>
     </div>
 
@@ -49,7 +47,7 @@ import AppAlert from '@/components/ui/AppAlert.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
-  name: 'classes',
+  name: 'subjects',
   data() {
     return {
       showCreateSubject: false,
@@ -116,10 +114,14 @@ export default {
 .app-specialtys {
   .header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-end;
 
     font-weight: 300;
+
+    border-bottom: 1px solid var(--color-bg-light);
+
+    padding-bottom: 25px;
+    margin-bottom: 25px;
 
     .title {
       font-size: 1.6em;

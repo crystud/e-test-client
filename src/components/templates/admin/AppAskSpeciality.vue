@@ -2,7 +2,6 @@
   <div>
     <app-create-speciality
       :show="showCreateSpeciality"
-      :college="college"
       @close="showCreateSpeciality = false"
       @created="checkSpecialties"
     ></app-create-speciality>
@@ -73,13 +72,13 @@ export default {
       getSpecialties: 'specialities/get',
     }),
     checkSpecialties() {
-      const { college: { id: collegeID }, show } = this
+      const { show } = this
 
       if (!show) return
 
       this.showPreloader = true
 
-      this.getSpecialties(collegeID).then(() => {
+      this.getSpecialties().then(() => {
         this.showPreloader = false
       })
     },
@@ -99,11 +98,6 @@ export default {
       type: Boolean,
       required: true,
       default: () => false,
-    },
-    college: {
-      type: Object,
-      required: true,
-      default: () => null,
     },
   },
   created() {
