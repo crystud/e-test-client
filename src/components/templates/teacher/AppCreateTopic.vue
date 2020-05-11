@@ -102,7 +102,14 @@ export default {
 
         this.name = ''
 
-        this.$emit('created')
+        this.setAlert({
+          title: 'Тему створено',
+          isSuccess: true,
+          show: true,
+          delay: 1500,
+        })
+
+        setTimeout(this.$emit('created'), 1400)
       } catch (e) {
         this.setAlert({
           title: 'Помилка',

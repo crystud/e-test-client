@@ -4,7 +4,7 @@
 
     <app-ask-subject
       :show="!subject.id"
-      @selected="selectedSubject => subject = selectedSubject"
+      @selected="subjectSelected"
     ></app-ask-subject>
 
     <div v-if="subject.id">
@@ -13,7 +13,7 @@
         :subject="subject"
         @close="showCreateTopic = false"
         @created="
-          refreshSubject()
+          loadSubject()
           showCreateTopic = false
         "
       ></app-create-topic>
@@ -25,24 +25,6 @@
           appearance="primary"
           @click="showCreateTopic = true"
         >Створити тему</app-button>
-      </div>
-
-      <app-search-bar
-        class="search"
-        @search="searchTopics"
-      ></app-search-bar>
-
-      <div
-        class="search-tip"
-        v-show="!search.searched || search.searched && !topics.length"
-      >
-        <div
-          v-if="!search.searched"
-        >Введіть пошуковий запит та натисність шукати</div>
-
-        <div
-          v-if="search.searched && !topics.length"
-        >За вашим запитом нічого не знайдено...</div>
       </div>
 
       <div class="list">
@@ -57,14 +39,13 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 import AppAskSubject from '@/components/templates/teacher/AppAskSubject.vue'
 import AppSubjectTopic from '@/components/templates/teacher/AppSubjectTopic.vue'
 import AppCreateTopic from '@/components/templates/teacher/AppCreateTopic.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
-import AppSearchBar from '@/components/ui/AppSearchBar.vue'
 
 export default {
   components: {
@@ -73,74 +54,36 @@ export default {
     AppSubjectTopic,
     AppCreateTopic,
     AppPreloader,
-    AppSearchBar,
   },
   data() {
     return {
       subject: {},
       showCreateTopic: false,
       showPreloader: false,
-      search: {
-        words: '',
-        searched: false,
-      },
+      topics: [],
     }
-  },
-  computed: {
-    ...mapGetters({
-      topics: 'topics/searchResults',
-    }),
   },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
-      searchTopicsAction: 'topics/search',
+      getSubject: 'subjects/getByID',
     }),
-    async searchTopics(name) {
-      const {
-        subject: { id: subject },
-      } = this
-
-      try {
-        this.search.words = name
-        this.search.searched = true
-
-        this.showPreloader = true
-
-        await this.searchTopicsAction({
-          name,
-          subject,
-        })
-      } catch (e) {
-        this.setAlert({
-          title: 'Помилка',
-          text: 'Нам не вдалось здійснити пошук... Спробуйте пізніше',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
-      } finally {
-        this.showPreloader = false
-        this.search.searched = true
-      }
-    },
-    async refreshSubject() {
-      const {
-        subject: { id },
-        search: { words: name },
-      } = this
+    async loadSubject() {
+      const { id } = this.subject
 
       if (!id) return
 
       this.showPreloader = true
-      this.search.searched = true
 
-      await this.searchTopicsAction({
-        name,
-        subject: id,
-      })
+      const { topics = [] } = await this.getSubject(id) || {}
+
+      this.topics = topics
 
       this.showPreloader = false
+    },
+    async subjectSelected(subject) {
+      this.subject = subject
+      this.loadSubject()
     },
   },
 }
