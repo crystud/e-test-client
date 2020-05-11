@@ -234,6 +234,8 @@ export default {
 
   display: grid;
   grid-template-columns: 1fr repeat(3, auto);
+  grid-template-areas: 'pagename settings createTest logout';
+
   justify-content: space-between;
   align-items: center;
   grid-gap: 20px;
@@ -249,6 +251,7 @@ export default {
 
   .page-title {
     font-weight: 400;
+    grid-area: pagename;
 
     .text {
       color: var(--color-font-main);
@@ -263,6 +266,7 @@ export default {
 
   .settings-icon {
     cursor: pointer;
+    grid-area: settings;
 
     color: var(--color-font-dark);
     font-size: 1.5em;
@@ -276,6 +280,7 @@ export default {
     color: #fafafa;
     cursor: pointer;
     font-size: 1em;
+    grid-area: createTest;
   }
 
   .logout {
@@ -284,10 +289,18 @@ export default {
     border: 0;
     font-size: 1em;
     cursor: pointer;
+    grid-area: logout;
 
     &:hover {
       text-decoration: underline;
     }
+  }
+
+  @media screen and (max-width: 700px) {
+    grid-template-areas: 'pagename pagename pagename' 'settings createTest logout';
+    grid-template-columns: 30px auto 80px;
+
+    justify-content: flex-start;
   }
 }
 
