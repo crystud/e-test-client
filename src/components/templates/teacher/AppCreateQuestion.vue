@@ -14,8 +14,8 @@
       >
         <app-data-list
           :data="[
-            ['Тема', topic.name],
-            ['Створив', `${topic.creator.firstName} ${topic.creator.lastName}`],
+            ['Питання для теми', topic.name],
+            ['Предмет', topic.subject.name],
           ]"
         ></app-data-list>
 
@@ -34,10 +34,10 @@
 
         <app-select
           :values="[
-            { label: '1 варіант відповіді', value: 'single_choice' },
+            { label: 'Простий вибір', value: 'single_choice' },
             { label: 'Декілька варіантів', value: 'multy_choice' },
-            { label: 'Ввести значення', value: 'text_input' },
-            { label: 'Встановити відповідність', value: 'numbering' },
+            { label: 'Коротка відповідь', value: 'text_input' },
+            { label: 'Логічна послідовність', value: 'numbering' },
           ]"
           label="Тип запитання"
           class="app-select"

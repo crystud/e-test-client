@@ -1,5 +1,3 @@
-import AsyncLoop from 'node-async-loop'
-
 import axios from '../../tools/axios'
 
 export default {
@@ -38,17 +36,13 @@ export default {
         return Promise.reject(e)
       }
     },
-    async getByID({ dispatch }, topicID) {
+    async getByID(_, topicID) {
       try {
         const { data, status } = await axios.get(`/topics/${topicID}`)
 
         if (status !== 200) {
           return Promise.reject()
         }
-
-        const creator = await dispatch('user/getUser', data.creator, { root: true })
-
-        data.creator = creator
 
         return Promise.resolve(data)
       } catch (e) {
@@ -75,29 +69,6 @@ export default {
       } catch (e) {
         return Promise.reject(e)
       }
-    },
-    getByIDs({ dispatch, commit }, topicsIDs) {
-      return new Promise((resolve, reject) => {
-        try {
-          if (topicsIDs.length === 0) return resolve([])
-
-          const topics = []
-
-          return AsyncLoop(topicsIDs, async (topicID, next) => {
-            const topic = await dispatch('getByID', topicID)
-
-            topics.push(topic)
-
-            return next()
-          }, () => {
-            commit('setTopics', topics)
-
-            return resolve(topics)
-          })
-        } catch (e) {
-          return reject(e)
-        }
-      })
     },
   },
 }

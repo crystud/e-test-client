@@ -15,30 +15,7 @@
 
       <div class="header">
         <div class="title">
-          <div class="main">Запитання до теми "{{topic.name}}"</div>
-
-          <div
-            class="verificated"
-            :class="{
-              confirmed: topic.confirmed,
-            }"
-          >
-            {{ topic.confirmed ? 'Підтверджена тема' : 'Непідтверджена тема' }}
-          </div>
-
-          <div class="creator">
-            <span class="label">Створив:</span>
-
-            <router-link
-              :to="{
-                name: 'teacher',
-                params: { id: topic.creator.id },
-              }"
-              class="value"
-            >
-              {{topic.creator.firstName}} {{topic.creator.lastName}}
-            </router-link>
-          </div>
+          <div class="main">Список запитань до теми "{{topic.name}}"</div>
         </div>
 
         <app-button
@@ -101,7 +78,6 @@ export default {
     ...mapActions({
       getTopic: 'topics/getByID',
       setAlert: 'alert/set',
-      getQuestionsByIDs: 'questions/getByIDs',
     }),
     async loadTopic() {
       const { $route: { params: { id } } } = this
@@ -118,11 +94,10 @@ export default {
 
       this.showPreloader = true
 
-      const topic = await this.getTopic(id)
-      const questions = await this.getQuestionsByIDs(topic.tasks)
+      const topic = await this.getTopic(id) || {}
 
       this.topic = topic
-      this.questions = questions
+      this.questions = topic.tasks
 
       this.showPreloader = false
 
@@ -136,9 +111,9 @@ export default {
       showPreloader: false,
       showCreateQuestion: false,
       taskTypes: {
-        single_choice: 'Один варіант',
+        single_choice: 'Простий вибір',
         multy_choice: 'Декілька варіантів',
-        text_input: 'Ввести значення',
+        text_input: 'Коротка відповідь',
         numbering: 'Визначити послідовність',
       },
     }
