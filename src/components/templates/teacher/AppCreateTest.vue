@@ -19,6 +19,13 @@
             @change="newVal => test.name = newVal"
           ></app-input>
 
+          <app-input
+            appearance="secondary"
+            placeholder="К-сть запитань"
+            class="app-input"
+            @change="newVal => test.countOfTasks = newVal"
+          ></app-input>
+
           <app-select
             :values="subjects.map(({ subject: { name }, id }) => ({ label: name, value: id }))"
             class="app-select"
@@ -80,10 +87,11 @@ export default {
           test: {
             name,
             subject,
+            countOfTasks,
           },
         } = this
 
-        if (!name || !subject) {
+        if (!name || !subject || !countOfTasks) {
           this.setAlert({
             title: 'Помилка',
             text: 'Усі поля повинні бути заповнені',
@@ -95,6 +103,7 @@ export default {
 
         const create = await this.createTest({
           name,
+          countOfTasks,
           teacher: Number(subject),
         })
 
@@ -109,9 +118,7 @@ export default {
             show: true,
           })
 
-          setTimeout(() => {
-            this.$emit('created')
-          }, 1500)
+          this.$emit('created')
         }
       } catch (e) {
         this.setAlert({
@@ -132,6 +139,7 @@ export default {
       test: {
         name: '',
         subject: null,
+        countOfTasks: 0,
       },
     }
   },

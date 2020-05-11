@@ -188,7 +188,7 @@ export default {
     grid-template-columns: 1fr 60px;
 
     overflow: hidden;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
 
     input, button {

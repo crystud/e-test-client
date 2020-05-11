@@ -1,17 +1,14 @@
 <template>
-  <div class="app-create-question">
+  <div
+    class="app-create-question"
+    v-if="show"
+  >
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-modal-window
-      :show="show && !alert.show"
-      :noPaddings="true"
-    >
-      <div class="title">Створення запитання для теми</div>
+    <div class="title">Створення запитання для теми</div>
 
-      <div
-        class="content"
-        v-if="show"
-      >
+    <div class="content">
+      <div class="question-info">
         <app-data-list
           :data="[
             ['Питання для теми', topic.name],
@@ -26,12 +23,6 @@
           @change="newTitle => title = newTitle"
         ></app-input>
 
-        <app-text-area
-          placeholder="Опис запитання (не обов'язково)"
-          class="app-text-area"
-          @change="value => description = value"
-        ></app-text-area>
-
         <app-select
           :values="[
             { label: 'Простий вибір', value: 'single_choice' },
@@ -44,7 +35,9 @@
           :sideBorder="true"
           @change="({ value }) => type = value"
         ></app-select>
+      </div>
 
+      <div class="answers-list">
         <app-single-option
           v-if="type === 'single_choice'"
           @change="options => optionsState = options"
@@ -65,19 +58,19 @@
           @change="options => optionsState = options"
         ></app-dragging-option>
       </div>
+    </div>
 
-      <div class="btns">
-        <button
-          class="leave"
-          @click="$emit('close')"
-        >Скасувати</button>
+    <div class="btns">
+      <button
+        class="leave"
+        @click="$emit('close')"
+      >Скасувати</button>
 
-        <button
-          class="create"
-          @click="create"
-        >Створити запитання</button>
-      </div>
-    </app-modal-window>
+      <button
+        class="create"
+        @click="create"
+      >Створити запитання</button>
+    </div>
   </div>
 </template>
 
@@ -85,11 +78,9 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
-import AppModalWindow from '@/components/ui/AppModalWindow.vue'
 import AppDataList from '@/components/ui/AppDataList.vue'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
-import AppTextArea from '@/components/ui/AppTextArea.vue'
 
 import AppSingleOption from '@/components/templates/questions/AppSingleOption.vue'
 import AppMultiOption from '@/components/templates/questions/AppMultiOption.vue'
@@ -99,11 +90,9 @@ import AppDraggingOption from '@/components/templates/questions/AppDraggingOptio
 export default {
   components: {
     AppPreloader,
-    AppModalWindow,
     AppDataList,
     AppInput,
     AppSelect,
-    AppTextArea,
     AppSingleOption,
     AppMultiOption,
     AppTextInputOption,
@@ -114,7 +103,6 @@ export default {
       showPreloader: false,
       type: null,
       title: '',
-      description: '',
       optionsState: {
         questions: [],
       },
@@ -139,7 +127,6 @@ export default {
         },
         topic: { id: topic },
         title: ask,
-        description,
         type,
       } = this
 
@@ -169,7 +156,6 @@ export default {
         const { id: test } = await this.createQuestion({
           topic,
           ask,
-          description,
           ignoreCase,
           type,
         }) || {}
@@ -221,8 +207,6 @@ export default {
 .app-create-question {
   .title,
   .content {
-    width: 100vw;
-    max-width: 600px;
     padding: 20px;
   }
 
@@ -233,15 +217,19 @@ export default {
   }
 
   .content {
-    overflow-y: auto;
-    max-height: 60vh;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 30px;
 
     .app-input,
-    .app-select,
-    .app-text-area {
+    .app-select {
       background: var(--color-bg-main);
       margin-bottom: 20px;
       border-radius: 10px;
+    }
+
+    @media screen and (max-width: 1100px) {
+      grid-template-columns: 1fr;
     }
   }
 

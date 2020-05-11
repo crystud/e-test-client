@@ -86,7 +86,7 @@ export default {
       font-size: 1em;
       background: var(--color-bg-main);
       border: 0;
-      border-radius: 5px;
+      border-radius: 10px;
 
       color: var(--color-font-main);
 

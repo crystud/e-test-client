@@ -3,22 +3,17 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <div v-if="topic.id">
-      <app-create-question
-        :show="showCreateQuestion"
-        :topic="topic"
-        @close="showCreateQuestion = false"
-        @created="
-          loadTopic()
-          showCreateQuestion = false
-        "
-      ></app-create-question>
-
       <div class="header">
         <div class="title">
-          <div class="main">Список запитань до теми "{{topic.name}}"</div>
+          <div class="main">
+            <span v-if="showCreateQuestion">Створення запитання для теми "{{topic.name}}"</span>
+
+            <span v-else>Список запитань до теми "{{topic.name}}"</span>
+          </div>
         </div>
 
         <app-button
+          v-show="!showCreateQuestion"
           appearance="primary"
           @click="showCreateQuestion = true"
         >Створити запитання</app-button>
@@ -27,7 +22,7 @@
       <div class="content">
         <div
           class="no-questions"
-          v-if="!questions.length"
+          v-if="!questions.length && !showCreateQuestion"
         >
           <div class="no-results">В даній темі покищо немає запитань...</div>
 
@@ -37,9 +32,19 @@
           >Створити запитання</div>
         </div>
 
+        <app-create-question
+          :show="showCreateQuestion"
+          :topic="topic"
+          @close="showCreateQuestion = false"
+          @created="
+            loadTopic()
+            showCreateQuestion = false
+          "
+        ></app-create-question>
+
         <div
           class="table"
-          v-if="questions.length"
+          v-if="questions.length && !showCreateQuestion"
         >
           <div class="row header-row">
             <div class="col">Запитання</div>

@@ -19,24 +19,9 @@
       <div class="tests">
         <app-teacher-tests-list
           class="teacher-tests drop-shadow"
-          title="Тести в розробці"
-          :tests="[
-            { name: 'Математика. Базовий рівень', questionsCount: 16 },
-            { name: 'Математика. Середній рівень', questionsCount: 16 },
-            { name: 'Математика. Вищий рівень', questionsCount: 16 },
-          ]"
-          :totalCount="7"
-        ></app-teacher-tests-list>
-
-        <app-teacher-tests-list
-          class="teacher-tests drop-shadow"
-          title="Активні тести"
-          :tests="[
-            { name: 'Вища математика. Базовий рівень', questionsCount: 32 },
-            { name: 'Вища математика. Середній рівень', questionsCount: 32 },
-            { name: 'Вища математика. Вищий рівень', questionsCount: 32 },
-          ]"
-          :totalCount="5"
+          title="Ваші тести"
+          :tests="teacherTests.filter((_, index) => (index <= 2))"
+          :totalCount="teacherTests.length"
         ></app-teacher-tests-list>
       </div>
 
@@ -68,6 +53,7 @@ export default {
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
+      getTeacherTests: 'user/getOwnTests',
     }),
     setFullHistory(isOpened) {
       this.fullIsOpened = isOpened
@@ -82,6 +68,7 @@ export default {
     return {
       user: {},
       fullIsOpened: false,
+      teacherTests: [],
       activity: [
         ['У авторській розробці', '5 тестів'],
         ['Створено питань', '37'],
@@ -109,6 +96,7 @@ export default {
 
     if (!userID) {
       this.user = this.self
+      this.teacherTests = await this.getTeacherTests()
 
       document.title = 'Ваш профіль -  CRYSTUD'
     } else {
