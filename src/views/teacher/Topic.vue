@@ -153,7 +153,6 @@ export default {
     .title {
       .main {
         font-size: 1.4em;
-        font-weight: 400;
 
         margin-bottom: 5px;
       }

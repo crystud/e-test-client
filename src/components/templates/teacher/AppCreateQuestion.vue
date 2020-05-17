@@ -5,36 +5,37 @@
   >
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <div class="title">Створення запитання для теми</div>
-
     <div class="content">
       <div class="question-info">
         <app-data-list
+          v-if="false"
           :data="[
             ['Питання для теми', topic.name],
             ['Предмет', topic.subject.name],
           ]"
         ></app-data-list>
 
+        <div class="question-type-selector">
+          <div class="label">Тип запитання</div>
+
+          <div class="list">
+            <div
+              v-for="({ label, value }, index) in types"
+              v-bind:key="index"
+              @click="type = value"
+              :class="{
+                selected: type === value,
+              }"
+            >{{label}}</div>
+          </div>
+        </div>
+
         <app-input
           appearance="secondary"
           class="app-input"
-          placeholder="Запитання..."
+          placeholder="Текст запитання..."
           @change="newTitle => title = newTitle"
         ></app-input>
-
-        <app-select
-          :values="[
-            { label: 'Простий вибір', value: 'single_choice' },
-            { label: 'Декілька варіантів', value: 'multy_choice' },
-            { label: 'Коротка відповідь', value: 'text_input' },
-            { label: 'Логічна послідовність', value: 'numbering' },
-          ]"
-          label="Тип запитання"
-          class="app-select"
-          :sideBorder="true"
-          @change="({ value }) => type = value"
-        ></app-select>
       </div>
 
       <div class="answers-list">
@@ -80,7 +81,6 @@ import { mapGetters, mapActions } from 'vuex'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppDataList from '@/components/ui/AppDataList.vue'
 import AppInput from '@/components/ui/AppInput.vue'
-import AppSelect from '@/components/ui/AppSelect.vue'
 
 import AppSingleOption from '@/components/templates/questions/AppSingleOption.vue'
 import AppMultiOption from '@/components/templates/questions/AppMultiOption.vue'
@@ -92,7 +92,6 @@ export default {
     AppPreloader,
     AppDataList,
     AppInput,
-    AppSelect,
     AppSingleOption,
     AppMultiOption,
     AppTextInputOption,
@@ -106,6 +105,12 @@ export default {
       optionsState: {
         questions: [],
       },
+      types: [
+        { label: 'Простий вибір', value: 'single_choice' },
+        { label: 'Множинний вибір', value: 'multy_choice' },
+        { label: 'Коротка відповідь', value: 'text_input' },
+        { label: 'Послідовність', value: 'numbering' },
+      ],
     }
   },
   computed: {
@@ -207,19 +212,16 @@ export default {
 .app-create-question {
   .title,
   .content {
-    padding: 20px;
-  }
-
-  .title {
-    font-size: 1.2em;
-    text-align: center;
-    border-bottom: 1px solid var(--color-bg-main);
+    padding: 0 20px;
   }
 
   .content {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-gap: 30px;
+
+    .app-input {
+      padding: 5px;
+      font-size: 1.1em;
+    }
 
     .app-input,
     .app-select {
@@ -227,9 +229,36 @@ export default {
       margin-bottom: 20px;
       border-radius: 10px;
     }
+  }
 
-    @media screen and (max-width: 1100px) {
-      grid-template-columns: 1fr;
+  .question-type-selector {
+    margin-bottom: 25px;
+
+    .label {
+      font-size: 1.2em;
+      font-weight: 100;
+      color: var(--color-font-dark);
+      margin-bottom: 15px;
+    }
+
+    .list {
+      div {
+        cursor: pointer;
+        display: inline-block;
+        margin-right: 10px;
+        padding: 15px 20px;
+        border-radius: 7px;
+        background: var(--color-bg-main);
+        color: var(--color-font-main);
+
+        transition: none;
+
+        &.selected {
+          background: var(--color-accent-green);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+          color: #fff;
+        }
+      }
     }
   }
 
@@ -238,6 +267,8 @@ export default {
     grid-template-columns: 1fr 1fr;
 
     border-top: 1px solid var(--color-bg-main);
+
+    margin-top: 40px;
 
     button {
       background: transparent;

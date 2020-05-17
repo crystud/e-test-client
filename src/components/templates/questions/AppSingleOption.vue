@@ -10,56 +10,53 @@
     <div class="list">
       <div
         class="option"
-        v-for="(option, index) in options"
+        v-for="({ question, correct }, index) in options"
         :key="index"
       >
-        <div class="text">{{option}}</div>
+        <div class="option-title">Варіант відповіді №{{index+1}}</div>
 
-        <button
-          class="is-right-switch"
-          @click="
-            rightOption = index
-            emitCurrentState()
-          "
+        <input
+          type="text"
+          v-model="options[index].question"
+          placeholder="Текст варіанта відповіді"
         >
-          <div
-            class="wrong"
-            v-if="rightOption !== index"
-          >Невірна відповідь</div>
 
-          <div
-            class="right"
-            v-if="rightOption === index"
-          >Вірна відповідь</div>
-        </button>
+        <div class="controls">
+          <button
+            class="is-right-switch"
+            :class="{
+              wrong: rightOption !== index,
+              right: rightOption === index,
+            }"
+            @click="
+              rightOption = index
+              emitCurrentState()
+            "
+          >
+            <span v-if="rightOption !== index">Невірна відповідь</span>
+            <span v-else>Вірна відповідь</span>
+          </button>
 
-        <button
-          class="remove"
-          @click="
-            options.splice(index, 1)
-            emitCurrentState()
-          "
-        >
-          <font-awesome-icon icon="times"></font-awesome-icon>
-        </button>
+          <button
+            class="remove"
+            @click="
+              options.splice(index, 1)
+              emitCurrentState()
+            "
+          >
+            <font-awesome-icon icon="times"></font-awesome-icon>
+            <span>Вилучити варіант відповіді</span>
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="add-option-form">
-      <input
-        type="text"
-        placeholder="Текст варіанту відповіді..."
-        v-model="optionValue"
-        v-on:keyup="({ keyCode }) => (keyCode === 13 ? addOption() : null)"
-      >
-
       <button
         title="Додати варіант відповіді"
-        @click="
-          addOption()
-          emitCurrentState()
-        "
+        @click="options.push({ question: '' })"
       >
+        <span>Створити ще один варіант відповіді</span>
         <font-awesome-icon icon="plus"></font-awesome-icon>
       </button>
     </div>
@@ -72,7 +69,12 @@ import { mapActions } from 'vuex'
 export default {
   data() {
     return {
-      options: [],
+      options: [
+        { question: '' },
+        { question: '' },
+        { question: '' },
+        { question: '' },
+      ],
       optionValue: '',
       rightOption: null,
     }
@@ -143,78 +145,91 @@ export default {
 
     .option {
       background: var(--color-bg-main);
-      border-radius: 5px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
-      margin-bottom: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      margin-bottom: 20px;
 
-      display: grid;
-      grid-template-columns: 1fr auto 60px;
+      overflow: hidden;
 
-      align-items: center;
+      .option-title {
+        padding: 20px;
+        font-size: 1.2em;
 
-      .text {
+      }
+
+      .controls {
+        padding: 20px;
+
+        display: flex;
+        justify-content: space-between;
+      }
+
+      input {
         color: var(--color-font-main);
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--color-bg-light);
+        height: 100%;
+        width: 100%;
         padding: 15px;
+        font-size: 1em;
+
+        &::placeholder {
+          color: var(--color-font-dark);
+        }
       }
 
       button {
-        padding: 15px;
+        padding: 15px 20px;
         height: 100%;
         font-size: 1em;
         border: 0;
-        border-left: 1px solid var(--color-bg-light);
+        border-radius: 5px;
         cursor: pointer;
-        background: transparent;
+        background: var(--color-bg-dark);
       }
 
       .is-right-switch {
-        .right {
-          color: var(--color-accent-green);
+        color: #fff;
+
+        &.right {
+          background: var(--color-accent-green);
         }
 
-        .wrong {
-          color: var(--color-accent-red);
+        &.wrong {
+          background: var(--color-accent-red);
         }
       }
 
       .remove {
         color: var(--color-accent-red);
+
+        span {
+          margin-left: 15px;
+        }
       }
     }
   }
 
   .add-option-form {
-    display: grid;
-    grid-template-columns: 1fr 60px;
-
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
-
-    input, button {
+    button {
+      width: 100%;
       padding: 15px;
+      border-radius: 10px;
       font-size: 1em;
       background: var(--color-bg-main);
       border: 0;
-    }
-
-    input {
-      color: var(--color-font-main);
-
-      &::placeholder {
-        color: var(--color-font-dark);
-      }
-    }
-
-    button {
-      border-left: 1px solid var(--color-bg-light);
       text-align: center;
       cursor: pointer;
 
-      color: var(--color-font-main);
+      color: var(--color-font-dark);
 
       &:hover {
-        background: var(--color-bg-dark);
+        color: var(--color-font-main);
+      }
+
+      span {
+        margin-right: 10px;
       }
     }
   }
