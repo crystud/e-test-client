@@ -8,7 +8,6 @@ export default {
 
   state: {
     permissions: [],
-    studies: [],
     groups: [],
     subjects: [],
     info: localStorage.accessToken ? ({
@@ -23,13 +22,7 @@ export default {
       roles: [],
       email: '',
       createAt: '',
-      editableColleges: [],
       groups: [],
-      ownColleges: [],
-      createSubjectRequests: [],
-      createTopicRequests: [],
-      teachSubjects: [],
-      studies: [],
       tests: [],
     },
     searchResults: [],
@@ -38,9 +31,6 @@ export default {
   getters: {
     self: ({ self }) => self,
     user: ({ user }) => user,
-    studies: ({ studies }) => studies,
-    tests: ({ tests }) => tests,
-    subjects: ({ subjects }) => subjects,
     permissions: ({ permissions }) => permissions,
     results: ({ results }) => results,
     tickets: ({ tickets }) => tickets,
@@ -64,17 +54,8 @@ export default {
     setResults(state, results) {
       state.results = results
     },
-    setStudies(state, studies) {
-      state.studies = studies
-    },
     setTickets(state, tickets) {
       state.tickets = tickets
-    },
-    setTests(state, tests) {
-      state.tests = tests
-    },
-    setSubjects(state, subjects) {
-      state.subjects = subjects
     },
     setInfo(state, info) {
       state.info = info
@@ -127,21 +108,6 @@ export default {
         return Promise.reject(e)
       }
     },
-    async getStudies({ commit }) {
-      try {
-        const { data, status } = await axios.get('/users/me/studies')
-
-        if (status !== 200) {
-          return Promise.reject()
-        }
-
-        commit('setStudies', data)
-
-        return Promise.resolve(data)
-      } catch (e) {
-        return Promise.reject(e)
-      }
-    },
     async getTickets({ commit }) {
       try {
         const { data, status } = await axios.get('/users/me/tickets')
@@ -166,40 +132,6 @@ export default {
         }
 
         commit('setResults', data)
-
-        return Promise.resolve(data)
-      } catch (e) {
-        return Promise.reject(e)
-      }
-    },
-    async getOwnTests({ commit, getters }) {
-      try {
-        const { info: { id: userID } } = getters
-
-        const { data, status } = await axios.get(`/tests/own/${userID}`)
-
-        if (status !== 200) {
-          return Promise.reject()
-        }
-
-        commit('setTests', data)
-
-        return Promise.resolve(data)
-      } catch (e) {
-        return Promise.reject(e)
-      }
-    },
-    async getSubjects({ commit, getters }) {
-      try {
-        const { info: { id: userID } } = getters
-
-        const { data, status } = await axios.get(`/teachers/byUser/${userID}`)
-
-        if (status !== 200) {
-          return Promise.reject()
-        }
-
-        commit('setSubjects', data)
 
         return Promise.resolve(data)
       } catch (e) {

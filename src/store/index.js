@@ -18,6 +18,7 @@ import permissions from './modules/permissions'
 import tickets from './modules/tickets'
 import attempts from './modules/attempts'
 import results from './modules/results'
+import teacher from './modules/teacher'
 
 Vue.use(Vuex)
 
@@ -46,5 +47,6 @@ export default new Vuex.Store({
     specialities,
     groups,
     user,
+    teacher,
   },
 })

@@ -21,6 +21,8 @@
     </div>
 
     <div class="list">
+
+
       <app-tests-item
         v-for="(test, index) in tests"
         :key="index"
@@ -49,7 +51,7 @@ export default {
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
-      getOwnTests: 'user/getOwnTests',
+      getOwnTests: 'teacher/getOwnTests',
     }),
     async loadTests() {
       try {

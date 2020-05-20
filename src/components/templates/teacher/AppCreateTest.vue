@@ -34,6 +34,30 @@
             label="Предмет..."
           ></app-select>
 
+          <div class="duration">
+            <div class="label">Час на проходження</div>
+
+            <div class="inputs">
+              <app-input
+                placeholder="Годин"
+                type="number"
+                appearance="secondary"
+                class="field"
+                @change="val => duration.hours = val"
+                :value="duration.hours"
+              ></app-input>
+
+              <app-input
+                placeholder="Хвилин"
+                type="number"
+                appearance="secondary"
+                class="field"
+                @change="val => duration.minutes = val"
+                :value="duration.minutes"
+              ></app-input>
+            </div>
+          </div>
+
           <div class="btns">
             <app-button
               appearance="neutral"
@@ -75,7 +99,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getSubjects: 'user/getSubjects',
+      getSubjects: 'teacher/getSubjects',
       setAlert: 'alert/set',
       createTest: 'tests/create',
     }),
@@ -89,6 +113,10 @@ export default {
             subject,
             countOfTasks,
           },
+          duration: {
+            minutes = 0,
+            hours = 0,
+          },
         } = this
 
         if (!name || !subject || !countOfTasks) {
@@ -96,14 +124,30 @@ export default {
             title: 'Помилка',
             text: 'Усі поля повинні бути заповнені',
             isSuccess: false,
-            delay: 3000,
+            delay: 2000,
             show: true,
           })
+
+          return
         }
+
+        if (!minutes && !hours) {
+          this.setAlert({
+            title: 'Заповніть час проходження',
+            isSuccess: false,
+            delay: 1500,
+            show: true,
+          })
+
+          return
+        }
+
+        const duration = parseInt((hours * 60) + minutes, 10)
 
         const create = await this.createTest({
           name,
           countOfTasks,
+          duration,
           teacher: Number(subject),
         })
 
@@ -140,6 +184,10 @@ export default {
         name: '',
         subject: null,
         countOfTasks: 0,
+      },
+      duration: {
+        hours: '',
+        minutes: '',
       },
     }
   },
@@ -189,6 +237,21 @@ export default {
         color: #fff;
 
         padding: 10px 30px;
+      }
+    }
+
+    .duration {
+      margin: 10px 0;
+
+      .label {
+        color: var(--color-font-dark);
+      }
+
+      .inputs {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 10px;
       }
     }
 

@@ -17,12 +17,14 @@
 
     <div class="sections">
       <div class="tests">
-        <app-teacher-tests-list
+        <!-- <app-teacher-tests-list
           class="teacher-tests drop-shadow"
           title="Ваші тести"
           :tests="teacherTests.filter((_, index) => (index <= 2))"
           :totalCount="teacherTests.length"
-        ></app-teacher-tests-list>
+        ></app-teacher-tests-list> -->
+
+        tests list...
       </div>
 
       <app-student-messages
@@ -40,7 +42,7 @@ import { mapGetters, mapActions } from 'vuex'
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 import AppTeacherActivity from '@/components/templates/teacher/AppTeacherActivity.vue'
-import AppTeacherTestsList from '@/components/templates/teacher/AppTeacherTestsList.vue'
+// import AppTeacherTestsList from '@/components/templates/teacher/AppTeacherTestsList.vue'
 
 export default {
   name: 'AppStudent',
@@ -48,12 +50,12 @@ export default {
     AppStudentPersonalInfo,
     AppTeacherActivity,
     AppStudentMessages,
-    AppTeacherTestsList,
+    // AppTeacherTestsList,
   },
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
-      getTeacherTests: 'user/getOwnTests',
+      getTeacherTests: 'teacher/getOwnTests',
     }),
     setFullHistory(isOpened) {
       this.fullIsOpened = isOpened

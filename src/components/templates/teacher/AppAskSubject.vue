@@ -66,7 +66,7 @@ export default {
   computed: {
     ...mapGetters({
       alert: 'alert/alert',
-      subjects: 'user/subjects',
+      subjects: 'teacher/subjects',
     }),
   },
   data() {
@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTeacherSubjects: 'user/getSubjects',
+      getTeacherSubjects: 'teacher/getSubjects',
     }),
     async checkCurrentState() {
       const { show } = this

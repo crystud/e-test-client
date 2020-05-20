@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getOwnTests: 'user/getOwnTests',
+      getOwnTests: 'teacher/getOwnTests',
       setAlert: 'alert/set',
       createPermission: 'permissions/create',
     }),
