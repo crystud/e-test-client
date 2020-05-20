@@ -31,17 +31,22 @@ export default {
 
         return AsyncLoop(questions, async (questionInfo, next) => {
           const {
-            question: text,
+            question: answerText,
             correct = false,
             position = 0,
+            image: { data: image = '' } = {},
           } = questionInfo
 
-          const { data, status } = await axios.post('/answers', {
-            text,
+          const payload = {
+            answerText,
             correct,
-            position,
             task: test,
-          })
+          }
+
+          if (position) payload.position = position
+          if (image) payload.image = image
+
+          const { data, status } = await axios.post('/answers', payload)
 
           if (status === 201) {
             inserted.push(data)

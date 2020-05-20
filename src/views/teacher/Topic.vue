@@ -56,7 +56,7 @@
             v-for="(task, index) in questions"
             :key="index"
           >
-            <div class="col title">{{task.ask}}</div>
+            <div class="col title">{{task.question}}</div>
             <div class="col type">{{taskTypes[task.type] || '-'}}</div>
           </div>
         </div>
@@ -116,10 +116,10 @@ export default {
       showPreloader: false,
       showCreateQuestion: false,
       taskTypes: {
-        single_choice: 'Простий вибір',
-        multy_choice: 'Декілька варіантів',
-        text_input: 'Коротка відповідь',
-        numbering: 'Визначити послідовність',
+        1: 'Простий вибір',
+        2: 'Множинний вибір',
+        3: 'Коротка відповідь',
+        4: 'Послідовність',
       },
     }
   },

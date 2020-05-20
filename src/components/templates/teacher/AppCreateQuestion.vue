@@ -30,32 +30,60 @@
           </div>
         </div>
 
-        <app-input
-          appearance="secondary"
-          class="app-input"
-          placeholder="Текст запитання..."
-          @change="newTitle => title = newTitle"
-        ></app-input>
+        <div class="test-info">
+          <app-input
+            appearance="secondary"
+            class="app-input"
+            placeholder="Текст запитання..."
+            @change="newTitle => title = newTitle"
+          ></app-input>
+
+          <label
+            class="attach-image"
+            for="attachImage"
+          >
+            <input
+              type="file"
+              accept="image/jpg,image/png,image/gif,image/jpeg"
+              id="attachImage"
+              @change="setAttachedImage"
+            >
+
+            <font-awesome-icon
+              icon="image"
+              v-if="!attachedFile.name"
+            ></font-awesome-icon>
+
+            <div
+              class="attached-filename"
+              v-if="attachedFile.name"
+            >
+              {{attachedFile.name}}
+            </div>
+          </label>
+        </div>
       </div>
+
+      {{optionsState}}
 
       <div class="answers-list">
         <app-single-option
-          v-if="type === 'single_choice'"
+          v-if="type === 'SIMPLE_CHOICE'"
           @change="options => optionsState = options"
         ></app-single-option>
 
         <app-multi-option
-          v-if="type === 'multy_choice'"
+          v-if="type === 'MULTIPLE_CHOICE'"
           @change="options => optionsState = options"
         ></app-multi-option>
 
         <app-text-input-option
-          v-if="type === 'text_input'"
+          v-if="type === 'SHORT_ANSWER'"
           @change="options => optionsState = options"
         ></app-text-input-option>
 
         <app-dragging-option
-          v-if="type === 'numbering'"
+          v-if="type === 'NUMERICAL'"
           @change="options => optionsState = options"
         ></app-dragging-option>
       </div>
@@ -105,11 +133,12 @@ export default {
       optionsState: {
         questions: [],
       },
+      attachedFile: {},
       types: [
-        { label: 'Простий вибір', value: 'single_choice' },
-        { label: 'Множинний вибір', value: 'multy_choice' },
-        { label: 'Коротка відповідь', value: 'text_input' },
-        { label: 'Послідовність', value: 'numbering' },
+        { label: 'Простий вибір', value: 'SIMPLE_CHOICE' },
+        { label: 'Множинний вибір', value: 'MULTIPLE_CHOICE' },
+        { label: 'Коротка відповідь', value: 'SHORT_ANSWER' },
+        { label: 'Послідовність', value: 'NUMERICAL' },
       ],
     }
   },
@@ -124,18 +153,57 @@ export default {
       createQuestion: 'questions/create',
       addAnswers: 'questions/addAnswers',
     }),
+    setAttachedImage({ target: { files: [image] } }) {
+      const reader = new FileReader()
+
+      reader.onload = () => {
+        const { result } = reader
+
+        const data = result.split('base64,')[1]
+
+        this.attachedFile = {
+          name: image.name,
+          data,
+        }
+      }
+
+      reader.onerror = () => {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось обробити фото',
+          show: true,
+          isSuccess: false,
+        })
+      }
+
+      reader.readAsDataURL(image)
+    },
     async create() {
       const {
         optionsState: {
           questions,
-          ignoreCase = false,
+          isReadyToBeCreated: {
+            ready,
+            error,
+          },
         },
         topic: { id: topic },
-        title: ask,
+        title: question,
         type,
+        attachedFile: { data: image = '' },
       } = this
 
-      if (type === 'multy_choice' && questions.length <= 1) {
+      if (!ready) {
+        return this.setAlert({
+          title: 'Помилка',
+          text: error,
+          show: true,
+          delay: 1500,
+          isSuccess: false,
+        })
+      }
+
+      if (type === 'MULTIPLE_CHOICE' && questions.length <= 1) {
         return this.setAlert({
           title: 'Варіантів відповідей недостатньо',
           text: 'Створіть ще варіанти відповідей',
@@ -158,12 +226,15 @@ export default {
       try {
         this.showPreloader = true
 
-        const { id: test } = await this.createQuestion({
+        const payload = {
           topic,
-          ask,
-          ignoreCase,
+          question,
           type,
-        }) || {}
+        }
+
+        if (image) payload.image = image
+
+        const { id: test } = await this.createQuestion(payload) || {}
 
         await this.addAnswers({
           questions,
@@ -226,8 +297,46 @@ export default {
     .app-input,
     .app-select {
       background: var(--color-bg-main);
-      margin-bottom: 20px;
       border-radius: 10px;
+    }
+  }
+
+  .test-info {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-gap: 10px;
+    align-items: center;
+
+    margin: 20px 0 30px;
+
+    .attach-image {
+      padding: 20px;
+      border-radius: 10px;
+      background: var(--color-bg-main);
+      color: var(--color-font-dark);
+      height: 100%;
+      font-size: 1.2em;
+      cursor: pointer;
+
+      &, svg {
+        transform: scale(1);
+        transition: all .3s;
+      }
+
+      .attached-filename {
+        color: var(--color-accent-green);
+      }
+
+      &:hover {
+        svg {
+          transform: scale(1.3);
+          color: var(--color-accent-green);
+        }
+      }
+
+      input {
+        display: none;
+      }
     }
   }
 

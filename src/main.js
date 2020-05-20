@@ -47,6 +47,7 @@ import {
   faUserPlus,
   faRedo,
   faMapMarkerAlt,
+  faImage,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -105,6 +106,7 @@ library.add(faChevronRight)
 library.add(faUserPlus)
 library.add(faRedo)
 library.add(faMapMarkerAlt)
+library.add(faImage)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

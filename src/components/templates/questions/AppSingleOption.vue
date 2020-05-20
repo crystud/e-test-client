@@ -10,7 +10,7 @@
     <div class="list">
       <div
         class="option"
-        v-for="({ question, correct }, index) in options"
+        v-for="({ question, correct, image }, index) in options"
         :key="index"
       >
         <div class="option-title">Варіант відповіді №{{index+1}}</div>
@@ -19,23 +19,55 @@
           type="text"
           v-model="options[index].question"
           placeholder="Текст варіанта відповіді"
+          @keyup="emitCurrentState"
         >
 
         <div class="controls">
-          <button
-            class="is-right-switch"
-            :class="{
-              wrong: rightOption !== index,
-              right: rightOption === index,
-            }"
-            @click="
-              rightOption = index
-              emitCurrentState()
-            "
-          >
-            <span v-if="rightOption !== index">Невірна відповідь</span>
-            <span v-else>Вірна відповідь</span>
-          </button>
+          <div>
+            <button
+              class="is-right-switch"
+              :class="{
+                wrong: rightOption !== index,
+                right: rightOption === index,
+              }"
+              @click="
+                rightOption = index
+                emitCurrentState()
+              "
+            >
+              <span v-if="rightOption !== index">Невірна відповідь</span>
+              <span v-else>Вірна відповідь</span>
+            </button>
+
+            <label
+              :for="`attach-image-${index}`"
+              class="attach-image"
+            >
+              <input
+                type="file"
+                accept="image/png,image/jpg,image/gif"
+                :id="`attach-image-${index}`"
+                @change="({ target: { files: [ image ] } }) => {
+                  setImage({ image, index })
+                  emitCurrentState(image)
+                }"
+              >
+
+              <span
+                class="icon"
+                v-if="!image || !image.name"
+              >
+                <font-awesome-icon icon="image"></font-awesome-icon>
+              </span>
+
+              <span
+                class="filename"
+                v-if="image && image.name"
+              >
+                {{image.name}}
+              </span>
+            </label>
+          </div>
 
           <button
             class="remove"
@@ -44,7 +76,7 @@
               emitCurrentState()
             "
           >
-            <font-awesome-icon icon="times"></font-awesome-icon>
+            <font-awesome-icon icon="trash"></font-awesome-icon>
             <span>Вилучити варіант відповіді</span>
           </button>
         </div>
@@ -54,7 +86,7 @@
     <div class="add-option-form">
       <button
         title="Додати варіант відповіді"
-        @click="options.push({ question: '' })"
+        @click="options.push({ question: '', image: '' })"
       >
         <span>Створити ще один варіант відповіді</span>
         <font-awesome-icon icon="plus"></font-awesome-icon>
@@ -70,10 +102,10 @@ export default {
   data() {
     return {
       options: [
-        { question: '' },
-        { question: '' },
-        { question: '' },
-        { question: '' },
+        { question: '', image: '' },
+        { question: '', image: '' },
+        { question: '', image: '' },
+        { question: '', image: '' },
       ],
       optionValue: '',
       rightOption: null,
@@ -86,14 +118,50 @@ export default {
     emitCurrentState() {
       const { options, rightOption } = this
 
-      const state = {}
+      const ready = rightOption || rightOption !== null
 
-      state.questions = options.map((question, index) => ({
+      const state = {
+        isReadyToBeCreated: {
+          ready,
+          error: !ready ? 'Оберіть правильну відповідь' : undefined,
+        },
+      }
+
+      state.questions = options.map(({ question, image }, index) => ({
         question,
+        image,
         correct: index === rightOption,
       }))
 
       this.$emit('change', state)
+    },
+    setImage({ image, index }) {
+      const reader = new FileReader()
+
+      reader.onload = () => {
+        const { result = '' } = reader
+
+        const data = result.split('base64,')[1]
+
+        this.options[index].image = {
+          name: image.name,
+          data,
+        }
+
+        this.emitCurrentState()
+      }
+
+      reader.onerror = () => {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось обробити фото',
+          delay: 1500,
+          show: true,
+          isSuccess: false,
+        })
+      }
+
+      reader.readAsDataURL(image)
     },
     addOption() {
       const { optionValue } = this
@@ -125,6 +193,9 @@ export default {
       return false
     },
   },
+  created() {
+    this.emitCurrentState()
+  },
 }
 </script>
 
@@ -154,14 +225,43 @@ export default {
       .option-title {
         padding: 20px;
         font-size: 1.2em;
-
       }
 
       .controls {
         padding: 20px;
 
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr auto;
+
+        div {
+          display: flex;
+          align-items: center;
+        }
+
+        .attach-image {
+          background: var(--color-bg-dark);
+          color: var(--color-font-dark);
+          padding: 15px;
+          margin: 0 10px;
+          border-radius: 10px;
+          cursor: pointer;
+
+          .icon {
+            font-size: 1.4em;
+          }
+
+          .filename {
+            color: var(--color-accent-green);
+          }
+
+          &:hover {
+            color: var(--color-accent-green);
+          }
+
+          input {
+            display: none;
+          }
+        }
       }
 
       input {
