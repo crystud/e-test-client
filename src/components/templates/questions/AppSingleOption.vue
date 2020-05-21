@@ -10,7 +10,7 @@
     <div class="list">
       <div
         class="option"
-        v-for="({ question, correct, image }, index) in options"
+        v-for="({ question, image }, index) in options"
         :key="index"
       >
         <div class="option-title">Варіант відповіді №{{index+1}}</div>
@@ -107,7 +107,6 @@ export default {
         { question: '', image: '' },
         { question: '', image: '' },
       ],
-      optionValue: '',
       rightOption: null,
     }
   },
@@ -162,35 +161,6 @@ export default {
       }
 
       reader.readAsDataURL(image)
-    },
-    addOption() {
-      const { optionValue } = this
-
-      if (!optionValue) {
-        return this.setAlert({
-          title: 'Заповніть варіант відповіді',
-          text: '',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
-      }
-
-      if (this.options.includes(optionValue)) {
-        return this.setAlert({
-          title: 'Такий варіант відповіді вже існує',
-          text: '',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
-      }
-
-      this.options.push(optionValue)
-
-      this.optionValue = ''
-
-      return false
     },
   },
   created() {
