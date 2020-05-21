@@ -185,13 +185,31 @@ export default {
           isReadyToBeCreated: {
             ready,
             error,
-          },
+          } = {},
         },
         topic: { id: topic },
         title: question,
         type,
         attachedFile: { data: image = '' },
       } = this
+
+      if (!type) {
+        return this.setAlert({
+          title: 'Оберіть тип, та задайте варіанти відповіді',
+          show: true,
+          delay: 1500,
+          isSuccess: false,
+        })
+      }
+
+      if (!question) {
+        return this.setAlert({
+          title: 'Вкажіть текст запитання',
+          show: true,
+          delay: 1500,
+          isSuccess: false,
+        })
+      }
 
       if (!ready) {
         return this.setAlert({
@@ -312,26 +330,14 @@ export default {
     .attach-image {
       padding: 20px;
       border-radius: 10px;
-      background: var(--color-bg-main);
       color: var(--color-font-dark);
       height: 100%;
-      font-size: 1.2em;
+      font-size: 1.3em;
       cursor: pointer;
 
-      &, svg {
-        transform: scale(1);
-        transition: all .3s;
-      }
-
+      &:hover,
       .attached-filename {
         color: var(--color-accent-green);
-      }
-
-      &:hover {
-        svg {
-          transform: scale(1.3);
-          color: var(--color-accent-green);
-        }
       }
 
       input {

@@ -3,68 +3,82 @@
     <div class="title">Відповідь: {{optionValue}}</div>
 
     <div class="add-option-form">
-      <input
+      <app-input
         type="text"
-        placeholder="Текст варіанту відповіді..."
-        v-model="optionValue"
-        @change="emitCurrentState"
-      >
+        placeholder="Текст короткої відповіді..."
+        appearance="secondary"
+        class="app-input"
+        @change="value => {
+          answer = value
+          emitCurrentState()
+        }"
+      ></app-input>
 
-      <div
-        class="ignore-case"
-        @click="ignoreCase = !ignoreCase"
+      <label
+        for="attach-image"
+        class="attach-image"
       >
-        Ігнорувати регістр:
-        <span
-          :class="{
-            'ignore': ignoreCase,
+        <input
+          type="file"
+          accept="image/png,image/jpg,image/gif"
+          id="attach-image"
+          @change="({ target: { files: [ image ] } }) => {
+            setImage(image)
+            emitCurrentState(image)
           }"
-        >{{ignoreCase ? 'Так' : 'Ні'}}</span>
-      </div>
+        >
+
+        <span
+          class="icon"
+          v-if="!image || !image.name"
+        >
+          <font-awesome-icon icon="image"></font-awesome-icon>
+        </span>
+
+        <span
+          class="filename"
+          v-if="image && image.name"
+        >
+          {{image.name}}
+        </span>
+      </label>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import AppInput from '@/components/ui/AppInput.vue'
 
 export default {
+  components: {
+    AppInput,
+  },
   data() {
     return {
-      optionValue: '',
-      ignoreCase: true,
+      answer: '',
+      image: {},
     }
   },
   methods: {
-    ...mapActions({
-      setAlert: 'alert/set',
-    }),
     emitCurrentState() {
-      const {
-        optionValue: question,
-        ignoreCase,
-      } = this
+      const { answer: question } = this
+
+      let ready = true
+      let error
+
+      if (question.length <= 0) {
+        ready = false
+        error = 'Довжина відповіді мін. 1 символ'
+      }
 
       this.$emit('change', {
         questions: [{ question, correct: true }],
-        ignoreCase,
+        isReadyToBeCreated: { ready, error },
       })
     },
-    addOption() {
-      const { optionValue } = this
-
-      if (!optionValue) {
-        return this.setAlert({
-          title: 'Заповніть варіант відповіді',
-          text: '',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
-      }
-
-      return false
-    },
+  },
+  created() {
+    this.emitCurrentState()
   },
 }
 </script>
@@ -78,37 +92,37 @@ export default {
   .add-option-form {
     margin-top: 10px;
 
-    input {
-      width: 100%;
-      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    grid-gap: 10px;
 
-      padding: 15px;
-      font-size: 1em;
+    .app-input {
       background: var(--color-bg-main);
-      border: 0;
-      border-radius: 10px;
-
-      color: var(--color-font-main);
-
-      &::placeholder {
-        color: var(--color-font-dark);
-      }
+      padding: 5px;
+      font-size: 1.1em;
     }
-  }
 
-  .ignore-case {
-    margin: 20px 0;
-    font-size: 1.2em;
-    user-select: none;
-    cursor: pointer;
+    .attach-image {
+      color: var(--color-font-dark);
+      padding: 15px;
+      border-radius: 10px;
+      cursor: pointer;
 
-    color: var(--color-font-dark);
+      .icon {
+        font-size: 1.3em;
+      }
 
-    span {
-      color: var(--color-accent-red);
-
-      &.ignore {
+      .filename {
         color: var(--color-accent-green);
+      }
+
+      &:hover {
+        color: var(--color-accent-green);
+      }
+
+      input {
+        display: none;
       }
     }
   }

@@ -111,13 +111,23 @@ export default {
     emitCurrentState() {
       const { options } = this
 
-      const ready = options.length > 1
+      let ready = true
+      let error
+
+      if (options.length <= 1) {
+        ready = false
+        error = 'Мінімум 2 варіанта відповіді'
+      }
+
+      const optionsAreNotEmpty = options.filter(({ question }) => question.length !== 0)
+
+      if (optionsAreNotEmpty.length !== options.length) {
+        ready = false
+        error = 'Заповніть всі варіанти відповіді'
+      }
 
       const state = {
-        isReadyToBeCreated: {
-          ready,
-          error: !ready ? 'Мінімум 2 варіанта відповіді' : undefined,
-        },
+        isReadyToBeCreated: { ready, error },
       }
 
       state.questions = options.map(({ question, correct, image }) => ({

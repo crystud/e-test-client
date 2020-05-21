@@ -117,13 +117,23 @@ export default {
     emitCurrentState() {
       const { options, rightOption } = this
 
-      const ready = rightOption || rightOption !== null
+      let ready = true
+      let error
+
+      if (rightOption === null || rightOption > options.length - 1) {
+        ready = false
+        error = 'Оберіть правильну відповідь'
+      }
+
+      const optionsAreNotEmpty = options.filter(({ question }) => question.length !== 0)
+
+      if (optionsAreNotEmpty.length !== options.length) {
+        ready = false
+        error = 'Заповніть всі варіанти відповіді'
+      }
 
       const state = {
-        isReadyToBeCreated: {
-          ready,
-          error: !ready ? 'Оберіть правильну відповідь' : undefined,
-        },
+        isReadyToBeCreated: { ready, error },
       }
 
       state.questions = options.map(({ question, image }, index) => ({
