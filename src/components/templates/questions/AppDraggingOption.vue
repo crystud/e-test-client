@@ -129,7 +129,6 @@ export default {
     .option {
       background: var(--color-bg-main);
       border-radius: 5px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
       margin-bottom: 10px;
 
       display: grid;
@@ -186,7 +185,6 @@ export default {
 
     overflow: hidden;
     border-radius: 10px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
 
     input, button {
       padding: 15px;

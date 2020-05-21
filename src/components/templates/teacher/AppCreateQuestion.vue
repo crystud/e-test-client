@@ -332,8 +332,11 @@ export default {
       border-radius: 10px;
       color: var(--color-font-dark);
       height: 100%;
-      font-size: 1.3em;
       cursor: pointer;
+
+      svg {
+        font-size: 1.3em;
+      }
 
       &:hover,
       .attached-filename {

@@ -1,6 +1,6 @@
 <template>
   <div class="app-single-option">
-    <div class="title">Відповідь: {{optionValue}}</div>
+    <div class="title">Відповідь: {{answer}}</div>
 
     <div class="add-option-form">
       <app-input
@@ -61,7 +61,10 @@ export default {
   },
   methods: {
     emitCurrentState() {
-      const { answer: question } = this
+      const {
+        answer: question,
+        image,
+      } = this
 
       let ready = true
       let error
@@ -72,9 +75,41 @@ export default {
       }
 
       this.$emit('change', {
-        questions: [{ question, correct: true }],
+        questions: [{
+          question,
+          correct: true,
+          image,
+        }],
         isReadyToBeCreated: { ready, error },
       })
+    },
+    setImage(image) {
+      const reader = new FileReader()
+
+      reader.onload = () => {
+        const { result = '' } = reader
+
+        const data = result.split('base64,')[1]
+
+        this.image = {
+          name: image.name,
+          data,
+        }
+
+        this.emitCurrentState()
+      }
+
+      reader.onerror = () => {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось обробити фото',
+          delay: 1500,
+          show: true,
+          isSuccess: false,
+        })
+      }
+
+      reader.readAsDataURL(image)
     },
   },
   created() {
