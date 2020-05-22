@@ -140,7 +140,7 @@
         </div>
 
         <button
-          v-show="(user.roles || []).includes('teacher')"
+          v-if="(user.roles || []).includes('teacher')"
           @click="showCreateTest = true"
           class="create-test"
         >Створити тест</button>

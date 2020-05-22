@@ -1,5 +1,8 @@
 <template>
-  <app-card class="subject">
+  <app-card
+    class="subject"
+    @click="$emit('click')"
+  >
     <div class="title">{{name}}</div>
 
     <app-data-list

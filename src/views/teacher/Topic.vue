@@ -47,6 +47,7 @@
           v-if="questions.length && !showCreateQuestion"
         >
           <div class="row header-row">
+            <div class="col">ID</div>
             <div class="col">Запитання</div>
             <div class="col">Тип</div>
           </div>
@@ -56,6 +57,7 @@
             v-for="(task, index) in questions"
             :key="index"
           >
+            <div class="col title">{{task.id}}</div>
             <div class="col title">{{task.question}}</div>
             <div class="col type">{{taskTypes[task.type] || '-'}}</div>
           </div>
@@ -205,7 +207,7 @@ export default {
     .table {
       .row {
         display: grid;
-        grid-template-columns: 1fr 200px;
+        grid-template-columns: 50px 1fr 200px;
 
         margin-bottom: 15px;
 
