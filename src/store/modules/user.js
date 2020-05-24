@@ -1,4 +1,3 @@
-import AsyncLoop from 'node-async-loop'
 import jwtDecode from 'jwt-decode'
 
 import axios from '../../tools/axios'
@@ -63,21 +62,6 @@ export default {
   },
 
   actions: {
-    async fetchSelf({ commit }) {
-      try {
-        const { data, status } = await axios.get('/users/me')
-
-        if (status !== 200) {
-          return Promise.reject()
-        }
-
-        commit('setSelf', data)
-
-        return Promise.resolve(data)
-      } catch (e) {
-        return Promise.reject(e)
-      }
-    },
     async getUser({ commit }, userID) {
       try {
         const { data, status } = await axios.get(`/users/${userID}`)
@@ -137,31 +121,6 @@ export default {
       } catch (e) {
         return Promise.reject(e)
       }
-    },
-    async getUsers(_, userIDs) {
-      return new Promise((resolve, reject) => {
-        try {
-          if (userIDs.length === 0) {
-            return Promise.resolve([])
-          }
-
-          const users = []
-
-          return AsyncLoop(userIDs, async (userID, next) => {
-            const { data, status } = await axios.get(`/users/${userID}`)
-
-            if (status !== 200) {
-              return reject()
-            }
-
-            users.push(data)
-
-            return next()
-          }, () => resolve(users))
-        } catch (e) {
-          return reject(e)
-        }
-      })
     },
     async search({ commit }, searchData) {
       try {

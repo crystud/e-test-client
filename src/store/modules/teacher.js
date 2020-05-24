@@ -65,5 +65,18 @@ export default {
         return Promise.reject(e)
       }
     },
+    async create(_, payload) {
+      try {
+        const { data, status } = await axios.post('/teachers', payload)
+
+        if (status !== 201) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
   },
 }

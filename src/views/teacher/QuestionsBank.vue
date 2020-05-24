@@ -19,7 +19,14 @@
       ></app-create-topic>
 
       <div class="header">
-        <div class="title">Теми із запитаннями до предмету "{{ subject.name }}"</div>
+        <div>
+          <div class="title">Теми із запитаннями до предмету "{{ subject.name }}"</div>
+
+          <div
+            class="change"
+            @click="subject = {}"
+          >Змінити предмет</div>
+        </div>
 
         <app-button
           appearance="primary"
@@ -104,6 +111,16 @@ export default {
     .title {
       font-size: 1.5em;
       font-weight: 400;
+    }
+
+    .change {
+      margin-top: 10px;
+      color: var(--color-font-dark);
+      cursor: pointer;
+
+      &:hover {
+        color: var(--color-font-main);
+      }
     }
 
     @media screen and (max-width: 500px) {

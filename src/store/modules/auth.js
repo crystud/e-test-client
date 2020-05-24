@@ -86,6 +86,13 @@ export default {
       commit('setRefreshToken', refresh)
       commit('setAuthorized', true)
 
+      const { user, roles } = jwtDecode(access)
+
+      commit('user/setInfo', {
+        ...user,
+        roles,
+      }, { root: true })
+
       return Promise.resolve()
     },
   },

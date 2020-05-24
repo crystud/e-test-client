@@ -27,12 +27,21 @@
           ></app-input>
 
           <app-select
+            v-if="!subject"
             :values="subjects.map(({ subject: { name }, id }) => ({ label: name, value: id }))"
             class="app-select"
             :sideBorder="true"
             @change="({ value }) => test.subject = value"
             label="Предмет..."
           ></app-select>
+
+          <div
+            v-if="subject && subject.subject"
+            class="selected-subject"
+          >
+            <div class="label">Предмет</div>
+            <div class="name">{{subject.subject.name}}</div>
+          </div>
 
           <div class="duration">
             <div class="label">Час на проходження</div>
@@ -117,9 +126,10 @@ export default {
             minutes = 0,
             hours = 0,
           },
+          subject: { id: preSelectedTeacher = null } = {},
         } = this
 
-        if (!name || !subject || !countOfTasks) {
+        if (!name || (!subject && !preSelectedTeacher) || !countOfTasks) {
           this.setAlert({
             title: 'Помилка',
             text: 'Усі поля повинні бути заповнені',
@@ -148,7 +158,7 @@ export default {
           name,
           countOfTasks,
           duration,
-          teacher: Number(subject),
+          teacher: preSelectedTeacher || Number(subject),
         })
 
         if (create.id) {
@@ -162,7 +172,7 @@ export default {
             show: true,
           })
 
-          this.$emit('created')
+          this.$emit('created', create)
         }
       } catch (e) {
         this.setAlert({
@@ -196,6 +206,11 @@ export default {
       type: Boolean,
       required: true,
       default: () => false,
+    },
+    subject: {
+      type: Object,
+      default: () => {},
+      required: false,
     },
   },
   async created() {
@@ -240,18 +255,27 @@ export default {
       }
     }
 
+    .label {
+      color: var(--color-font-dark);
+    }
+
     .duration {
       margin: 10px 0;
-
-      .label {
-        color: var(--color-font-dark);
-      }
 
       .inputs {
         margin-top: 10px;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         grid-gap: 10px;
+      }
+    }
+
+    .selected-subject {
+      margin: 20px 0;
+
+      .name {
+        margin-top: 5px;
+        font-size: 1.1em;
       }
     }
 

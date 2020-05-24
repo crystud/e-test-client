@@ -6,6 +6,7 @@
       'margin-top': `${marginTop}px`,
     }"
     ref="wrap"
+    @click="$emit('click')"
   >
     <slot></slot>
   </div>
@@ -41,6 +42,9 @@ export default {
       type: Boolean,
       required: true,
     },
+  },
+  created() {
+    window.addEventListener('resize', () => this.checkState())
   },
 }
 </script>

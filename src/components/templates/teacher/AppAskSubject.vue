@@ -117,6 +117,7 @@ export default {
 
     .text {
       font-size: 1.3em;
+      font-weight: 400;
     }
 
     .refresh {
@@ -155,7 +156,7 @@ export default {
       }
 
       .name {
-        font-size: 1.3em;
+        font-size: 1.1em;
         font-weight: 100;
       }
 

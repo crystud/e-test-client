@@ -27,7 +27,7 @@
 
     <div class="header">
       <div class="title">
-        <div class="text">{Назва теста}</div>
+        <div class="text">{{test.name}}</div>
       </div>
 
       <app-button
@@ -39,6 +39,8 @@
         "
       >Додати питання до теста</app-button>
     </div>
+
+    {{test}}
 
     <div class="questions">
       <div class="title">Список питань</div>
@@ -88,9 +90,14 @@ export default {
     AppAskTopic,
     AppAskQuestions,
   },
+  computed: {
+    questions() {
+      return (this.test.tasks || [])
+    },
+  },
   methods: {
     ...mapActions({
-      loadQuestions: 'questions/getByIDs',
+      getTest: 'tests/getTestByID',
       setAlert: 'alert/set',
     }),
     cancelQuestionAdding() {
@@ -106,7 +113,7 @@ export default {
       showPreloader: false,
       addQuestionSubject: {},
       addQuestionTopic: {},
-      questions: [],
+      test: {},
       taskTypes: {
         single_choice: 'Один варіант',
         multy_choice: 'Декілька варіантів',
@@ -116,8 +123,20 @@ export default {
     }
   },
   async created() {
-    // const { $route: { params: { testID } } } = this
-    // this.questions = await this.loadQuestions()
+    const { $route: { params: { id } } } = this
+
+    try {
+      this.showPreloader = true
+      this.test = await this.getTest(id)
+    } catch (e) {
+      this.setAlert({
+        title: 'Помилка',
+        text: 'Не вдалось отримати дані про тест...',
+        isSuccess: false,
+      })
+    } finally {
+      this.showPreloader = false
+    }
   },
 }
 </script>
