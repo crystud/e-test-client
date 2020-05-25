@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 
 import theme from './modules/appearance'
 import auth from './modules/auth'
-import college from './modules/college'
 import subjects from './modules/subjects'
 import specialities from './modules/specialities'
 import groups from './modules/groups'
@@ -42,7 +41,6 @@ export default new Vuex.Store({
     tests,
     theme,
     auth,
-    college,
     subjects,
     specialities,
     groups,

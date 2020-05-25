@@ -6,49 +6,19 @@
       :show="show && !showPreloader && !alert.show"
       :noPaddings="true"
     >
-      <div class="title">Оберіть тему</div>
+      <div class="header">
+        <div class="title">Оберіть тему</div>
+
+        <button class="refresh">
+          <font-awesome-icon icon="redo"></font-awesome-icon>
+        </button>
+      </div>
 
       <div class="content">
-        <div class="search-bar">
-          <input
-            type="text"
-            placeholder="Пошук тем..."
-            v-model="search.words"
-          >
-
-          <button
-            @click="search.confirmed = search.confirmed ? 0 : 1"
-            class="type"
-            :class="{ confirmed: search.confirmed }"
-          >
-            <font-awesome-icon
-              icon="check"
-              class="icon"
-            ></font-awesome-icon>
-          </button>
-
-          <button
-            @click="searchTopics"
-            class="search"
-          >
-            <font-awesome-icon icon="search"></font-awesome-icon>
-          </button>
-        </div>
-
-        <div
-          class="search-type"
-          :class="{ confirmed: search.confirmed }"
-        >Пошук верифікованих тем: <span>{{search.confirmed ? 'Так' : 'Ні'}}</span></div>
-
         <div
           class="no-topics"
-          v-if="search.searched && !topics.length"
-        >Тем не знайдено</div>
-
-        <div
-          class="no-topics"
-          v-if="!search.searched"
-        >Шукайте теми через пошук</div>
+          v-if="!topics.length"
+        >Тем в предметі немає...</div>
 
         <div class="list">
           <div
@@ -58,16 +28,6 @@
             @click="$emit('selected', topic)"
           >
             <div class="name">{{topic.name}}</div>
-
-            <div
-              class="is-verified"
-              :class="{
-                'verified': topic.confirmed,
-                'not-verified': !topic.confirmed,
-              }"
-            >
-              {{topic.confirmed ? 'Верифікована тема' : 'Неверифікована тема'}}
-            </div>
           </div>
         </div>
       </div>
@@ -83,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
@@ -107,13 +67,18 @@ export default {
   },
   computed: {
     ...mapGetters({
-      topics: 'topics/searchResults',
       alert: 'alert/alert',
     }),
+    topics() {
+      const { subject: { topics } = {} } = this
+
+      return topics || []
+    },
   },
   data() {
     return {
       showPreloader: false,
+      subject: {},
       search: {
         words: '',
         confirmed: 1,
@@ -123,37 +88,27 @@ export default {
   },
   watch: {
     show() {
-      this.setSearchResults([])
+      if (this.show) {
+        this.loadSubject()
+      }
     },
   },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
-      searchTopicsAction: 'topics/search',
+      getSubject: 'subjects/getByID',
     }),
-    ...mapMutations({
-      setSearchResults: 'topics/setSearchResults',
-    }),
-    async searchTopics() {
-      const {
-        search: { confirmed },
-        search: { words: name },
-        subjectID: subject,
-      } = this
-
+    async loadSubject() {
       try {
-        this.search.words = name
+        const { subjectID } = this
+
         this.showPreloader = true
 
-        await this.searchTopicsAction({
-          name,
-          confirmed,
-          subject,
-        })
+        this.subject = await this.getSubject(subjectID)
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
-          text: 'Нам не вдалось здійснити пошук... Спробуйте пізніше',
+          text: 'Нам не вдалось отримати список тем',
           isSuccess: false,
           show: true,
           delay: 1000,
@@ -169,76 +124,39 @@ export default {
 
 <style lang="less" scoped>
 .app-ask-subject {
-  .title, .content {
+  .header, .content {
     width: 100vw;
     max-width: 500px;
   }
 
-  .title {
-    font-size: 1.3em;
-    border-bottom: 1px solid var(--color-bg-main);
-    padding: 20px;
-  }
-
-  .search-type {
-    margin: 15px;
-    color: var(--color-font-dark);
-
-    span {
-      color: var(--color-accent-red);
-    }
-
-    &.confirmed {
-      span {
-        color: var(--color-accent-green);
-      }
-    }
-  }
-
-  .search-bar {
-    width: 100%;
+  .header {
     display: grid;
-    grid-template-columns: 1fr 70px 70px;
+    grid-template-columns: 1fr auto;
+    grid-gap: 20px;
+    align-items: center;
+
     border-bottom: 1px solid var(--color-bg-main);
+    padding: 15px;
 
-    input {
-      width: 100%;
-      height: 100%;
-
-      color: var(--color-font-main);
-
-      &::placeholder {
-        color: var(--color-font-dark);
-      }
+    .title {
+      font-size: 1.3em;
     }
 
-    input,
     button {
-      padding: 15px;
-      font-size: 1em;
-      border: 0;
       background: transparent;
-    }
-
-    button {
+      color: var(--color-font-dark);
+      font-size: 1em;
+      padding: 10px;
+      border: 0;
       cursor: pointer;
-    }
 
-    .type {
-      color: var(--color-accent-red);
+      transform: scale(1);
+      transition: all .15s;
 
-      &.confirmed {
-        color: var(--color-accent-green);
+      &:hover {
+        color: var(--color-font-main);
+        transform: scale(1.3);
       }
-    }
-
-    .search {
-      color: var(--color-font-main);
-    }
-
-    .search,
-    .type {
-      border-left: 1px solid var(--color-bg-main);
     }
   }
 
@@ -264,7 +182,6 @@ export default {
 
       .name {
         font-size: 1.3em;
-        margin-bottom: 5px;
       }
 
       .is-verified {

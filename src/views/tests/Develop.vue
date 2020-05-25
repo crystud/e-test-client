@@ -14,14 +14,21 @@
         showAddQuestion = false
       }"
       :subjectID="addQuestionSubject.id || 0"
+      @cancel="
+        addQuestionSubject = {}
+        showAddQuestion = false
+      "
     ></app-ask-topic>
 
     <app-ask-questions
       :show="Boolean(addQuestionSubject.id && addQuestionTopic.id)"
       :topic="addQuestionTopic"
-      :levelID="editingLevel.id || 0"
+      :testID="test.id"
       @cancel="cancelQuestionAdding"
-      @added="cancelQuestionAdding"
+      @added="
+        cancelQuestionAdding()
+        loadTest()
+      "
       :alreadyAdded="questions.map(({ id }) => id)"
     ></app-ask-questions>
 
@@ -40,8 +47,6 @@
       >Додати питання до теста</app-button>
     </div>
 
-    {{test}}
-
     <div class="questions">
       <div class="title">Список питань</div>
 
@@ -55,17 +60,19 @@
         v-if="questions.length"
       >
         <div class="row header-row">
+          <div class="id">ID</div>
           <div class="question">Запитання</div>
           <div class="type">Тип</div>
         </div>
 
         <div
-          v-for="(question, index) in questions"
+          v-for="({ id, question, type }, index) in questions"
           :key="index"
           class="row"
         >
-          <div class="question">{{question.ask}}</div>
-          <div class="type">{{taskTypes[question.type]}}</div>
+          <div class="id">#{{id}}</div>
+          <div class="question">{{question}}</div>
+          <div class="type">{{taskTypes[type]}}</div>
         </div>
       </div>
     </div>
@@ -105,6 +112,22 @@ export default {
       this.addQuestionTopic = {}
       this.showAddQuestion = false
     },
+    async loadTest() {
+      const { $route: { params: { id } } } = this
+
+      try {
+        this.showPreloader = true
+        this.test = await this.getTest(id)
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось отримати дані про тест...',
+          isSuccess: false,
+        })
+      } finally {
+        this.showPreloader = false
+      }
+    },
   },
   data() {
     return {
@@ -115,28 +138,15 @@ export default {
       addQuestionTopic: {},
       test: {},
       taskTypes: {
-        single_choice: 'Один варіант',
-        multy_choice: 'Декілька варіантів',
-        text_input: 'Ввести значення',
-        numbering: 'Визначити послідовність',
+        SIMPLE_CHOICE: 'Простий вибір',
+        MULTIPLE_CHOICE: 'Множинний вибір',
+        SHORT_ANSWER: 'Коротка відповідь',
+        NUMBERING: 'Послідовність',
       },
     }
   },
-  async created() {
-    const { $route: { params: { id } } } = this
-
-    try {
-      this.showPreloader = true
-      this.test = await this.getTest(id)
-    } catch (e) {
-      this.setAlert({
-        title: 'Помилка',
-        text: 'Не вдалось отримати дані про тест...',
-        isSuccess: false,
-      })
-    } finally {
-      this.showPreloader = false
-    }
+  created() {
+    this.loadTest()
   },
 }
 </script>
@@ -195,7 +205,8 @@ export default {
         }
 
         display: grid;
-        grid-template-columns: 1fr 150px;
+        grid-template-columns: 70px 1fr 150px;
+        grid-gap: 30px;
         margin-bottom: 20px;
       }
     }

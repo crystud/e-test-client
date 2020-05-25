@@ -11,21 +11,21 @@
       <div class="content">
         <div class="list">
           <div
-            v-for="(question, index) in questions"
+            v-for="({ question, type, id }, index) in questions"
             :key="index"
             class="question"
             :class="{
-              selected: selected.includes(question.id) || alreadyAdded.includes(question.id),
+              selected: selected.includes(id) || alreadyAdded.includes(id),
             }"
-            @click="toggleSelected(question.id)"
+            @click="toggleSelected(id)"
           >
             <div class="is-selected">
               <font-awesome-icon icon="check"></font-awesome-icon>
             </div>
 
             <div>
-              <div class="ask">{{question.ask}}</div>
-              <div class="type">{{taskTypes[question.type]}}</div>
+              <div class="ask">{{question}}</div>
+              <div class="type">{{taskTypes[type]}}</div>
             </div>
           </div>
         </div>
@@ -60,10 +60,14 @@ export default {
     AppPreloader,
     AppModalWindow,
   },
+  computed: {
+    questions() {
+      return this.topicInfo.tasks || []
+    },
+  },
   methods: {
     ...mapActions({
       loadTopic: 'topics/getByID',
-      loadQuestions: 'questions/getByIDs',
       addQuestionsToTest: 'questions/addToTest',
       setAlert: 'alert/set',
     }),
@@ -83,7 +87,7 @@ export default {
       return this.selected.push(questionID)
     },
     async addQuestions() {
-      const { selected, levelID: level } = this
+      const { selected, testID } = this
 
       if (!selected.length) {
         this.setAlert({
@@ -101,7 +105,7 @@ export default {
 
         await this.addQuestionsToTest({
           questionsIDs: selected,
-          level,
+          testID,
         })
 
         this.setAlert({
@@ -129,13 +133,12 @@ export default {
     return {
       showPreloader: false,
       topicInfo: {},
-      questions: [],
       selected: [],
       taskTypes: {
-        single_choice: 'Один варіант',
-        multy_choice: 'Декілька варіантів',
-        text_input: 'Ввести значення',
-        numbering: 'Визначити послідовність',
+        0: 'Простий вибір',
+        1: 'Множинний вибір',
+        2: 'Коротка відповідь',
+        3: 'Послідовність',
       },
     }
   },
@@ -143,17 +146,14 @@ export default {
     show: {
       type: Boolean,
       required: true,
-      default: () => false,
+    },
+    testID: {
+      type: Number,
+      required: true,
     },
     topic: {
       type: Object,
       required: true,
-      default: () => {},
-    },
-    levelID: {
-      type: Number,
-      required: true,
-      default: () => 0,
     },
     alreadyAdded: {
       type: Array,
@@ -172,7 +172,6 @@ export default {
         this.showPreloader = true
 
         this.topicInfo = await this.loadTopic(id)
-        this.questions = await this.loadQuestions(this.topicInfo.tasks)
 
         this.showPreloader = false
       }
