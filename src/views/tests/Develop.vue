@@ -3,8 +3,9 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-ask-subject
-      :show="showAddQuestion"
+      :show="showAddQuestion && !addQuestionSubject.id"
       @selected="subject => addQuestionSubject = subject"
+      @close="showAddQuestion = false"
     ></app-ask-subject>
 
     <app-ask-topic
@@ -23,7 +24,7 @@
     <app-ask-questions
       :show="Boolean(addQuestionSubject.id && addQuestionTopic.id)"
       :topic="addQuestionTopic"
-      :testID="test.id"
+      :testID="test.id || 0"
       @cancel="cancelQuestionAdding"
       @added="
         cancelQuestionAdding()
@@ -34,7 +35,7 @@
 
     <div class="header">
       <div class="title">
-        <div class="text">{{test.name}}</div>
+        <div class="text">Тест: {{test.name}}</div>
       </div>
 
       <app-button
@@ -46,6 +47,12 @@
         "
       >Додати питання до теста</app-button>
     </div>
+
+    <app-question-detailed-info
+      :questionID="questionShowInfoID"
+      class="question-full-info"
+      @close="questionShowInfoID = 0"
+    ></app-question-detailed-info>
 
     <div class="questions">
       <div class="title">Список питань</div>
@@ -68,7 +75,11 @@
         <div
           v-for="({ id, question, type }, index) in questions"
           :key="index"
-          class="row"
+          class="row question-row"
+          :class="{
+            detailed: id === questionShowInfoID,
+          }"
+          @click="questionShowInfoID = id"
         >
           <div class="id">#{{id}}</div>
           <div class="question">{{question}}</div>
@@ -85,6 +96,7 @@ import { mapActions } from 'vuex'
 import AppAskSubject from '@/components/templates/teacher/AppAskSubject.vue'
 import AppAskTopic from '@/components/templates/teacher/AppAskTopic.vue'
 import AppAskQuestions from '@/components/templates/teacher/AppAskQuestions.vue'
+import AppQuestionDetailedInfo from '@/components/templates/teacher/AppQuestionDetailedInfo.vue'
 
 import AppButton from '@/components/ui/AppButton.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
@@ -96,6 +108,7 @@ export default {
     AppAskSubject,
     AppAskTopic,
     AppAskQuestions,
+    AppQuestionDetailedInfo,
   },
   computed: {
     questions() {
@@ -137,6 +150,7 @@ export default {
       addQuestionSubject: {},
       addQuestionTopic: {},
       test: {},
+      questionShowInfoID: 0,
       taskTypes: {
         SIMPLE_CHOICE: 'Простий вибір',
         MULTIPLE_CHOICE: 'Множинний вибір',
@@ -176,11 +190,15 @@ export default {
     }
   }
 
+  .question-full-info {
+    margin: 20px 0;
+  }
+
   .questions {
     margin-top: 20px;
 
     background: var(--color-bg-dark);
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, .3);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, .2);
     border-radius: 10px;
 
     padding: 30px;
@@ -204,10 +222,34 @@ export default {
           color: var(--color-font-dark);
         }
 
+        &.question-row {
+          cursor: pointer;
+          padding: 0px;
+          background: transparent;
+          border-radius: 5px;
+          transition: all .3s;
+
+          &.detailed {
+            background: var(--color-accent-green);
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+          }
+        }
+
         display: grid;
         grid-template-columns: 70px 1fr 150px;
         grid-gap: 30px;
         margin-bottom: 20px;
+
+        @media screen and (max-width: 600px) {
+          grid-template-columns: 1fr;
+          grid-gap: 10px;
+
+          .question {
+            font-size: 1.3em;
+          }
+        }
       }
     }
   }

@@ -10,30 +10,26 @@
 
       <div class="content">
         <div
-          v-if="!groups.length"
+          v-if="!specialities.length"
           class="no-subjects"
-        >Жодної групи не знайдено...</div>
+        >Жодної спеціальності не знайдено...</div>
 
         <div class="list">
-          <div
-            v-for="(group, index) in groups"
+          <app-speciality-item
+            v-for="(speciality, index) in specialities"
             :key="index"
-            class="subject"
-            @click="$emit('selected', group)"
-          >
-            <div class="name">{{group.name || '-'}}</div>
-
-            <div class="additional">
-              {{group.course}} курс
-            </div>
-          </div>
+            :speciality="speciality"
+            :selected="selectedSpeciality === index"
+            @click="selectedSpeciality !== index ? selectedSpeciality = index : false"
+            @selected="group => $emit('selected', group)"
+          ></app-speciality-item>
         </div>
       </div>
 
-      <router-link
+      <div
         class="leave"
-        :to="{ name: 'homeUser' }"
-      >Перейти до домівки</router-link>
+        @click="$emit('close')"
+      >Скасувати</div>
     </app-modal-window>
   </div>
 </template>
@@ -43,9 +39,11 @@ import { mapActions, mapGetters } from 'vuex'
 
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
+import AppSpecialityItem from '@/components/templates/teacher/AppSpecialityItem.vue'
 
 export default {
   components: {
+    AppSpecialityItem,
     AppModalWindow,
     AppPreloader,
   },
@@ -54,11 +52,6 @@ export default {
       type: Boolean,
       required: true,
       default: () => false,
-    },
-    groupsList: {
-      type: Array,
-      required: true,
-      default: () => [],
     },
   },
   computed: {
@@ -69,18 +62,34 @@ export default {
   data() {
     return {
       showPreloader: false,
-      groups: [],
+      selectedSpeciality: null,
+      specialities: [],
     }
   },
   methods: {
     ...mapActions({
-      getGroupsByIDs: 'groups/get',
+      getSpecialities: 'specialities/get',
+      setAlert: 'alert/set',
     }),
     async checkCurrentState() {
-      const { show, groupsList } = this
+      const { show } = this
+
+      this.selectedSpeciality = null
 
       if (show) {
-        this.groups = groupsList
+        try {
+          this.showPreloader = true
+          this.specialities = await this.getSpecialities()
+        } catch (e) {
+          this.setAlert({
+            title: 'Помилка',
+            text: 'Не вдалось отримати список спеціальностей',
+            delay: 2000,
+            isSuccess: false,
+          })
+        } finally {
+          this.showPreloader = false
+        }
       }
     },
   },
@@ -147,7 +156,7 @@ export default {
     border: 0;
     border-top: 1px solid var(--color-bg-main);
     background: transparent;
-    color: var(--color-font-dark) !important;
+    color: var(--color-accent-red);
     cursor: pointer;
 
     &:hover {

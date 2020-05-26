@@ -3,6 +3,16 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <div v-if="topic.id">
+      <app-create-question
+        :show="showCreateQuestion"
+        :topic="topic"
+        @close="showCreateQuestion = false"
+        @created="
+          loadTopic()
+          showCreateQuestion = false
+        "
+      ></app-create-question>
+
       <div class="header">
         <div class="title">
           <div class="main">
@@ -19,6 +29,12 @@
         >Створити запитання</app-button>
       </div>
 
+      <app-question-detailed-info
+        :questionID="questionShowInfoID"
+        class="question-full-info"
+        @close="questionShowInfoID = 0"
+      ></app-question-detailed-info>
+
       <div class="content">
         <div
           class="no-questions"
@@ -32,16 +48,6 @@
           >Створити запитання</div>
         </div>
 
-        <app-create-question
-          :show="showCreateQuestion"
-          :topic="topic"
-          @close="showCreateQuestion = false"
-          @created="
-            loadTopic()
-            showCreateQuestion = false
-          "
-        ></app-create-question>
-
         <div
           class="table"
           v-if="questions.length && !showCreateQuestion"
@@ -53,9 +59,13 @@
           </div>
 
           <div
-            class="row"
             v-for="(task, index) in questions"
             :key="index"
+            class="row question-row"
+            :class="{
+              detailed: task.id === questionShowInfoID,
+            }"
+            @click="questionShowInfoID = task.id"
           >
             <div class="col title">{{task.id}}</div>
             <div class="col title">{{task.question}}</div>
@@ -74,12 +84,14 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 import AppCreateQuestion from '@/components/templates/teacher/AppCreateQuestion.vue'
+import AppQuestionDetailedInfo from '@/components/templates/teacher/AppQuestionDetailedInfo.vue'
 
 export default {
   components: {
     AppButton,
     AppPreloader,
     AppCreateQuestion,
+    AppQuestionDetailedInfo,
   },
   methods: {
     ...mapActions({
@@ -117,6 +129,7 @@ export default {
       questions: [],
       showPreloader: false,
       showCreateQuestion: false,
+      questionShowInfoID: 0,
       taskTypes: {
         1: 'Простий вибір',
         2: 'Множинний вибір',
@@ -177,6 +190,10 @@ export default {
     }
   }
 
+  .question-full-info {
+    margin: 20px 0;
+  }
+
   .content {
     margin-top: 20px;
 
@@ -217,6 +234,21 @@ export default {
           color: var(--color-font-dark);
           border-bottom: 1px solid var(--color-bg-main);
           padding-bottom: 20px;
+        }
+
+        &.question-row {
+          cursor: pointer;
+          padding: 0px;
+          background: transparent;
+          border-radius: 5px;
+          transition: all .3s;
+
+          &.detailed {
+            background: var(--color-accent-green);
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+          }
         }
       }
     }

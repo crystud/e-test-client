@@ -6,31 +6,16 @@ export default {
   namespaced: true,
 
   state: {
-    permissions: [],
-    groups: [],
-    subjects: [],
     info: localStorage.accessToken ? ({
       ...jwtDecode(localStorage.accessToken || '').user,
       roles: jwtDecode(localStorage.accessToken || '').roles,
     }) : {},
-    user: {
-      notEvaluated: true,
-      firstName: '',
-      lastName: '',
-      patronymic: '',
-      roles: [],
-      email: '',
-      createAt: '',
-      groups: [],
-      tests: [],
-    },
     searchResults: [],
   },
 
   getters: {
     self: ({ self }) => self,
     user: ({ user }) => user,
-    permissions: ({ permissions }) => permissions,
     results: ({ results }) => results,
     tickets: ({ tickets }) => tickets,
     searchResults: ({ searchResults }) => searchResults,
@@ -46,9 +31,6 @@ export default {
     },
     setSearchResults(state, searchResults) {
       state.searchResults = searchResults
-    },
-    setPermissions(state, permissions) {
-      state.permissions = permissions
     },
     setResults(state, results) {
       state.results = results
@@ -71,21 +53,6 @@ export default {
         }
 
         commit('setUser', data)
-
-        return Promise.resolve(data)
-      } catch (e) {
-        return Promise.reject(e)
-      }
-    },
-    async getPermissions({ commit }) {
-      try {
-        const { data, status } = await axios.get('/users/me/permissions')
-
-        if (status !== 200) {
-          return Promise.reject()
-        }
-
-        commit('setPermissions', data)
 
         return Promise.resolve(data)
       } catch (e) {

@@ -101,12 +101,7 @@ import { mapActions } from 'vuex'
 export default {
   data() {
     return {
-      options: [
-        { question: '', image: '' },
-        { question: '', image: '' },
-        { question: '', image: '' },
-        { question: '', image: '' },
-      ],
+      options: [1, 2, 3, 4].map(() => ({ question: '', image: '', correct: false })),
       rightOption: null,
     }
   },
@@ -125,7 +120,10 @@ export default {
         error = 'Оберіть правильну відповідь'
       }
 
-      const optionsAreNotEmpty = options.filter(({ question }) => question.length !== 0)
+      const optionsAreNotEmpty = options.filter(({
+        question,
+        image,
+      }) => image.name || question.length !== 0)
 
       if (optionsAreNotEmpty.length !== options.length) {
         ready = false
@@ -135,6 +133,8 @@ export default {
       const state = {
         isReadyToBeCreated: { ready, error },
       }
+
+      console.log(options)
 
       state.questions = options.map(({ question, image }, index) => ({
         question,

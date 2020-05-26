@@ -5,6 +5,7 @@
     <app-ask-subject
       :show="!subject.id"
       @selected="subjectSelected"
+      @close="$router.push({ name: 'homeTeacher' })"
     ></app-ask-subject>
 
     <div v-if="subject.id">

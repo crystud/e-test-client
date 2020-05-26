@@ -6,11 +6,13 @@ export default {
   state: {
     tests: [],
     subjects: [],
+    permissions: [],
   },
 
   getters: {
     tests: ({ tests }) => tests,
     subjects: ({ subjects }) => subjects,
+    permissions: ({ permissions }) => permissions,
   },
 
   mutations: {
@@ -19,6 +21,9 @@ export default {
     },
     setSubjects(state, subjects) {
       state.subjects = subjects
+    },
+    setPermissions(state, permissions) {
+      state.permissions = permissions
     },
   },
 
@@ -59,6 +64,21 @@ export default {
         }
 
         commit('setSubjects', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
+    async getPermissions({ commit }, teacherID) {
+      try {
+        const { data, status } = await axios.get(`/permissions/findByTeacher/${teacherID}`)
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setPermissions', data)
 
         return Promise.resolve(data)
       } catch (e) {

@@ -21,7 +21,7 @@ export default {
         $refs: { wrap = 0 } = {},
       } = this
 
-      this.marginTop = show ? 0 : -wrap.clientHeight - 10
+      this.marginTop = show ? 0 : -wrap.clientHeight
     },
   },
   mounted() {

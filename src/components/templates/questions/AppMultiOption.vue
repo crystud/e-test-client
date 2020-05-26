@@ -119,7 +119,10 @@ export default {
         error = 'Мінімум 2 варіанта відповіді'
       }
 
-      const optionsAreNotEmpty = options.filter(({ question }) => question.length !== 0)
+      const optionsAreNotEmpty = options.filter(({
+        question,
+        image,
+      }) => image.name || question.length !== 0)
 
       if (optionsAreNotEmpty.length !== options.length) {
         ready = false

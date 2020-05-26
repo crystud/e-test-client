@@ -3,31 +3,21 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-ask-group
-      :show="Boolean(showSelectGroup && !group.id)"
+      :show="Boolean(showCreatePermission && !group.id)"
       :groupsList="groupsList"
       @selected="selectedGroup => group = selectedGroup"
+      @close="showCreatePermission = false"
     ></app-ask-group>
 
     <app-create-permission
       :show="Boolean(group.id && showCreatePermission)"
-      :group="group"
-      :studyID="studyID"
       @done="
         showCreatePermission = false
-        showSelectGroup = false
-        studyID = 0
         group = {}
-        subject = {}
-        groupsList = []
-        loadPermissions()
       "
       @cancel="
         showCreatePermission = false
-        showSelectGroup = false
-        studyID = 0
         group = {}
-        subject = {}
-        groupsList = []
       "
     ></app-create-permission>
 
@@ -36,7 +26,10 @@
 
       <app-button
         appearance="primary"
-        @click="showCreatePermission = true"
+        @click="
+          showCreatePermission = true
+          group = {}
+        "
       >Створити дозвіл</app-button>
     </div>
 
@@ -54,7 +47,7 @@
           <div class="members">К-сть груп</div>
         </div>
 
-        <div
+        <!-- <div
           v-for="(permission, index) in grantedPermissions"
           :key="index"
           class="row"
@@ -64,7 +57,7 @@
           <div class="start">{{getNormalDate(permission.startTime)}}</div>
           <div class="end">{{getNormalDate(permission.endTime)}}</div>
           <div class="members">{{permission.groups.length}}</div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -83,19 +76,16 @@ export default {
   data() {
     return {
       showCreatePermission: false,
-      showSelectGroup: false,
       showPreloader: false,
-      subject: {},
       group: {},
-      groupsList: [],
-      studyID: 0,
       grantedPermissions: [],
     }
   },
   methods: {
     ...mapActions({
       getGroups: 'specialities/getGroups',
-      getSelfPermissions: 'user/getPermissions',
+      getSelfPermissions: 'teacher/getPermissions',
+      user: 'user/info',
     }),
     getNormalDate(time) {
       if (!time) return ''
@@ -110,7 +100,7 @@ export default {
     async loadPermissions() {
       this.showPreloader = true
 
-      this.grantedPermissions = await this.getSelfPermissions()
+      this.grantedPermissions = await this.getSelfPermissions(this.user.id)
 
       this.showPreloader = false
     },
@@ -131,8 +121,8 @@ export default {
     AppPreloader,
     AppCreatePermission,
   },
-  async created() {
-    await this.loadPermissions()
+  created() {
+    this.loadPermissions()
   },
 }
 </script>

@@ -135,10 +135,10 @@ export default {
       topicInfo: {},
       selected: [],
       taskTypes: {
-        0: 'Простий вибір',
-        1: 'Множинний вибір',
-        2: 'Коротка відповідь',
-        3: 'Послідовність',
+        1: 'Простий вибір',
+        2: 'Множинний вибір',
+        3: 'Коротка відповідь',
+        4: 'Послідовність',
       },
     }
   },
@@ -170,6 +170,7 @@ export default {
 
       if (show && id) {
         this.showPreloader = true
+        this.selected = []
 
         this.topicInfo = await this.loadTopic(id)
 

@@ -5,11 +5,27 @@ import axios from '../../tools/axios'
 export default {
   namespaced: true,
 
-  state: {},
+  state: {
+    question: {
+      id: 0,
+      question: '',
+      type: null,
+      attachment: null,
+      topic: {},
+      creator: {},
+      answers: [],
+    },
+  },
 
-  getters: {},
+  getters: {
+    question: ({ question }) => question,
+  },
 
-  mutations: {},
+  mutations: {
+    setQuestion(state, question) {
+      state.question = question
+    },
+  },
 
   actions: {
     async create(_, questionData) {
@@ -56,13 +72,15 @@ export default {
         }, () => resolve(inserted))
       })
     },
-    async getByID(_, questionID) {
+    async getByID({ commit }, questionID) {
       try {
         const { data, status } = await axios.get(`/tasks/${questionID}`)
 
         if (status !== 200) {
           return Promise.reject()
         }
+
+        commit('setQuestion', data)
 
         return Promise.resolve(data)
       } catch (e) {

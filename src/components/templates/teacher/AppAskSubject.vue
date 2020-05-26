@@ -37,10 +37,10 @@
         </div>
       </div>
 
-      <router-link
+      <div
         class="leave"
-        :to="{ name: 'homeUser' }"
-      >Перейти до домівки</router-link>
+        @click="$emit('close')"
+      >Закрити</div>
     </app-modal-window>
   </div>
 </template>
