@@ -3,16 +3,6 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <div v-if="topic.id">
-      <app-create-question
-        :show="showCreateQuestion"
-        :topic="topic"
-        @close="showCreateQuestion = false"
-        @created="
-          loadTopic()
-          showCreateQuestion = false
-        "
-      ></app-create-question>
-
       <div class="header">
         <div class="title">
           <div class="main">
@@ -47,6 +37,16 @@
             @click="showCreateQuestion = true"
           >Створити запитання</div>
         </div>
+
+        <app-create-question
+          :show="showCreateQuestion"
+          :topic="topic"
+          @close="showCreateQuestion = false"
+          @created="
+            loadTopic()
+            showCreateQuestion = false
+          "
+        ></app-create-question>
 
         <div
           class="table"

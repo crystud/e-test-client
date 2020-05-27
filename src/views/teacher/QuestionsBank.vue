@@ -2,45 +2,33 @@
   <div class="app-questions-bank">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-ask-subject
-      :show="!subject.id"
-      @selected="subjectSelected"
-      @close="$router.push({ name: 'homeTeacher' })"
-    ></app-ask-subject>
-
-    <div v-if="subject.id">
+    <div>
       <app-create-topic
         :show="showCreateTopic"
-        :subject="subject"
-        @close="showCreateTopic = false"
-        @created="
-          loadSubject()
+        :subject="createTopicSubject"
+        @close="
           showCreateTopic = false
+          createTopicSubject = {}
+        "
+        @created="
+          loadSubjects()
+          showCreateTopic = false
+          createTopicSubject = {}
         "
       ></app-create-topic>
 
-      <div class="header">
-        <div>
-          <div class="title">Теми із запитаннями до предмету "{{ subject.name }}"</div>
-
-          <div
-            class="change"
-            @click="subject = {}"
-          >Змінити предмет</div>
-        </div>
-
-        <app-button
-          appearance="primary"
-          @click="showCreateTopic = true"
-        >Створити тему</app-button>
-      </div>
-
       <div class="list">
-        <app-subject-topic
-          v-for="(topic, index) in (topics || [])"
+        <app-question-bank-subject
+          v-for="(subject, index) in subjects"
           :key="index"
-          :topic="topic"
-        ></app-subject-topic>
+          :subject="subject"
+          :isOpened="openedIndex === index"
+          @click="openedIndex = index"
+          @createTopic="
+            createTopicSubject = subject.subject
+            showCreateTopic = true
+          "
+        ></app-question-bank-subject>
       </div>
     </div>
   </div>
@@ -49,50 +37,50 @@
 <script>
 import { mapActions } from 'vuex'
 
-import AppAskSubject from '@/components/templates/teacher/AppAskSubject.vue'
-import AppSubjectTopic from '@/components/templates/teacher/AppSubjectTopic.vue'
 import AppCreateTopic from '@/components/templates/teacher/AppCreateTopic.vue'
-import AppButton from '@/components/ui/AppButton.vue'
+import AppQuestionBankSubject from '@/components/templates/teacher/AppQuestionBankSubject.vue'
+
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
   components: {
-    AppAskSubject,
-    AppButton,
-    AppSubjectTopic,
     AppCreateTopic,
     AppPreloader,
+    AppQuestionBankSubject,
   },
   data() {
     return {
-      subject: {},
       showCreateTopic: false,
       showPreloader: false,
-      topics: [],
+      openedIndex: null,
+      subjects: [],
+      createTopicSubject: {},
     }
   },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
-      getSubject: 'subjects/getByID',
+      getTeacherSubjects: 'teacher/getSubjects',
     }),
-    async loadSubject() {
-      const { id } = this.subject
+    async loadSubjects() {
+      try {
+        this.showPreloader = true
 
-      if (!id) return
-
-      this.showPreloader = true
-
-      const { topics = [] } = await this.getSubject(id) || {}
-
-      this.topics = topics
-
-      this.showPreloader = false
+        this.subjects = await this.getTeacherSubjects()
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось отримати інформацію про предмет...',
+          isSuccess: false,
+          show: true,
+        })
+      } finally {
+        this.showPreloader = false
+      }
     },
-    async subjectSelected(subject) {
-      this.subject = subject
-      this.loadSubject()
-    },
+  },
+  created() {
+    this.loadSubjects()
   },
 }
 </script>
@@ -100,51 +88,16 @@ export default {
 <style lang="less" scoped>
 .app-questions-bank {
   .header {
+    display: flex;
+    justify-content: flex-end;
     margin-bottom: 30px;
-
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-gap: 20px;
-
-    justify-content: space-between;
-    align-items: center;
-
-    .title {
-      font-size: 1.5em;
-      font-weight: 400;
-    }
-
-    .change {
-      margin-top: 10px;
-      color: var(--color-font-dark);
-      cursor: pointer;
-
-      &:hover {
-        color: var(--color-font-main);
-      }
-    }
-
-    @media screen and (max-width: 500px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .search {
-    margin: 20px 0;
-    background: var(--color-bg-dark);
-  }
-
-  .search-tip {
-    text-align: center;
-    margin: 50px;
-    color: var(--color-font-dark);
-    font-size: 1.5em;
   }
 
   .list {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
+    align-items: flex-start;
   }
 
   @media screen and (max-width: 650px) {
