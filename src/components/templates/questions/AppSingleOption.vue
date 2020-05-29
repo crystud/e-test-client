@@ -134,8 +134,6 @@ export default {
         isReadyToBeCreated: { ready, error },
       }
 
-      console.log(options)
-
       state.questions = options.map(({ question, image }, index) => ({
         question,
         image,

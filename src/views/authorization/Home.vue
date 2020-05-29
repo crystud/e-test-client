@@ -382,6 +382,7 @@ export default {
         color: var(--color-font-main);
         font-size: 1.3em;
         font-weight: 400;
+        text-align: center;
       }
     }
 

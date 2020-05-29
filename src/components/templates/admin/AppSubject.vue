@@ -3,14 +3,16 @@
     class="subject"
     @click="$emit('click')"
   >
-    <div class="title">{{name}}</div>
+    <div class="content">
+      <div class="title">{{name}}</div>
 
-    <app-data-list
-      :data="[
-        ['Вчителів', teachers],
-      ]"
-      class="data-list"
-    ></app-data-list>
+      <app-data-list
+        :data="[
+          ['Вчителів', teachers],
+        ]"
+        class="data-list"
+      ></app-data-list>
+    </div>
   </app-card>
 </template>
 
@@ -44,6 +46,9 @@ export default {
   font-weight: 300;
 
   position: relative;
+
+  display: flex;
+  align-items: center;
 
   &::before {
     content: "";

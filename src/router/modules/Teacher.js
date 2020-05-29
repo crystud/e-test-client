@@ -63,4 +63,12 @@ export default [
     },
     component: () => import('@/views/teacher/Permissions.vue'),
   },
+  {
+    path: '/permission/:permissionID',
+    name: 'permissionDetails',
+    meta: {
+      title: 'Інформація про дозвіл',
+    },
+    component: () => import('@/views/teacher/Permission.vue'),
+  },
 ]

@@ -60,7 +60,7 @@ export default {
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
-      getTickets: 'user/getTickets',
+      getTickets: 'student/getTickets',
     }),
     async loadTickets() {
       try {

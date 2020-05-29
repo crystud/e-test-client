@@ -1,5 +1,3 @@
-import AsyncLoop from 'node-async-loop'
-
 import axios from '../../tools/axios'
 
 export default {
@@ -25,29 +23,18 @@ export default {
         return Promise.reject()
       }
     },
-    getByIDs({ dispatch }, permissionsIDs) {
-      return new Promise((resolve) => {
-        if (!permissionsIDs.length) return resolve([])
+    async getByID(_, permissionID) {
+      try {
+        const { data, status } = await axios.get(`/permissions/${permissionID}`)
 
-        const permissions = []
+        if (status !== 200) {
+          return Promise.reject()
+        }
 
-        return AsyncLoop(permissionsIDs, async (permissionID, next) => {
-          const { data, status } = await axios.get(`/permissions/${permissionID}`)
-
-          if (status !== 200) {
-            return next()
-          }
-
-          const test = await dispatch('tests/getTestByID', data.test, { root: true })
-
-          permissions.push({
-            ...data,
-            test,
-          })
-
-          return next()
-        }, () => resolve(permissions))
-      })
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
     },
   },
 }

@@ -144,7 +144,7 @@ export default {
           date: endDate,
         },
         testID,
-        maxAttempts: maxCountOfUse,
+        maxAttempts,
         group: { id: group },
       } = this
 
@@ -188,7 +188,7 @@ export default {
         await this.createPermission({
           startTime: start,
           endTime: end,
-          maxCountOfUse,
+          maxCountOfUse: parseInt(maxAttempts, 10),
           test: testID,
           group,
         })

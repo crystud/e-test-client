@@ -10,7 +10,7 @@ import user from './modules/user'
 import alert from './modules/alert'
 import tests from './modules/tests'
 import levels from './modules/levels'
-import studies from './modules/studies'
+import student from './modules/student'
 import topics from './modules/topics'
 import questions from './modules/questions'
 import permissions from './modules/permissions'
@@ -35,7 +35,7 @@ export default new Vuex.Store({
     permissions,
     questions,
     topics,
-    studies,
+    student,
     levels,
     alert,
     tests,

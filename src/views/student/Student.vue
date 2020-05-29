@@ -24,10 +24,10 @@
           v-if="(user.roles || []).includes('student')"
         ></app-student-subjects>
 
-        <app-student-results
+        <!-- <app-student-results
           class="drop-shadow"
           v-if="(user.roles || []).includes('student')"
-          ></app-student-results>
+          ></app-student-results> -->
       </div>
 
       <app-student-messages :messages="exampleMessages"></app-student-messages>
@@ -41,7 +41,7 @@ import { mapGetters, mapActions } from 'vuex'
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
 import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
-import AppStudentResults from '@/components/templates/student/AppStudentResults.vue'
+// import AppStudentResults from '@/components/templates/student/AppStudentResults.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
@@ -53,7 +53,7 @@ export default {
     AppStudentSubjects,
     AppStudentMessages,
     AppPreloader,
-    AppStudentResults,
+    // AppStudentResults,
   },
   computed: {
     ...mapGetters({
@@ -107,8 +107,6 @@ export default {
     } = this
 
     const roles = (this.self.roles || [])
-
-    console.log(roles, userID)
 
     if (!userID && !roles.includes('student')) {
       if (roles.includes('teacher')) {
