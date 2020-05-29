@@ -4,13 +4,15 @@
 
     <app-ask-group
       :show="Boolean(showCreatePermission && !group.id)"
-      :groupsList="groupsList"
       @selected="selectedGroup => group = selectedGroup"
       @close="showCreatePermission = false"
     ></app-ask-group>
 
+    {{group}}
+
     <app-create-permission
       :show="Boolean(group.id && showCreatePermission)"
+      :group="group"
       @done="
         showCreatePermission = false
         group = {}
@@ -64,7 +66,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -81,11 +83,15 @@ export default {
       grantedPermissions: [],
     }
   },
+  computed: {
+    ...mapGetters({
+      user: 'user/info',
+    }),
+  },
   methods: {
     ...mapActions({
-      getGroups: 'specialities/getGroups',
       getSelfPermissions: 'teacher/getPermissions',
-      user: 'user/info',
+      setAlert: 'alert/set',
     }),
     getNormalDate(time) {
       if (!time) return ''
@@ -98,21 +104,18 @@ export default {
       return `${datetime} ${daytime}`
     },
     async loadPermissions() {
-      this.showPreloader = true
+      try {
+        this.showPreloader = true
 
-      this.grantedPermissions = await this.getSelfPermissions(this.user.id)
-
-      this.showPreloader = false
-    },
-    async studySelected({ specialties, id }) {
-      this.showPreloader = true
-
-      const groups = await this.getGroups(specialties.map(({ id: specialityID }) => specialityID))
-
-      this.showSelectGroup = true
-      this.showPreloader = false
-      this.studyID = id
-      this.groupsList = groups
+        this.grantedPermissions = await this.getSelfPermissions(this.user.id)
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось отримати список дозволів...',
+        })
+      } finally {
+        this.showPreloader = false
+      }
     },
   },
   components: {

@@ -18,6 +18,7 @@
         <div class="info">
           <div class="task">
             <app-data-list
+              class="data-list"
               :data="[
                 [
                   'Створив',
@@ -36,7 +37,7 @@
           </div>
 
           <div
-            v-if="question.type !== 'NUMBERING'"
+            v-if="question.type !== 'NUMERICAL'"
             class="answers"
           >
             <div class="title">Варіанти відповідей</div>
@@ -71,6 +72,33 @@
               </div>
             </div>
           </div>
+
+          <div
+            class="answers numerical"
+            v-else
+          >
+            <div class="title">Послідовність:</div>
+
+            <div class="wrap">
+              <div
+                v-for="({ image, position, answerText }, index) in question.answers"
+                v-bind:key="index"
+                class="item"
+              >
+                <div
+                  v-if="image"
+                  class="image"
+                >
+                  <img
+                    :src="`data:image/jpg;base64,${image}`"
+                    alt="answer option image"
+                  >
+                </div>
+
+                <div class="text">{{position}}. {{answerText}}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </app-fade-card>
@@ -92,7 +120,7 @@ export default {
         SIMPLE_CHOICE: 'Простий вибір',
         MULTIPLE_CHOICE: 'Множинний вибір',
         SHORT_ANSWER: 'Коротка відповідь',
-        NUMBERING: 'Послідовність',
+        NUMERICAL: 'Послідовність',
       },
     }
   },
@@ -206,6 +234,10 @@ export default {
       grid-template-columns: 1fr 2fr;
       grid-gap: 20px;
 
+      .data-list {
+        margin: 0;
+      }
+
       .answers {
         .title {
           font-size: 1.1em;
@@ -218,20 +250,20 @@ export default {
           grid-gap: 20px;
         }
 
+        .image {
+          display: flex;
+
+          img {
+            margin: auto;
+            max-width: 100%;
+            max-height: 70px;
+          }
+        }
+
         .answer {
           background: var(--color-bg-main);
           border-radius: 10px;
           padding: 30px;
-
-          .image {
-            display: flex;
-
-            img {
-              margin: auto;
-              max-width: 100%;
-              max-height: 100px;
-            }
-          }
 
           .answer-text {
             font-size: 1.2em;
@@ -258,6 +290,29 @@ export default {
 
           .answer .image img {
             margin: 0;
+          }
+        }
+      }
+
+      .numerical {
+        .wrap {
+          .item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background: var(--color-bg-main);
+            color: var(--color-font-main);
+            overflow: hidden;
+
+            .image img {
+              display: block;
+            }
+
+            .text, .image {
+              padding: 15px;
+            }
           }
         }
       }

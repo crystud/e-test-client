@@ -67,7 +67,11 @@ export default {
     emitCurrentState() {
       const { chain } = this
 
-      const state = {}
+      const state = {
+        isReadyToBeCreated: {
+          ready: chain.length > 1,
+        },
+      }
 
       state.questions = chain.map((question, position) => ({
         question,
@@ -107,6 +111,9 @@ export default {
 
       return false
     },
+  },
+  created() {
+    this.emitCurrentState()
   },
 }
 </script>

@@ -1,5 +1,7 @@
 <template>
   <div class="app-create-topic">
+    <app-preloader :show="showPreloader"></app-preloader>
+
     <app-modal-window
       :show="show && !alert.show"
       :noPaddings="true"
@@ -37,11 +39,13 @@
 import { mapActions, mapGetters } from 'vuex'
 
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppInput from '@/components/ui/AppInput.vue'
 
 export default {
   components: {
     AppModalWindow,
+    AppPreloader,
     AppInput,
   },
   props: {
@@ -59,6 +63,7 @@ export default {
   data() {
     return {
       name: '',
+      showPreloader: false,
     }
   },
   computed: {
@@ -75,26 +80,32 @@ export default {
       const { name, subject: { id } } = this
 
       if (!name) {
-        return this.setAlert({
+        this.setAlert({
           title: 'Вкажіть назву',
           text: '',
           delay: 1000,
           show: true,
           isSuccess: false,
         })
+
+        return
       }
 
       if (!id) {
-        return this.setAlert({
+        this.setAlert({
           title: 'Помилка',
           text: 'Не вдалось оприділити ID предмету',
           delay: 1000,
           show: true,
           isSuccess: false,
         })
+
+        return
       }
 
       try {
+        this.showPreloader = true
+
         await this.createTopic({
           name,
           subject: id,
@@ -118,9 +129,9 @@ export default {
           show: true,
           delay: 1500,
         })
+      } finally {
+        this.showPreloader = false
       }
-
-      return false
     },
   },
 }

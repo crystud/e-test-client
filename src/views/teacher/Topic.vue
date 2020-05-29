@@ -15,7 +15,10 @@
         <app-button
           v-show="!showCreateQuestion"
           appearance="primary"
-          @click="showCreateQuestion = true"
+          @click="
+            showCreateQuestion = true
+            questionShowInfoID = 0
+          "
         >Створити запитання</app-button>
       </div>
 
@@ -131,10 +134,10 @@ export default {
       showCreateQuestion: false,
       questionShowInfoID: 0,
       taskTypes: {
-        1: 'Простий вибір',
-        2: 'Множинний вибір',
-        3: 'Коротка відповідь',
-        4: 'Послідовність',
+        SIMPLE_CHOICE: 'Простий вибір',
+        MULTIPLE_CHOICE: 'Множинний вибір',
+        SHORT_ANSWER: 'Коротка відповідь',
+        NUMERICAL: 'Послідовність',
       },
     }
   },

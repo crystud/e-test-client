@@ -9,17 +9,43 @@
       <div class="title">Створення дозволу</div>
 
       <div class="content">
-        <div class="tip">В списку тільки ваші публічні тести</div>
+        <div class="tip">Оберіть тест, до якого потрібно надати доступ</div>
 
-        <app-select
-          :values="
-            testsList
-            .filter((test) => test.isPublic)
-            .map((test) => ({ value: test.id, label: test.title }))"
-          label="Оберіть тест"
-          :sideBorder="true"
-          @change="({ value }) => testID = value"
-        ></app-select>
+        <select
+          class="test-select"
+          placeholder="12"
+          v-model="testID"
+        >
+          <optgroup
+            v-for="(subject, index) in subjectsList"
+            v-bind:key="index"
+            :label="subject.subject.name"
+          >
+            <option
+              v-if="!subject.tests.length"
+              disabled
+            >Тестів у предметі немає...</option>
+
+            <option
+              v-for="(test, testIndex) in subject.tests"
+              v-bind:key="testIndex"
+              :value="test.id"
+            >{{test.name}}</option>
+          </optgroup>
+        </select>
+
+        <div class="count-of-attempts">
+          <div class="tip">Максимальна к-сть спроб (0 для безмежної кількості)</div>
+
+          <app-input
+            appearance="secondary"
+            placeholder="Макс. к-сть спроб"
+            type="number"
+            @change="value => maxAttempts = value"
+            :value="maxAttempts"
+            class="app-input"
+          ></app-input>
+        </div>
 
         <div class="time start">
           <div class="label">Початок часу доступу</div>
@@ -73,15 +99,16 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
+import AppInput from '@/components/ui/AppInput.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
-import AppSelect from '@/components/ui/AppSelect.vue'
 
 export default {
   data() {
     return {
       showPreloader: false,
-      testsList: [],
+      subjectsList: [],
       testID: null,
+      maxAttempts: 1,
       start: {
         time: '',
         date: '',
@@ -94,7 +121,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getOwnTests: 'teacher/getOwnTests',
+      getSubjects: 'teacher/getSubjects',
       setAlert: 'alert/set',
       createPermission: 'permissions/create',
     }),
@@ -117,8 +144,8 @@ export default {
           date: endDate,
         },
         testID,
-        studyID,
-        group: { id },
+        maxAttempts: maxCountOfUse,
+        group: { id: group },
       } = this
 
       const end = this.toISOString(endDate, endTime)
@@ -144,15 +171,26 @@ export default {
         return
       }
 
+      if (!group) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось оприділити групу...',
+          isSuccess: false,
+          show: true,
+        })
+
+        return
+      }
+
       try {
         this.showPreloader = true
 
         await this.createPermission({
           startTime: start,
           endTime: end,
-          testId: testID,
-          study: studyID,
-          groups: [id],
+          maxCountOfUse,
+          test: testID,
+          group,
         })
 
         this.showPreloader = false
@@ -178,12 +216,11 @@ export default {
   },
   components: {
     AppModalWindow,
+    AppInput,
     AppPreloader,
-    AppSelect,
   },
   computed: {
     ...mapGetters({
-      self: 'user/self',
       alert: 'alert/alert',
     }),
   },
@@ -194,7 +231,7 @@ export default {
       if (show) {
         this.showPreloader = true
 
-        this.testsList = await this.getOwnTests()
+        this.subjectsList = await this.getSubjects()
 
         this.showPreloader = false
       }
@@ -207,10 +244,6 @@ export default {
     },
     group: {
       type: Object,
-      required: true,
-    },
-    studyID: {
-      type: Number,
       required: true,
     },
   },
@@ -245,10 +278,23 @@ export default {
       margin-bottom: 10px;
     }
 
-    .app-select {
+    .test-select {
+      width: 100%;
       background: var(--color-bg-main);
-      border-radius: 10px;
+      border: 1px solid var(--color-bg-main);
+      border-radius: 0;
+      color: var(--color-font-main);
+      padding: 10px;
+      font-size: 1em;
       margin-bottom: 20px;
+    }
+
+    .count-of-attempts {
+      margin-bottom: 20px;
+
+      .app-input {
+        background: var(--color-bg-main);
+      }
     }
 
     .time {

@@ -10,11 +10,7 @@
           showCreateTopic = false
           createTopicSubject = {}
         "
-        @created="
-          loadSubjects()
-          showCreateTopic = false
-          createTopicSubject = {}
-        "
+        @created="reloadSubjects"
       ></app-create-topic>
 
       <div class="list">
@@ -62,6 +58,18 @@ export default {
       setAlert: 'alert/set',
       getTeacherSubjects: 'teacher/getSubjects',
     }),
+    reloadSubjects() {
+      const { openedIndex } = this
+
+
+      this.openedIndex = 0
+
+      this.loadSubjects()
+      this.showCreateTopic = false
+      this.createTopicSubject = {}
+
+      this.openedIndex = openedIndex
+    },
     async loadSubjects() {
       try {
         this.showPreloader = true

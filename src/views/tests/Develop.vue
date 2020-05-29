@@ -2,27 +2,18 @@
   <div class="app-test-develop">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-ask-subject
-      :show="showAddQuestion && !addQuestionSubject.id"
-      @selected="subject => addQuestionSubject = subject"
-      @close="showAddQuestion = false"
-    ></app-ask-subject>
-
     <app-ask-topic
-      :show="Boolean(addQuestionSubject.id && !addQuestionTopic.id)"
+      :show="Boolean(showAddQuestion && test.subject && !addQuestionTopic.id)"
       @selected="topic => {
         addQuestionTopic = topic
         showAddQuestion = false
       }"
-      :subjectID="addQuestionSubject.id || 0"
-      @cancel="
-        addQuestionSubject = {}
-        showAddQuestion = false
-      "
+      :subjectID="test.subject ? test.subject.id : 0"
+      @cancel="showAddQuestion = false"
     ></app-ask-topic>
 
     <app-ask-questions
-      :show="Boolean(addQuestionSubject.id && addQuestionTopic.id)"
+      :show="Boolean(test.subject && addQuestionTopic.id)"
       :topic="addQuestionTopic"
       :testID="test.id || 0"
       @cancel="cancelQuestionAdding"
@@ -93,7 +84,6 @@
 <script>
 import { mapActions } from 'vuex'
 
-import AppAskSubject from '@/components/templates/teacher/AppAskSubject.vue'
 import AppAskTopic from '@/components/templates/teacher/AppAskTopic.vue'
 import AppAskQuestions from '@/components/templates/teacher/AppAskQuestions.vue'
 import AppQuestionDetailedInfo from '@/components/templates/teacher/AppQuestionDetailedInfo.vue'
@@ -105,7 +95,6 @@ export default {
   components: {
     AppButton,
     AppPreloader,
-    AppAskSubject,
     AppAskTopic,
     AppAskQuestions,
     AppQuestionDetailedInfo,
@@ -121,7 +110,6 @@ export default {
       setAlert: 'alert/set',
     }),
     cancelQuestionAdding() {
-      this.addQuestionSubject = {}
       this.addQuestionTopic = {}
       this.showAddQuestion = false
     },
@@ -147,7 +135,6 @@ export default {
       editingLevel: {},
       showAddQuestion: false,
       showPreloader: false,
-      addQuestionSubject: {},
       addQuestionTopic: {},
       test: {},
       questionShowInfoID: 0,
@@ -155,7 +142,7 @@ export default {
         SIMPLE_CHOICE: 'Простий вибір',
         MULTIPLE_CHOICE: 'Множинний вибір',
         SHORT_ANSWER: 'Коротка відповідь',
-        NUMBERING: 'Послідовність',
+        NUMERICAL: 'Послідовність',
       },
     }
   },

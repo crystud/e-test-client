@@ -108,6 +108,8 @@ export default {
 
     const roles = (this.self.roles || [])
 
+    console.log(roles, userID)
+
     if (!userID && !roles.includes('student')) {
       if (roles.includes('teacher')) {
         return this.$router.push({
@@ -117,6 +119,10 @@ export default {
 
       if (roles.includes('admin')) {
         return this.$router.push({ name: 'statsCollege' })
+      }
+
+      if (roles.includes('user')) {
+        return this.$router.push({ name: 'userHome' })
       }
 
       return this.setAlert({

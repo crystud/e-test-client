@@ -153,6 +153,11 @@ export default {
       },
     }
   },
+  watch: {
+    subject() {
+      this.updatedSubject = null
+    },
+  },
   computed: {
     ...mapGetters({
       users: 'user/searchResults',

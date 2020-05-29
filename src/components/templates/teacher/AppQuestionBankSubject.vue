@@ -11,7 +11,7 @@
     <div class="header">
       <div class="info">
         <div class="name">{{subject.subject.name}}</div>
-        <div class="tests-count">{TOPICS_COUNT} тем</div>
+        <div class="tests-count">Тем: {{subject.subject.topicsCount}}</div>
       </div>
 
       <div class="side-tools">
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <app-fade-card :show="isOpened">
+    <app-fade-card :show="Boolean(isOpened && topics.length)">
       <div class="content">
         <div
           v-if="!topics.length"
@@ -42,7 +42,7 @@
         </div>
 
         <div v-if="topics.length">
-          <div class="label">В цьому предметі є {TOPICS_COUNT} тем</div>
+          <div class="label">В цьому предметі є {{topics.length}} тем</div>
 
           <div class="tests">
             <div
@@ -82,6 +82,9 @@ export default {
     topics() {
       return this.info.topics || []
     },
+    topicsCount() {
+      return this.subject.subject.topicsCount
+    },
   },
   methods: {
     ...mapActions({
@@ -109,10 +112,17 @@ export default {
   },
   watch: {
     isOpened() {
-      const { isOpened } = this
+      const { isOpened, loadSubject } = this
 
       if (isOpened) {
-        this.loadSubject()
+        loadSubject()
+      }
+    },
+    topicsCount() {
+      const { isOpened, loadSubject } = this
+
+      if (isOpened) {
+        loadSubject()
       }
     },
   },
