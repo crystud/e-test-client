@@ -64,8 +64,6 @@
         </div>
       </div>
 
-      {{optionsState}}
-
       <div class="answers-list">
         <app-single-option
           v-if="type === 'SIMPLE_CHOICE'"

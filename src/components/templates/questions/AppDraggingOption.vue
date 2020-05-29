@@ -1,49 +1,79 @@
 <template>
   <div class="app-single-option">
-    <div class="title">Визначити послідовність</div>
+    <div class="title">Послідовність</div>
 
     <div
       class="no-options"
-      v-if="!chain.length"
-    >Послідовність не вказана...</div>
+      v-if="!options.length"
+    >Елементів послідовності немає...</div>
 
     <div class="list">
       <div
         class="option"
-        v-for="(option, index) in chain"
+        v-for="({ question, correct, image }, index) in options"
         :key="index"
       >
-        <div class="number">{{index + 1}}</div>
+        <div class="option-title">№{{index+1}}</div>
 
-        <div class="text">{{option}}</div>
-
-        <button
-          class="remove"
-          @click="
-            chain.splice(index, 1)
-            emitCurrentState()
-          "
+        <input
+          type="text"
+          v-model="options[index].question"
+          placeholder="Текст елемента послідовності"
+          @keyup="emitCurrentState"
         >
-          <font-awesome-icon icon="times"></font-awesome-icon>
-        </button>
+
+        <div class="controls">
+          <div>
+            <label
+              :for="`attach-image-${index}`"
+              class="attach-image"
+            >
+              <input
+                type="file"
+                accept="image/png,image/jpg,image/gif"
+                :id="`attach-image-${index}`"
+                @change="({ target: { files: [ image ] } }) => {
+                  setImage({ image, index })
+                  emitCurrentState(image)
+                }"
+              >
+
+              <span
+                class="icon"
+                v-if="!image || !image.name"
+              >
+                <font-awesome-icon icon="image"></font-awesome-icon>
+              </span>
+
+              <span
+                class="filename"
+                v-if="image && image.name"
+              >
+                {{image.name}}
+              </span>
+            </label>
+          </div>
+
+          <button
+            class="remove"
+            @click="
+              options.splice(index, 1)
+              emitCurrentState()
+            "
+          >
+            <font-awesome-icon icon="trash"></font-awesome-icon>
+            <span>Вилучити</span>
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="add-option-form">
-      <input
-        type="text"
-        placeholder="Текст елементу послідовності..."
-        v-model="optionValue"
-        v-on:keyup="({ keyCode }) => (keyCode === 13 ? addOption() : null)"
-      >
-
       <button
-        title="Додати елемент в послідовність"
-        @click="
-          addOption()
-          emitCurrentState()
-        "
+        title="Створити ще один елемент послідовності"
+        @click="options.push({ question: '', image: '' })"
       >
+        <span>Створити ще один елемент послідовності</span>
         <font-awesome-icon icon="plus"></font-awesome-icon>
       </button>
     </div>
@@ -56,8 +86,7 @@ import { mapActions } from 'vuex'
 export default {
   data() {
     return {
-      chain: [],
-      optionValue: '',
+      options: [1, 2, 3].map(() => ({ question: '', image: '' })),
     }
   },
   methods: {
@@ -65,51 +94,65 @@ export default {
       setAlert: 'alert/set',
     }),
     emitCurrentState() {
-      const { chain } = this
+      const { options } = this
 
-      const state = {
-        isReadyToBeCreated: {
-          ready: chain.length > 1,
-        },
+      let ready = true
+      let error
+
+      if (options.length <= 1) {
+        ready = false
+        error = 'Мінімум 2 варіанта відповіді'
       }
 
-      state.questions = chain.map((question, position) => ({
+      const optionsAreNotEmpty = options.filter(({
         question,
-        position,
+        image,
+      }) => image.name || question.length !== 0)
+
+      if (optionsAreNotEmpty.length !== options.length) {
+        ready = false
+        error = 'Заповніть всі варіанти відповіді'
+      }
+
+      const state = {
+        isReadyToBeCreated: { ready, error },
+      }
+
+      state.questions = options.map(({ question, image }) => ({
+        question,
+        image,
         correct: false,
       }))
 
       this.$emit('change', state)
     },
-    addOption() {
-      const { optionValue } = this
+    setImage({ image, index }) {
+      const reader = new FileReader()
 
-      if (!optionValue) {
-        return this.setAlert({
-          title: 'Заповніть елемент послідовності',
-          text: '',
-          isSuccess: false,
+      reader.onload = () => {
+        const { result = '' } = reader
+
+        const data = result.split('base64,')[1]
+
+        this.options[index].image = {
+          name: image.name,
+          data,
+        }
+
+        this.emitCurrentState()
+      }
+
+      reader.onerror = () => {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось обробити фото',
+          delay: 1500,
           show: true,
-          delay: 1000,
+          isSuccess: false,
         })
       }
 
-      if (this.chain.includes(optionValue)) {
-        return this.setAlert({
-          title: 'Такий елемент вже існує',
-          text: '',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
-      }
-
-      this.chain.push(optionValue)
-      this.emitCurrentState()
-
-      this.optionValue = ''
-
-      return false
+      reader.readAsDataURL(image)
     },
   },
   created() {
@@ -135,88 +178,120 @@ export default {
 
     .option {
       background: var(--color-bg-main);
-      border-radius: 5px;
-      margin-bottom: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      margin-bottom: 20px;
 
-      display: grid;
-      grid-template-columns: 40px 1fr auto;
+      overflow: hidden;
 
-      align-items: center;
-
-      .number {
-        color: var(--color-font-main);
-        border-right: 1px solid var(--color-bg-light);
-        height: 100%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        font-size: 1.4em;
+      .option-title {
+        padding: 20px;
+        font-size: 1.2em;
       }
 
-      .text {
+      .controls {
+        padding: 20px;
+
+        display: grid;
+        grid-template-columns: 1fr auto;
+
+        div {
+          display: flex;
+          align-items: center;
+        }
+
+        .attach-image {
+          background: var(--color-bg-dark);
+          color: var(--color-font-dark);
+          padding: 15px;
+          margin: 0 10px;
+          border-radius: 10px;
+          cursor: pointer;
+
+          .icon {
+            font-size: 1.4em;
+          }
+
+          .filename {
+            color: var(--color-accent-green);
+          }
+
+          &:hover {
+            color: var(--color-accent-green);
+          }
+
+          input {
+            display: none;
+          }
+        }
+      }
+
+      input {
         color: var(--color-font-main);
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--color-bg-light);
+        height: 100%;
+        width: 100%;
         padding: 15px;
+        font-size: 1em;
+
+        &::placeholder {
+          color: var(--color-font-dark);
+        }
       }
 
       button {
-        padding: 15px;
+        padding: 15px 20px;
         height: 100%;
         font-size: 1em;
         border: 0;
-        border-left: 1px solid var(--color-bg-light);
+        border-radius: 5px;
         cursor: pointer;
-        background: transparent;
+        background: var(--color-bg-dark);
       }
 
       .is-right-switch {
-        .right {
-          color: var(--color-accent-green);
+        color: #fff;
+
+        &.right {
+          background: var(--color-accent-green);
         }
 
-        .wrong {
-          color: var(--color-accent-red);
+        &.wrong {
+          background: var(--color-accent-red);
         }
       }
 
       .remove {
         color: var(--color-accent-red);
+
+        span {
+          margin-left: 15px;
+        }
       }
     }
   }
 
   .add-option-form {
-    display: grid;
-    grid-template-columns: 1fr 60px;
-
-    overflow: hidden;
-    border-radius: 10px;
-
-    input, button {
+    button {
+      width: 100%;
       padding: 15px;
+      border-radius: 10px;
       font-size: 1em;
       background: var(--color-bg-main);
       border: 0;
-    }
-
-    input {
-      color: var(--color-font-main);
-
-      &::placeholder {
-        color: var(--color-font-dark);
-      }
-    }
-
-    button {
-      border-left: 1px solid var(--color-bg-light);
       text-align: center;
       cursor: pointer;
 
-      color: var(--color-font-main);
+      color: var(--color-font-dark);
 
       &:hover {
-        background: var(--color-bg-dark);
+        color: var(--color-font-main);
+      }
+
+      span {
+        margin-right: 10px;
       }
     }
   }
