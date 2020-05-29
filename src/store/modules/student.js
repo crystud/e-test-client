@@ -23,6 +23,19 @@ export default {
   },
 
   actions: {
+    async getGroups() {
+      try {
+        const { data, status } = await axios.get('/students/own')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
     async getTickets({ commit, rootGetters }, studentID) {
       try {
         let userID

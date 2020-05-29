@@ -3,15 +3,30 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-warn-passing
-      :show="showWarnPassing"
       :ticket="passingTicket"
-      @cancel="
-        passingTicket = {}
-        showWarnPassing = false
-      "
+      @cancel="passingTicket = 0"
     ></app-warn-passing>
 
-    <div class="title">Дозволи на проходження</div>
+    <div class="header">
+      <div class="title">Дозволи на проходження</div>
+
+      <div
+        v-if="student"
+        class="current-group"
+      >
+        {{student.group.name}}
+      </div>
+    </div>
+
+    <select
+      v-if="studentGroups.length > 1"
+      v-model="groupID"
+    >
+      <option
+        v-for="(student, index) in studentGroups"
+        v-bind:key="index"
+      >{{student.group.name}}</option>
+    </select>
 
     <div class="tests">
       <div class="row header-title">
@@ -23,20 +38,22 @@
         class="row cursor-pointer"
         v-for="(ticket, index) in tickets"
         :key="index"
-        @click="
-          showWarnPassing = true
-          passingTicket = ticket
-        "
+        @click="passingTicket = ticket.id"
       >
-        <div class="name">{{ticket.title}}</div>
+        <div class="name">{{ticket.createAt}}</div>
 
         <div
           class="permission"
           :class="{
-            'closed': ticket.used,
-            'opened': !ticket.used,
+            closed: ticket.used,
+            opened: !ticket.used,
+            outstanding: ticket.outstanding,
           }"
-        >{{ticket.used ? 'Використаний' : 'Невикористаний'}}</div>
+        >
+          <span v-if="ticket.used">Використаний</span>
+          <span v-if="!ticket.used">Невикористаний</span>
+          <span v-if="ticket.outstanding">Прострочений</span>
+        </div>
       </div>
     </div>
   </app-user-card>
@@ -61,12 +78,22 @@ export default {
     ...mapActions({
       setAlert: 'alert/set',
       getTickets: 'student/getTickets',
+      getStudentGroups: 'student/getGroups',
     }),
     async loadTickets() {
       try {
         this.showPreloader = true
 
-        this.tickets = await this.getTickets()
+        const studentGroups = await this.getStudentGroups()
+
+        const student = studentGroups[0] ? studentGroups[0] : null
+
+        if (student) {
+          this.studentGroups = studentGroups
+          this.student = student
+
+          this.tickets = await this.getTickets(student.id)
+        }
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -83,9 +110,10 @@ export default {
   data() {
     return {
       showPreloader: false,
-      showWarnPassing: false,
-      passingTicket: {},
+      passingTicket: 0,
+      student: null,
       tickets: [],
+      studentGroups: [],
     }
   },
   async created() {
@@ -100,9 +128,21 @@ export default {
 .subjects-info {
   margin-bottom: 20px;
 
-  .title {
-    font-size: 1.5em;
-    font-weight: 300;
+  .header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-gap: 20px;
+    align-items: center;
+
+    .title {
+      font-size: 1.5em;
+      font-weight: 300;
+    }
+
+    .current-group {
+      color: var(--color-font-dark);
+      font-size: 1.1em;
+    }
   }
 
   .tests {
@@ -137,11 +177,12 @@ export default {
 
       .permission {
         &.closed {
-          color: #E01616;
+          color: #1ED6BA;
         }
 
-        &.opened {
-          color: #1ED6BA;
+        &.opened,
+        &.outstanding {
+          color: #E01616;
         }
       }
 

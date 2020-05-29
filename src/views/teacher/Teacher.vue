@@ -1,5 +1,18 @@
 <template>
   <div class="app-student">
+    <app-create-test
+      :show="showCreateTest"
+      :subject="createTestSubject"
+      @close="
+        showCreateTest = false
+        createTestSubject = {}
+      "
+      @created="({ id }) => $router.push({
+        name: 'testDevelop',
+        params: { id },
+      })"
+    ></app-create-test>
+
     <div class="student-info">
       <app-student-personal-info
         class="drop-shadow"
@@ -17,14 +30,17 @@
 
     <div class="sections">
       <div class="tests">
-        <!-- <app-teacher-tests-list
-          class="teacher-tests drop-shadow"
-          title="Ваші тести"
-          :tests="teacherTests.filter((_, index) => (index <= 2))"
-          :totalCount="teacherTests.length"
-        ></app-teacher-tests-list> -->
-
-        tests list...
+        <app-teacher-attached-subject
+          v-for="(subject, index) in subjects"
+          :key="index"
+          :subject="subject"
+          :isOpened="openedIndex === index"
+          @click="openedIndex = index"
+          @create="
+            createTestSubject = subject
+            showCreateTest = true
+          "
+        ></app-teacher-attached-subject>
       </div>
 
       <app-student-messages
@@ -41,21 +57,16 @@ import { mapGetters, mapActions } from 'vuex'
 
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
+
 import AppTeacherActivity from '@/components/templates/teacher/AppTeacherActivity.vue'
-// import AppTeacherTestsList from '@/components/templates/teacher/AppTeacherTestsList.vue'
+import AppTeacherAttachedSubject from '@/components/templates/teacher/AppTeacherAttachedSubject.vue'
+import AppCreateTest from '@/components/templates/teacher/AppCreateTest.vue'
 
 export default {
-  name: 'AppStudent',
-  components: {
-    AppStudentPersonalInfo,
-    AppTeacherActivity,
-    AppStudentMessages,
-    // AppTeacherTestsList,
-  },
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
-      getTeacherTests: 'teacher/getOwnTests',
+      getTeacherSubjects: 'teacher/getSubjects',
     }),
     setFullHistory(isOpened) {
       this.fullIsOpened = isOpened
@@ -69,8 +80,11 @@ export default {
   data() {
     return {
       user: {},
+      showCreateTest: false,
+      createTestSubject: {},
       fullIsOpened: false,
-      teacherTests: [],
+      openedIndex: null,
+      subjects: [],
       activity: [
         ['У авторській розробці', '5 тестів'],
         ['Створено питань', '37'],
@@ -98,7 +112,7 @@ export default {
 
     if (!userID) {
       this.user = this.self
-      this.teacherTests = await this.getTeacherTests()
+      this.subjects = await this.getTeacherSubjects()
 
       document.title = 'Ваш профіль -  CRYSTUD'
     } else {
@@ -110,6 +124,13 @@ export default {
     document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
 
     this.showPreloader = false
+  },
+  components: {
+    AppTeacherAttachedSubject,
+    AppStudentPersonalInfo,
+    AppTeacherActivity,
+    AppStudentMessages,
+    AppCreateTest,
   },
 }
 </script>

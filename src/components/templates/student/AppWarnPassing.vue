@@ -3,17 +3,44 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-modal-window
-      :show="show && !alert.show"
+      :show="Boolean(ticket && ticketInfo.id && !alert.show)"
       :noPaddings="true"
     >
-      <div class="title">Ви впевнені, що хочете пройти тест?</div>
-
       <div
+        v-if="ticketInfo.id"
         class="content"
-        v-if="ticket.id"
       >
-        <div class="test">
-          <div class="name">{{ticket.title || '-'}}</div>
+        <div class="header">
+          <div class="name">{{ticketInfo.createAt}}</div>
+          <div class="created-at">Дозвіл створено {{getNormalDate(ticketInfo.createAt)}}</div>
+        </div>
+
+        <app-data-list
+          class="app-data-list"
+          :data="[
+            ['Початок доступу', getNormalDate(ticketInfo.permission.startTime)],
+            ['Кінець доступу', getNormalDate(ticketInfo.permission.endTime)],
+            ['Макс. к-сть спроб', ticketInfo.permission.maxCountOfUse || 'Безмежна'],
+          ]"
+        ></app-data-list>
+
+        <div class="access-status">
+          <span>Статус: </span>
+
+          <span
+            v-if="ticketInfo.used"
+            class="denied"
+          >Використаний</span>
+
+          <span
+            v-if="!ticketInfo.used"
+            class="granted"
+          >Невикористаний</span>
+
+          <span
+            v-if="ticketInfo.outstanding"
+            class="denined"
+          >Прострочений</span>
         </div>
       </div>
 
@@ -37,22 +64,9 @@ import { mapActions, mapGetters } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
+import AppDataList from '@/components/ui/AppDataList.vue'
 
 export default {
-  components: {
-    AppPreloader,
-    AppModalWindow,
-  },
-  props: {
-    show: {
-      type: Boolean,
-      required: true,
-    },
-    ticket: {
-      type: Object,
-      required: true,
-    },
-  },
   computed: {
     ...mapGetters({
       alert: 'alert/alert',
@@ -62,21 +76,54 @@ export default {
     ...mapActions({
       setAlert: 'alert/set',
       useTicket: 'tickets/use',
+      loadTicket: 'tickets/getByID',
     }),
+    getNormalDate(time) {
+      if (!time) return ''
+
+      const date = new Date(time)
+
+      const datetime = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
+      const daytime = `${date.getHours()}:${date.getMinutes()}`
+
+      return `${datetime} ${daytime}`
+    },
+    async checkState() {
+      const { ticket } = this
+
+      if (ticket) {
+        try {
+          this.showPreloader = true
+
+          this.ticketInfo = await this.loadTicket(ticket)
+        } catch (e) {
+          this.setAlert({
+            title: 'Помилка',
+            text: 'Не вдалось отримати інформацію про квиток',
+            show: true,
+            isSuccess: false,
+          })
+        } finally {
+          this.showPreloader = false
+        }
+      }
+    },
     async pass() {
       const { ticket } = this
 
       try {
         this.showPreloader = true
 
-        const { attempts: [attempt] } = await this.useTicket(ticket.id)
+        const attemptData = await this.useTicket(ticket)
 
-        this.$router.push({
-          name: 'testPass',
-          params: {
-            attemptID: attempt.id,
-          },
-        })
+        console.log(attemptData)
+
+        // this.$router.push({
+        //   name: 'testPass',
+        //   params: {
+        //     attemptID: attempt.id,
+        //   },
+        // })
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -92,69 +139,90 @@ export default {
   data() {
     return {
       showPreloader: false,
+      ticketInfo: {},
     }
+  },
+  watch: {
+    ticket() {
+      this.checkState()
+    },
+  },
+  props: {
+    ticket: {
+      type: Number,
+      required: true,
+    },
+  },
+  components: {
+    AppPreloader,
+    AppDataList,
+    AppModalWindow,
   },
 }
 </script>
 
 <style lang="less" scoped>
 .app-warn-passing {
-  .title,
   .content {
     width: 100vw;
     max-width: 500px;
-    padding: 20px;
-  }
-
-  .title {
-    font-size: 1.3em;
-    color: var(--color-font-main);
-
-    text-align: center;
-    border-bottom: 1px solid var(--color-bg-main);
+    padding: 35px;
   }
 
   .content {
-    text-align: center;
+    .header {
+      margin-bottom: 20px;
 
-    .test {
       .name {
-        color: var(--color-font-main);
         font-size: 1.3em;
-        font-weight: 100;
-        margin-bottom: 10px;
+        font-weight: bold;
       }
 
-      .description {
+      .created-at {
         color: var(--color-font-dark);
+        margin-top: 5px;
       }
+    }
+
+    .access-status {
+      margin-top: 20px;
+      color: var(--color-font-dark);
+
+      .granted { color: var(--color-accent-green) }
+      .denied { color: var(--color-accent-red) }
     }
   }
 
   .btns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto;
+    grid-gap: 10px;
+    justify-content: flex-end;
+
     border-top: 1px solid var(--color-bg-main);
+    padding: 20px;
 
     button {
-      background: transparent;
       border: 0;
-      padding: 20px;
+      padding: 13px 30px;
+      border-radius: 5px;
       font-size: 1em;
       cursor: pointer;
-      transition: none;
-
-      &:hover {
-        background: var(--color-bg-main);
-      }
 
       &.leave {
+        background: var(--color-bg-main);
         color: var(--color-accent-red);
       }
 
       &.pass {
-        color: var(--color-accent-green);
+        background: var(--color-accent-green);
+        color: #fff;
       }
+    }
+
+    @media screen and (max-width: 400px) {
+      grid-template-columns: 1fr;
+      justify-content: center;
     }
   }
 }

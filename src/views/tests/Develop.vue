@@ -39,8 +39,6 @@
       >Додати питання до теста</app-button>
     </div>
 
-    {{test}}
-
     <app-question-detailed-info
       :questionID="questionShowInfoID"
       class="question-full-info"

@@ -23,9 +23,9 @@ export default {
         return Promise.reject(e)
       }
     },
-    async use(_, ticketID) {
+    async use(_, ticket) {
       try {
-        const { data, status } = await axios.post(`/tickets/${ticketID}/use`)
+        const { data, status } = await axios.post('/attempts', { ticket })
 
         if (status !== 201) {
           return Promise.reject()
