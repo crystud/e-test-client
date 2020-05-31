@@ -40,7 +40,7 @@
         :key="index"
         @click="passingTicket = ticket.id"
       >
-        <div class="name">{{ticket.createAt}}</div>
+        <div class="name">{{ticket.permission.test.name}}</div>
 
         <div
           class="permission"

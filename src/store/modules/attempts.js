@@ -36,9 +36,9 @@ export default {
         return Promise.reject(e)
       }
     },
-    async loadOptions(_, { questionID, attemptID }) {
+    async getQuestion(_, questionID) {
       try {
-        const { data, status } = await axios.get(`/attempts/${attemptID}/tasks/${questionID}/answers`)
+        const { data, status } = await axios.get(`/attempts/attemptTasks/${questionID}`)
 
         if (status !== 200) {
           return Promise.reject()

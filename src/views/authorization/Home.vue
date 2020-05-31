@@ -129,6 +129,8 @@
         @created="showCreateTest = false"
       ></app-create-test>
 
+      <app-student-active-tests></app-student-active-tests>
+
       <div class="global-header">
         <div class="page-title">
           <font-awesome-icon
@@ -174,6 +176,7 @@ import AppScreen from '@/components/ui/AppScreen.vue'
 import AppHomeLink from '@/components/ui/AppHomeLink.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppCreateTest from '@/components/templates/teacher/AppCreateTest.vue'
+import AppStudentActiveTests from '@/components/templates/student/AppStudentActiveTests.vue'
 
 import AppSettings from '@/components/templates/settings/AppSettings.vue'
 
@@ -218,6 +221,7 @@ export default {
     AppPreloader,
     AppSettings,
     AppCreateTest,
+    AppStudentActiveTests,
   },
 }
 </script>

@@ -34,6 +34,11 @@
           </optgroup>
         </select>
 
+        <app-permission-create-test-info
+          :testID="testID || 0"
+          @filledStateUpdate="value => testFilled = value"
+        ></app-permission-create-test-info>
+
         <div class="count-of-attempts">
           <div class="tip">Максимальна к-сть спроб (0 для безмежної кількості)</div>
 
@@ -101,6 +106,7 @@ import { mapGetters, mapActions } from 'vuex'
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
+import AppPermissionCreateTestInfo from '@/components/templates/teacher/AppPermissionCreateTestInfo.vue'
 
 export default {
   data() {
@@ -108,6 +114,7 @@ export default {
       showPreloader: false,
       subjectsList: [],
       testID: null,
+      testFilled: 0,
       maxAttempts: 1,
       start: {
         time: '',
@@ -145,11 +152,23 @@ export default {
         },
         testID,
         maxAttempts,
+        testFilled,
         group: { id: group },
       } = this
 
       const end = this.toISOString(endDate, endTime)
       const start = this.toISOString(startDate, startTime)
+
+      if (testFilled < 100) {
+        this.setAlert({
+          title: 'Створення неможливе',
+          text: 'В тесті недостатньо запитань',
+          show: true,
+          isSuccess: false,
+        })
+
+        return
+      }
 
       if (!testID) {
         this.setAlert({
@@ -203,6 +222,8 @@ export default {
 
         setTimeout(() => this.$emit('done'), 1500)
       } catch (e) {
+        console.log(e)
+
         this.setAlert({
           title: 'Помилка',
           text: 'Не вдалось створити дозвіл...',
@@ -218,6 +239,7 @@ export default {
     AppModalWindow,
     AppInput,
     AppPreloader,
+    AppPermissionCreateTestInfo,
   },
   computed: {
     ...mapGetters({

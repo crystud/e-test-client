@@ -116,14 +116,14 @@ export default {
 
         const attemptData = await this.useTicket(ticket)
 
-        console.log(attemptData)
+        localStorage.setItem('attempt', JSON.stringify(attemptData))
 
-        // this.$router.push({
-        //   name: 'testPass',
-        //   params: {
-        //     attemptID: attempt.id,
-        //   },
-        // })
+        this.$router.push({
+          name: 'testPass',
+          params: {
+            attemptID: attemptData.id,
+          },
+        })
       } catch (e) {
         this.setAlert({
           title: 'Помилка',

@@ -8,88 +8,107 @@
       @finish="finish"
     ></app-finish-warning>
 
-    <app-questions-list
-      :currentQuestion="currentQuestion.id"
-      @setQuestion="loadQuestion"
-      @onStop="showWarning = true"
-      :tasksList="attempt.tasks || []"
-    ></app-questions-list>
-
-    {{attempt.tasks}}
-
-    <div>
-      <div style="margin: 10px 0">{{currentQuestion}}</div>
-      <div style="margin: 10px 0">{{options}}</div>
-      <div style="margin: 10px 0">{{userAnswers}}</div>
-      <div style="margin: 10px 0">{{numbering}}</div>
-    </div>
-
-    <div
-      v-if="!currentQuestion.id"
-      class="select-question"
-    >Оберіть запитання</div>
-
-    <div v-if="currentQuestion.id">
-      <app-question :question="currentQuestion"></app-question>
-
-      <div class="options">
-        <div class="header">
-          <span class="title">{{taskTypesTips[currentQuestion.type]}}</span>
-          <span class="title">Тип: {{taskTypes[currentQuestion.type]}}</span>
-        </div>
-
-        <div
-          v-if="currentQuestion.type === 'text_input'"
-          class="input-type"
-        >
-          <input
-            type="text"
-            placeholder="Введіть свою відповідь"
-            v-on:keyup="fillTextInputQuestion"
-            :value="getTextInputQuestionValue()"
-          >
-        </div>
-
-        <div
-          v-if="currentQuestion.type === 'numbering'"
-          class="numbering-type"
-        >
-          <div
-            class="option"
-            v-for="(option, index) in options"
-            :key="index"
-          >
-            <select v-on:change="(ev) => fillNumberingQuestion(ev, index)">
-              <option>-</option>
-
-              <option
-                v-for="(numberingOption, localIndex) in options"
-                :key="localIndex"
-                :value="numberingOption.id"
-                :selected="checkNumberingOptionSelected(numberingOption.id, index)"
-              >{{localIndex+1}}</option>
-            </select>
-
-            <span class="text">{{option.text}}</span>
-          </div>
-        </div>
-
-        <div v-if="['single_choice', 'multy_choice'].includes(currentQuestion.type)">
-          <div
-            v-if="!options.length"
-            class="select-question"
-          >
-            Варіантів відповіді не знайдено...
-          </div>
-
-          <div class="list">
-            <app-answer-option
-              v-for="(option, index) in options"
+    <div class="markup">
+      <div class="leftbar">
+        <div class="questions">
+          <ul>
+            <li
+              v-for="(task, index) in tasksList"
               v-bind:key="index"
-              :text="option.text"
-              @toggleSelect="toggle(option.id, currentQuestion.id)"
-              :selected="isSelected(option.id, currentQuestion.id)"
-            ></app-answer-option>
+              :class="{
+                selected: currentQuestion.id === task.id,
+              }"
+              @click="
+                currentQuestion = task
+                loadQuestion()
+              "
+            >Питання №{{index+1}}</li>
+          </ul>
+        </div>
+
+        <div
+          class="finish"
+          @click="showWarning = true"
+        >
+          Закінчити тест
+        </div>
+      </div>
+
+      <div class="status">
+        Статус: {{userAnswers.length}} / {{tasksList.length}}
+      </div>
+
+      <div class="current-question">
+        <div
+          v-if="!currentQuestion.id"
+          class="select-question"
+        >Оберіть запитання</div>
+
+        <div v-if="question.task">
+          <div class="options">
+            <div class="header">
+              <span class="title">{{taskTypesTips[currentQuestion.task.type]}}</span>
+              <span class="title">Тип: {{taskTypes[currentQuestion.task.type]}}</span>
+            </div>
+
+            <div
+              v-if="currentQuestion.type === 'text_input'"
+              class="input-type"
+            >
+              <input
+                type="text"
+                placeholder="Введіть свою відповідь"
+                v-on:keyup="fillTextInputQuestion"
+                :value="getTextInputQuestionValue()"
+              >
+            </div>
+
+            <div
+              v-if="currentQuestion.type === 'numbering'"
+              class="numbering-type"
+            >
+              <div
+                class="option"
+                v-for="(option, index) in options"
+                :key="index"
+              >
+                <select v-on:change="(ev) => fillNumberingQuestion(ev, index)">
+                  <option>-</option>
+
+                  <option
+                    v-for="(numberingOption, localIndex) in options"
+                    :key="localIndex"
+                    :value="numberingOption.id"
+                    :selected="checkNumberingOptionSelected(numberingOption.id, index)"
+                  >{{localIndex+1}}</option>
+                </select>
+
+                <span class="text">{{option.text}}</span>
+              </div>
+            </div>
+
+            <div v-if="['SIMPLE_CHOICE', 'MULTI_CHOICE'].includes(question.task.type)">
+              <div
+                v-if="!options.length"
+                class="select-question"
+              >
+                Варіантів відповіді не знайдено...
+              </div>
+
+              <div class="list">
+                <app-answer-option
+                  v-for="(option, index) in options"
+                  v-bind:key="index"
+                  :text="option.answer.answerText"
+                  @toggleSelect="toggle(option.id, question.id)"
+                  :selected="isSelected(option.id, question.id)"
+                ></app-answer-option>
+              </div>
+
+              <pre>
+                {{question}}
+              </pre>
+            </div>
           </div>
         </div>
       </div>
@@ -100,8 +119,6 @@
 <script>
 import { mapActions } from 'vuex'
 
-import AppQuestionsList from '@/components/templates/tests/AppQuestionsList.vue'
-import AppQuestion from '@/components/templates/tests/AppQuestion.vue'
 import AppAnswerOption from '@/components/templates/tests/AppAnswerOption.vue'
 import AppFinishWarning from '@/components/templates/tests/AppFinishWarning.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
@@ -109,21 +126,29 @@ import AppPreloader from '@/components/ui/AppPreloader.vue'
 export default {
   name: 'testPass',
   components: {
-    AppQuestionsList,
-    AppQuestion,
     AppAnswerOption,
     AppFinishWarning,
     AppPreloader,
+  },
+  computed: {
+    tasksList() {
+      const { attempt: { attemptTasks } = {} } = this
+
+      return attemptTasks || []
+    },
+    options() {
+      return this.question.attemptAnswers || []
+    },
   },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
       getTest: 'tests/getTestByID',
       getAttempt: 'attempts/getByID',
-      getQuestion: 'attempts/getQuestion',
       getTasks: 'attempts/getTasks',
       loadOptions: 'attempts/loadOptions',
       sendAnswers: 'attempts/sendAnswers',
+      getQuestion: 'attempts/getQuestion',
     }),
     async finish() {
       const {
@@ -253,11 +278,11 @@ export default {
           answers: [optionID],
         })
       } else {
-        switch (this.currentQuestion.type) {
-          case 'single_choice':
+        switch (this.question.task.type) {
+          case 'SIMPLE_CHOICE':
             question.answers = [optionID]
             break
-          case 'multy_choice':
+          case 'MULTI_CHOICE':
             if (question.answers.length + 1 < this.options.length
                 && !question.answers.includes(optionID)) {
               question.answers.push(optionID)
@@ -276,18 +301,13 @@ export default {
 
       return false
     },
-    async loadQuestion(questionID) {
+    async loadQuestion() {
       try {
+        const { currentQuestion: { id } = {} } = this
+
         this.showPreloader = true
 
-        const question = this.tasks.find(({ id }) => id === questionID)
-
-        this.options = await this.loadOptions({
-          questionID: question.id,
-          attemptID: this.attempt.id,
-        })
-
-        this.currentQuestion = question
+        this.question = await this.getQuestion(id)
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -305,17 +325,15 @@ export default {
       showWarning: false,
       showPreloader: false,
       currentQuestion: {},
-      test: {},
       attempt: {},
-      tasks: [],
-      options: [],
+      question: {},
       userAnswers: [],
       numbering: [],
       taskTypes: {
-        single_choice: 'Один варіант',
-        multy_choice: 'Декілька варіантів',
-        text_input: 'Ввести значення',
-        numbering: 'Визначити послідовність',
+        SIMPLE_CHOICE: 'Простий вибір',
+        MULTI_CHOICE: 'Множинний вибір',
+        SHORT_ANSWER: 'Коротка відповідь',
+        NUMERICAL: 'Послідовність',
       },
       taskTypesTips: {
         single_choice: 'Варіанти відповідей',
@@ -332,7 +350,6 @@ export default {
 
     try {
       this.attempt = await this.getAttempt(attemptID)
-      this.tasks = await this.getTasks(attemptID)
     } catch (e) {
       this.setAlert({
         title: 'Помилка',
@@ -351,97 +368,121 @@ export default {
 .app-test-pass {
   user-select: none;
 
-  .options {
-    margin-top: 30px;
+  .markup {
+    display: grid;
+    grid-template-areas: 'leftbar status' 'leftbar current-question';
+    grid-template-columns: 230px 1fr;
+    grid-template-rows: auto 1fr;
 
-    .header {
-      color: var(--color-font-dark);
+    width: 100%;
+    min-height: calc(100vh - 130px);
 
-      margin-bottom: 15px;
+    background: var(--color-bg-dark);
+    border-radius: 10px;
 
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .numbering-type,
-    .input-type {
-      padding: 60px 30px;
-      text-align: center;
-      border-radius: 10px;
-      background: var(--color-bg-dark);
-    }
-
-    .numbering-type {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-
-      .option {
-        margin-bottom: 30px;
-        display: grid;
-
-        grid-template-columns: 70px 200px;
-        grid-gap: 10px;
-
-        select,
-        .text {
-          background: var(--color-bg-main);
-          color: var(--color-font-main);
-          padding: 10px;
-          border-radius: 5px;
-          font-size: 1.2em;
-        }
-
-        select {
-          height: 100%;
-          border: 0;
-          width: 70px;
-        }
-
-        .text {
-          display: flex;
-          align-items: center;
-        }
-      }
-    }
-
-    .input-type {
-      input {
-        padding: 15px;
-        max-width: 300px;
-        width: 100%;
-        font-size: 1em;
-        border-radius: 10px;
-        border: 0;
-        background: var(--color-bg-main);
-        color: var(--color-font-main);
-
-        &::placeholder {
-          color: var(--color-font-dark);
-        }
-      }
-    }
-
-    .list {
-      margin-top: 10px;
+    .leftbar {
+      grid-area: leftbar;
+      border-right: 1px solid var(--color-bg-main);
 
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-gap: 20px;
-    }
+      grid-template-rows: 1fr 50px;
 
-    @media screen and (max-width: 680px) {
-      .list {
-        grid-template-columns: 1fr;
+      .questions {
+        overflow: auto;
+
+        ul {
+          display: block;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+
+          li {
+            padding: 15px 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all .3s;
+
+            &:hover {
+              background: var(--color-bg-main);
+            }
+
+            &::before {
+              content: "";
+
+              display: block;
+              position: absolute;
+              top: 0;
+              left: 0;
+              bottom: 0;
+              margin: auto;
+
+              width: 4px;
+              height: 0%;
+              background: var(--color-accent-green);
+              border-radius: 10px;
+
+              transition: all .3s;
+            }
+
+            &.selected {
+              color: var(--color-accent-green);
+
+              &::before {
+                height: 70%;
+              }
+            }
+          }
+        }
+      }
+
+      .finish {
+        cursor: pointer;
+        color: var(--color-accent-red);
+        background: var(--color-bg-dark);
+        border-top: 1px solid var(--color-bg-main);
+        border-radius: 0 0 0 10px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:active {
+          transform: scale(.96);
+        }
       }
     }
-  }
 
-  .select-question {
-    text-align: center;
-    margin: 80px;
-    font-size: 1.5em;
-    color: var(--color-font-dark);
+    .status {
+      grid-area: status;
+      border-bottom: 1px solid var(--color-bg-main);
+
+      padding: 20px;
+    }
+
+    .current-question {
+      grid-area: current-question;
+      padding: 30px;
+
+      .list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 20px;
+
+        @media screen and (max-width: 700px) {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+
+    @media screen and (max-width: 650px) {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      grid-template-areas: 'status' 'leftbar' 'current-question';
+
+      .leftbar {
+        border-right: 0;
+      }
+    }
   }
 }
 </style>

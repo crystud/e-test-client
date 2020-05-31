@@ -12,7 +12,7 @@ export default {
   actions: {
     async create(_, payload) {
       try {
-        const { data, status } = await axios.post('/permissions', payload)
+        const { data, status } = await axios.post('/permissions', payload) || {}
 
         if (status !== 201) {
           return Promise.reject()
@@ -20,12 +20,12 @@ export default {
 
         return Promise.resolve(data)
       } catch (e) {
-        return Promise.reject()
+        return Promise.reject(e)
       }
     },
     async getByID(_, permissionID) {
       try {
-        const { data, status } = await axios.get(`/permissions/${permissionID}`)
+        const { data, status } = await axios.get(`/permissions/${permissionID}`) || {}
 
         if (status !== 200) {
           return Promise.reject()
@@ -33,7 +33,7 @@ export default {
 
         return Promise.resolve(data)
       } catch (e) {
-        return Promise.reject()
+        return Promise.reject(e)
       }
     },
   },

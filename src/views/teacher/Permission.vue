@@ -46,7 +46,11 @@
         ></app-ticket-detail-info>
 
         <app-fade-card :show="!Boolean(detailInfoTicketID)">
-          <h1>Активність проходження</h1>
+          <div class="header">
+            <h1>Активність проходження</h1>
+
+            <div class="live">наживо</div>
+          </div>
 
           <div class="list">
             <div class="row header-row">
@@ -190,19 +194,44 @@ export default {
     .test-info {
       grid-area: test-info;
       padding: 30px;
-
-      .title {
-        font-size: 1.3em;
-      }
     }
 
     .tickets {
       grid-area: tickets;
       padding: 30px;
 
-      h1 {
-        font-weight: 100;
-        font-size: 1.7em;
+      .header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-gap: 20px;
+        align-items: center;
+        margin-bottom: 30px;
+
+        h1 {
+          font-weight: 100;
+          font-size: 1.7em;
+        }
+
+        @keyframes liveAnimation {
+          0%, 100% {
+            background: var(--color-accent-green);
+            transform: scale(1.03);
+          }
+
+          50% {
+            background: var(--color-accent-blue);
+            transform: scale(1);
+          }
+        }
+
+        .live {
+          padding: 5px 10px;
+          border-radius: 5px;
+          background: var(--color-accent-green);
+
+          transform: scale(1);
+          animation: 2s liveAnimation infinite;
+        }
       }
     }
 
@@ -210,6 +239,10 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+
+      .title {
+        font-size: 1.3em;
+      }
     }
 
     .list {

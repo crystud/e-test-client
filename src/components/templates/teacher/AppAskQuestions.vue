@@ -3,7 +3,7 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-modal-window
-      :show="show"
+      :show="Boolean(show && !alert.show)"
       :noPaddings="true"
     >
       <div class="title">Виберіть питання до тесту</div>
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
@@ -61,6 +61,9 @@ export default {
     AppModalWindow,
   },
   computed: {
+    ...mapGetters({
+      alert: 'alert/alert',
+    }),
     questions() {
       return this.topicInfo.tasks || []
     },
@@ -90,13 +93,6 @@ export default {
       const { selected, testID } = this
 
       if (!selected.length) {
-        this.setAlert({
-          title: 'Виберіть питання',
-          isSuccess: false,
-          delay: 1000,
-          show: true,
-        })
-
         return
       }
 
@@ -265,7 +261,7 @@ export default {
       }
 
       &.add-questions {
-        color: var(--color-accent-dark);
+        color: var(--color-font-dark);
         cursor: default;
 
         &.active {

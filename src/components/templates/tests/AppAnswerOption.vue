@@ -35,7 +35,7 @@ export default {
 .option {
   cursor: pointer;
 
-  background: var(--color-bg-dark);
+  background: var(--color-bg-main);
   color: var(--color-font-dark);
 
   padding: 30px;

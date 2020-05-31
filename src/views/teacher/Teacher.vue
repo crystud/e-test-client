@@ -32,9 +32,10 @@
       <div class="tests">
         <app-teacher-attached-subject
           v-for="(subject, index) in subjects"
-          :key="index"
+          v-bind:key="index"
           :subject="subject"
           :isOpened="openedIndex === index"
+          class="teaching-subject"
           @click="openedIndex = index"
           @create="
             createTestSubject = subject
@@ -153,6 +154,10 @@ export default {
     .teacher-tests {
       margin-bottom: 20px;
     }
+  }
+
+  .teaching-subject {
+    margin-bottom: 10px;
   }
 
   .mobile {

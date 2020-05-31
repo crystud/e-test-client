@@ -32,10 +32,10 @@
           class="subject-select"
         >
           <option
-            v-for="(teaching, index) in subjects"
+            v-for="(teacher, index) in subjects"
             v-bind:key="index"
-            :value="teaching"
-          >{{teaching.subject.name}}</option>
+            :value="teacher"
+          >{{teacher.subject.name}}</option>
         </select>
       </div>
 
@@ -61,11 +61,12 @@
           <div class="test">Назва тесту</div>
           <div class="start">Початок активності</div>
           <div class="end">Кінець активності</div>
+          <div class="group">Група</div>
         </div>
 
         <div
           class="no-permissions"
-          v-if="!grantedPermissions.length"
+          v-if="!grantedPermissions.length && teaching"
         >Ви не надали жодного дозволу на проходження з предмету "{{teaching.subject.name}}"</div>
 
         <router-link
@@ -80,6 +81,7 @@
           <div class="test">{{permission.test.name}}</div>
           <div class="start">{{getNormalDate(permission.startTime)}}</div>
           <div class="end">{{getNormalDate(permission.endTime)}}</div>
+          <div class="group">{{permission.group.name}}</div>
         </router-link>
       </div>
     </div>
@@ -112,6 +114,16 @@ export default {
       getSubjects: 'teacher/getSubjects',
       setAlert: 'alert/set',
     }),
+    getNormalDate(time) {
+      if (!time) return ''
+
+      const date = new Date(time)
+
+      const datetime = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
+      const daytime = `${date.getHours()}:${date.getMinutes()}`
+
+      return `${datetime} ${daytime}`
+    },
     async loadSubjects() {
       try {
         this.showPreloader = true
@@ -134,9 +146,9 @@ export default {
       try {
         this.showPreloader = true
 
-        const { teaching: { id: teacherID } } = this
+        const { teaching } = this
 
-        this.grantedPermissions = teacherID ? await this.getSelfPermissions(teacherID) : []
+        this.grantedPermissions = teaching ? await this.getSelfPermissions(teaching.id) : []
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -229,7 +241,7 @@ export default {
 
       .row {
         display: grid;
-        grid-template-columns: 1fr 200px 200px;
+        grid-template-columns: 1fr 200px 200px 100px;
         grid-gap: 20px;
 
         align-items: center;
@@ -248,6 +260,22 @@ export default {
             text-decoration: underline !important;
           }
         }
+      }
+    }
+  }
+
+  @media screen and (max-width: 700px) {
+    .header {
+      grid-template-columns: 1fr;
+    }
+
+    .content .list .row {
+      grid-template-columns: 1fr;
+      grid-gap: 10px;
+
+      .test {
+        font-size: 1.5em;
+        font-weight: 400;
       }
     }
   }
