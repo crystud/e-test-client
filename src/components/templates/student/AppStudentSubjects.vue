@@ -31,6 +31,7 @@
     <div class="tests">
       <div class="row header-title">
         <div class="name">Назва</div>
+        <div class="attempts">Макс. к-сть спроб</div>
         <div class="permission">Дозвіл</div>
       </div>
 
@@ -41,6 +42,8 @@
         @click="passingTicket = ticket.id"
       >
         <div class="name">{{ticket.permission.test.name}}</div>
+
+        <div class="attempts">{{ticket.permission.maxCountOfUse ||  'Без обмежень'}}</div>
 
         <div
           class="permission"
@@ -150,7 +153,7 @@ export default {
 
     .row {
       display: grid;
-      grid-template-columns: 1fr 100px 100px;
+      grid-template-columns: 1fr 150px 1fr;
 
       padding: 7px 0;
 

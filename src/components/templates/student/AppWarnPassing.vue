@@ -2,45 +2,105 @@
   <div class="app-warn-passing">
     <app-preloader :show="showPreloader"></app-preloader>
 
+    {{ticketInfo.test}}
+
     <app-modal-window
       :show="Boolean(ticket && ticketInfo.id && !alert.show)"
       :noPaddings="true"
     >
       <div
         v-if="ticketInfo.id"
-        class="content"
+        class="sections"
+        :class="{
+          'showing-attempts-list': attempts.length,
+        }"
       >
-        <div class="header">
-          <div class="name">{{ticketInfo.createAt}}</div>
-          <div class="created-at">Дозвіл створено {{getNormalDate(ticketInfo.createAt)}}</div>
+        <div
+          class="attempts-list"
+          v-if="attempts.length"
+        >
+          <div class="title">Ваші спроби проходження</div>
+
+          <div
+            v-for="({
+              active,
+              startTime,
+              endTime,
+              maxEndTime,
+              id: attemptID,
+              result,
+            }, index) in attempts"
+            v-bind:key="index"
+            class="attempt"
+          >
+            <div class="start-time">
+              <div v-if="endTime">{{countPassingTime(startTime, endTime)}}</div>
+            </div>
+
+            <div
+              v-if="!active"
+              class="see-result"
+            >Результат ---%</div>
+
+            <div v-if="active">
+              <div class="is-active active">Активна</div>
+
+              <div
+                class="time-until-closed"
+                :class="{
+                  'is-closed': countTimeUntilClosed(maxEndTime).isClosed,
+                }"
+              >
+                {{countTimeUntilClosed(maxEndTime).text}}
+              </div>
+
+              <div
+                v-if="!countTimeUntilClosed(maxEndTime).isClosed"
+                @click="$router.push({
+                  name: 'testPass',
+                  params: {
+                    attemptID,
+                  },
+                })"
+                class="continue"
+              >Продовжити проходження</div>
+            </div>
+          </div>
         </div>
 
-        <app-data-list
-          class="app-data-list"
-          :data="[
-            ['Початок доступу', getNormalDate(ticketInfo.permission.startTime)],
-            ['Кінець доступу', getNormalDate(ticketInfo.permission.endTime)],
-            ['Макс. к-сть спроб', ticketInfo.permission.maxCountOfUse || 'Безмежна'],
-          ]"
-        ></app-data-list>
+        <div class="content">
+          <div class="header">
+            <div class="name">{{ticketInfo.createAt}}</div>
+            <div class="created-at">Дозвіл створено {{getNormalDate(ticketInfo.createAt)}}</div>
+          </div>
 
-        <div class="access-status">
-          <span>Статус: </span>
+          <app-data-list
+            class="app-data-list"
+            :data="[
+              ['Початок доступу', getNormalDate(ticketInfo.permission.startTime)],
+              ['Кінець доступу', getNormalDate(ticketInfo.permission.endTime)],
+              ['Макс. к-сть спроб', ticketInfo.permission.maxCountOfUse || 'Безмежна'],
+            ]"
+          ></app-data-list>
 
-          <span
-            v-if="ticketInfo.used"
-            class="denied"
-          >Використаний</span>
+          <div class="access-status">
+            <span>Статус: </span>
 
-          <span
-            v-if="!ticketInfo.used"
-            class="granted"
-          >Невикористаний</span>
+            <span
+              v-if="ticketInfo.used"
+              class="denied"
+            >Використаний</span>
 
-          <span
-            v-if="ticketInfo.outstanding"
-            class="denined"
-          >Прострочений</span>
+            <span
+              v-if="!ticketInfo.used"
+              class="granted"
+            >Невикористаний</span>
+
+            <span
+              v-if="ticketInfo.outstanding"
+              class="denined"
+            >Прострочений</span>
+          </div>
         </div>
       </div>
 
@@ -71,6 +131,9 @@ export default {
     ...mapGetters({
       alert: 'alert/alert',
     }),
+    attempts() {
+      return this.ticketInfo.attempts || []
+    },
   },
   methods: {
     ...mapActions({
@@ -78,6 +141,44 @@ export default {
       useTicket: 'tickets/use',
       loadTicket: 'tickets/getByID',
     }),
+    countTimeUntilClosed(closeTime, current) {
+      const currentTime = current || new Date()
+      const difference = new Date(closeTime).getTime() - currentTime.getTime()
+
+      const timeLeft = Math.round(difference / 1000)
+
+      const days = Math.floor(timeLeft / 86400)
+      const hours = Math.floor((timeLeft - (days * 86400)) / 3600)
+      const minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600)) / 60)
+      const seconds = timeLeft % 60
+
+      return {
+        time: {
+          days,
+          hours,
+          minutes,
+          seconds,
+        },
+        isClosed: timeLeft < 0,
+        text:
+          this.isClosed
+            ? 'Доступ закрито'
+            : `Доступ закриється через ${days} дн. ${hours} год. ${minutes} хв.`,
+      }
+    },
+    countPassingTime(startTime, endTime) {
+      const difference = new Date(endTime).getTime() - new Date(startTime).getTime()
+
+      const timeLeft = Math.round(difference / 1000)
+
+      const hours = Math.floor(timeLeft / 3600)
+      const minutes = Math.floor((timeLeft - (hours * 3600)) / 60)
+      const seconds = timeLeft % 60
+
+      const hoursText = hours > 0 ? `${hours} год. ` : ''
+
+      return `${hoursText}${minutes} хв. ${seconds} сек.`
+    },
     getNormalDate(time) {
       if (!time) return ''
 
@@ -163,13 +264,73 @@ export default {
 
 <style lang="less" scoped>
 .app-warn-passing {
-  .content {
-    width: 100vw;
-    max-width: 500px;
-    padding: 35px;
+  .sections {
+    max-width: 850px;
+
+    display: grid;
+    grid-gap: 10px;
+
+    &.showing-attempts-list {
+      grid-template-columns: 2fr 3fr;
+    }
+
+    .attempts-list {
+      max-height: 70vh;
+      overflow-y: auto;
+
+      border-right: 1px solid var(--color-bg-main);
+
+      .title {
+        padding: 15px 10px;
+        color: var(--color-font-dark);
+      }
+
+      .attempt {
+        padding: 20px 30px;
+        border-top: 1px solid var(--color-bg-main);
+
+        .start-time {
+          font-size: 1.1em;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+
+        .see-result {
+          color: var(--color-font-dark);
+          cursor: pointer;
+          user-select: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        .is-active {
+          color: var(--color-accent-green);
+        }
+
+        .time-until-closed {
+          margin-top: 10px;
+          color: var(--color-font-dark);
+        }
+
+        .continue {
+          display: inline-block;
+          padding: 5px 10px;
+          border-radius: 5px;
+          cursor: pointer;
+          user-select: none;
+          margin-top: 15px;
+          color: var(--color-accent-green);
+          background: var(--color-bg-main);
+        }
+      }
+    }
   }
 
   .content {
+    padding: 35px;
+
     .header {
       margin-bottom: 20px;
 

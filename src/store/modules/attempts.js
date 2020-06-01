@@ -49,9 +49,12 @@ export default {
         return Promise.reject(e)
       }
     },
-    async sendAnswers(_, { payload, attemptID }) {
+    async sendAnswers(_, { payload: tasks, attemptID }) {
       try {
-        const { data, status } = await axios.post(`/attempts/${attemptID}/complete`, payload)
+        const { data, status } = await axios.post('/attempts/complete', {
+          ...tasks,
+          attempt: parseInt(attemptID, 10),
+        })
 
         if (status !== 201) {
           return Promise.reject()

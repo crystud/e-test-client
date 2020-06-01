@@ -18,10 +18,12 @@
               :class="{
                 selected: currentQuestion.id === task.id,
               }"
-              @click="
-                currentQuestion = task
-                loadQuestion()
-              "
+              @click="() => {
+                if (currentQuestion.id !== task.id) {
+                  currentQuestion = task
+                  loadQuestion()
+                }
+              }"
             >Питання №{{index+1}}</li>
           </ul>
         </div>
@@ -35,12 +37,38 @@
       </div>
 
       <div class="status">
-        Статус: {{userAnswers.length}} / {{tasksList.length}}
+        Статус:
+        {{
+          (userAnswers.filter(({ answers }) => answers.length > 0).length
+          / tasksList.length) * 100
+        }}%
       </div>
 
       <div class="current-question">
         <div
-          v-if="!currentQuestion.id"
+          v-if="question.id"
+          class="question-content"
+        >
+          <div
+            class="image"
+            v-if="question.task.image"
+          >
+            <img
+              :src="`data:image/jpg;base64,${question.task.image}`"
+              alt="question image"
+            >
+          </div>
+
+          <div
+            class="text"
+            v-if="question.task.question"
+          >
+            {{question.task.question}}
+          </div>
+        </div>
+
+        <div
+          v-if="!question.id"
           class="select-question"
         >Оберіть запитання</div>
 
@@ -52,11 +80,12 @@
             </div>
 
             <div
-              v-if="currentQuestion.type === 'text_input'"
+              v-if="question.task.type === 'SHORT_ANSWER'"
               class="input-type"
             >
               <input
                 type="text"
+                autofocus
                 placeholder="Введіть свою відповідь"
                 v-on:keyup="fillTextInputQuestion"
                 :value="getTextInputQuestionValue()"
@@ -64,7 +93,7 @@
             </div>
 
             <div
-              v-if="currentQuestion.type === 'numbering'"
+              v-if="question.task.type === 'NUMERICAL'"
               class="numbering-type"
             >
               <div
@@ -72,6 +101,8 @@
                 v-for="(option, index) in options"
                 :key="index"
               >
+                <span class="number">{{index+1}}</span>
+
                 <select v-on:change="(ev) => fillNumberingQuestion(ev, index)">
                   <option>-</option>
 
@@ -80,14 +111,12 @@
                     :key="localIndex"
                     :value="numberingOption.id"
                     :selected="checkNumberingOptionSelected(numberingOption.id, index)"
-                  >{{localIndex+1}}</option>
+                  >{{numberingOption.answer.answerText}}</option>
                 </select>
-
-                <span class="text">{{option.text}}</span>
               </div>
             </div>
 
-            <div v-if="['SIMPLE_CHOICE', 'MULTI_CHOICE'].includes(question.task.type)">
+            <div v-if="['SIMPLE_CHOICE', 'MULTIPLE_CHOICE'].includes(question.task.type)">
               <div
                 v-if="!options.length"
                 class="select-question"
@@ -104,10 +133,6 @@
                   :selected="isSelected(option.id, question.id)"
                 ></app-answer-option>
               </div>
-
-              <pre>
-                {{question}}
-              </pre>
             </div>
           </div>
         </div>
@@ -153,7 +178,7 @@ export default {
     async finish() {
       const {
         userAnswers,
-        tasks,
+        tasksList: tasks,
         $route: { params: { attemptID } },
       } = this
 
@@ -162,7 +187,7 @@ export default {
       userAnswers.forEach(({ question, answers }) => {
         const location = tasks.findIndex(({ id }) => question.id === id)
 
-        if (question.type === 'text_input') {
+        if (question.task.type === 'SHORT_ANSWER') {
           responseTasks[location] = {
             answers: answers[0],
           }
@@ -179,9 +204,13 @@ export default {
         this.showPreloader = true
 
         await this.sendAnswers({
-          payload: { tasks: responseTasks },
+          payload: {
+            tasks: responseTasks.map((response) => response || { answers: [] }),
+          },
           attemptID,
         })
+
+        localStorage.removeItem('attempt')
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -282,9 +311,8 @@ export default {
           case 'SIMPLE_CHOICE':
             question.answers = [optionID]
             break
-          case 'MULTI_CHOICE':
-            if (question.answers.length + 1 < this.options.length
-                && !question.answers.includes(optionID)) {
+          case 'MULTIPLE_CHOICE':
+            if (!question.answers.includes(optionID)) {
               question.answers.push(optionID)
             } else {
               const location = question.answers.indexOf(optionID)
@@ -331,15 +359,15 @@ export default {
       numbering: [],
       taskTypes: {
         SIMPLE_CHOICE: 'Простий вибір',
-        MULTI_CHOICE: 'Множинний вибір',
+        MULTIPLE_CHOICE: 'Множинний вибір',
         SHORT_ANSWER: 'Коротка відповідь',
         NUMERICAL: 'Послідовність',
       },
       taskTypesTips: {
-        single_choice: 'Варіанти відповідей',
-        multy_choice: 'Варіанти відповідей',
-        text_input: 'Введіть відповідь',
-        numbering: 'Визначте послідовність',
+        SIMPLE_CHOICE: 'Варіанти відповідей',
+        MULTIPLE_CHOICE: 'Варіанти відповідей',
+        SHORT_ANSWER: 'Введіть відповідь',
+        NUMERICAL: 'Послідовність',
       },
     }
   },
@@ -350,6 +378,33 @@ export default {
 
     try {
       this.attempt = await this.getAttempt(attemptID)
+
+      if (!this.attempt.active) {
+        const delay = 2000
+
+        localStorage.removeItem('attempt')
+
+        this.setAlert({
+          title: 'Спроба неактивна',
+          text: 'Час дії спроби витік.',
+          show: true,
+          isSuccess: false,
+          delay,
+        })
+
+        setTimeout(() => {
+          this.$router.push({ name: 'homeUser' })
+        }, 2000)
+
+        return
+      }
+
+      localStorage.setItem('attempt', JSON.stringify(this.attempt))
+
+      this.userAnswers = this.attempt.attemptTasks.map((question) => ({
+        question,
+        answers: [],
+      }))
     } catch (e) {
       this.setAlert({
         title: 'Помилка',
@@ -463,6 +518,12 @@ export default {
       grid-area: current-question;
       padding: 30px;
 
+      .select-question {
+        color: var(--color-font-dark);
+        font-size: 1.3em;
+        text-align: center;
+      }
+
       .list {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -470,6 +531,77 @@ export default {
 
         @media screen and (max-width: 700px) {
           grid-template-columns: 1fr;
+        }
+      }
+
+      .question-content {
+        display: grid;
+        grid-template-columns: auto auto;
+
+        align-items: center;
+
+        margin-bottom: 20px;
+        background: var(--color-bg-main);
+        padding: 20px;
+        border-radius: 10px;
+
+        .image {
+          img {
+            max-height: 150px;
+          }
+        }
+
+        .text {
+          font-size: 1.3em;
+        }
+      }
+
+      .options {
+        .header {
+          margin-bottom: 20px;
+
+          display: flex;
+          justify-content: space-between;
+
+          color: var(--color-font-dark);
+        }
+      }
+
+      .numbering-type {
+        .option {
+          margin-bottom: 15px;
+
+          .number {
+            font-size: 1.2em;
+          }
+
+          select {
+            font-size: 1em;
+            padding: 10px;
+            border-radius: 5px;
+            border: 0;
+            background: var(--color-bg-main);
+            color: var(--color-font-main);
+
+            margin-left: 15px;
+          }
+        }
+      }
+
+      .input-type {
+        input {
+          padding: 15px;
+          font-size: 1em;
+          border-radius: 5px;
+          border: 0;
+          background: var(--color-bg-main);
+          color: var(--color-font-main);
+
+          width: 100%;
+
+          &::placeholder {
+            color: var(--color-font-dark);
+          }
         }
       }
     }

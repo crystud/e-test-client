@@ -22,11 +22,18 @@
 
 <script>
 export default {
-  computed: {
-    attempt() {
-      const attempt = localStorage.getItem('attempt')
+  data() {
+    return {
+      get attempt() {
+        const attempt = localStorage.getItem('attempt')
 
-      return attempt ? JSON.parse(attempt) : {}
+        return attempt ? JSON.parse(attempt) : {}
+      },
+    }
+  },
+  watch: {
+    localStorage() {
+      console.log('change')
     },
   },
 }
