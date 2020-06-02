@@ -32,9 +32,35 @@
         <div class="title">Спроби</div>
 
         <div class="list">
-          <div class="no-attempts">Спроб немає</div>
+          <div
+            v-if="!(ticket.attempts || []).length"
+            class="no-attempts"
+          >Спроб немає</div>
 
-          {{ticket.attempts}}
+          <div
+            v-for="(attempt, index) in (ticket.attempts || [])"
+            v-bind:key="index"
+            class="attempt"
+          >
+            <div class="label">Спроба №{{index+1}}</div>
+            <div class="result">Результат: {{attempt.result.percent}}%</div>
+
+            <div
+              class="is-active"
+              :class="{ active: attempt.active }"
+            >Активна: {{attempt.active ? 'Так' : 'Ні'}}</div>
+
+            <div
+              v-if="attempt.result.id"
+              class="see-detailed"
+              @click="$router.push({
+                name: 'testResults',
+                params: {
+                  attemptID: attempt.id,
+                },
+              })"
+            >Детальніше...</div>
+          </div>
         </div>
       </div>
     </app-fade-card>
@@ -152,6 +178,40 @@ export default {
         color: var(--color-font-dark);
         margin: 30px 0;
         font-size: 1.2em;
+      }
+
+      .attempt {
+        border-bottom: 1px solid var(--color-bg-main);
+        padding: 15px 0;
+
+        .label {
+          font-size: 1.2em;
+          font-weight: bold;
+          margin-bottom: 5px;
+        }
+
+        .result {
+          color: var(--color-font-dark);
+          margin-bottom: 5px;
+        }
+
+        .is-active {
+          color: var(--color-accent-red);
+
+          &.active {
+            color: var(--color-accent-green);
+          }
+        }
+
+        .see-detailed {
+          margin-top: 10px;
+          color: var(--color-accent-green);
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
     }
   }

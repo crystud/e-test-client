@@ -129,6 +129,7 @@
                   v-for="(option, index) in options"
                   v-bind:key="index"
                   :text="option.answer.answerText"
+                  :image="option.answer.image || ''"
                   @toggleSelect="toggle(option.id, question.id)"
                   :selected="isSelected(option.id, question.id)"
                 ></app-answer-option>
@@ -211,6 +212,11 @@ export default {
         })
 
         localStorage.removeItem('attempt')
+
+        this.$router.push({
+          name: 'testResults',
+          params: { attemptID },
+        })
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -221,8 +227,6 @@ export default {
         })
       } finally {
         this.showPreloader = false
-
-        this.$router.push({ name: 'homeUser' })
       }
     },
     checkNumberingOptionSelected(optionID, index) {

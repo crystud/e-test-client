@@ -2,8 +2,6 @@
   <div class="app-warn-passing">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    {{ticketInfo.test}}
-
     <app-modal-window
       :show="Boolean(ticket && ticketInfo.id && !alert.show)"
       :noPaddings="true"
@@ -40,6 +38,10 @@
             <div
               v-if="!active"
               class="see-result"
+              @click="$router.push({
+                name: 'testResults',
+                params: { attemptID },
+              })"
             >Результат ---%</div>
 
             <div v-if="active">

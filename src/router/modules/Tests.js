@@ -24,7 +24,7 @@ export default [
     component: () => import('@/views/tests/TestPass.vue'),
   },
   {
-    path: '/test/results/:id',
+    path: '/test/results/:attemptID',
     name: 'testResults',
     meta: {
       title: 'Результати тесту',

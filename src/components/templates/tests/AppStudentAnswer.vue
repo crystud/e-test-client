@@ -2,21 +2,21 @@
   <div
     class="app-student-answer"
     :class="{
-      'wrong-answer': !isRight,
-      'right-answer': isRight,
+      'wrong-answer': !answer.isRight,
+      'right-answer': answer.isRight,
     }"
   >
-    <div class="question">Lorem ipsum dolor sit amet?</div>
+    <div class="question">{{answer.task.question}}</div>
 
     <div class="answer">
       <span class="icon">
         <font-awesome-icon
-          :icon="isRight ? 'check' : 'times'"
+          :icon="answer.isRight ? 'check' : 'times'"
         ></font-awesome-icon>
       </span>
 
       <span class="text">
-        Lorem, ipsum.
+        // Тут типу відповідь
       </span>
     </div>
 
@@ -28,8 +28,8 @@
 export default {
   name: 'AppStudentAnswer',
   props: {
-    isRight: {
-      type: Boolean,
+    answer: {
+      type: Object,
       required: true,
     },
   },
