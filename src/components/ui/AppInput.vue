@@ -28,6 +28,11 @@ export default {
       required: false,
       default: () => '',
     },
+    autofocus: {
+      type: Boolean,
+      required: false,
+      default: () => false,
+    },
     appearance: {
       required: false,
       default: () => 'border-bottom-highlight',

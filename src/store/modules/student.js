@@ -57,15 +57,13 @@ export default {
         return Promise.reject(e)
       }
     },
-    async getResults({ commit }) {
+    async create(_, payload) {
       try {
-        const { data, status } = await axios.get('/users/me/results')
+        const { data, status } = await axios.post('/students', payload)
 
-        if (status !== 200) {
+        if (status !== 201) {
           return Promise.reject()
         }
-
-        commit('setResults', data)
 
         return Promise.resolve(data)
       } catch (e) {

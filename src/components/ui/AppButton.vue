@@ -24,6 +24,10 @@ export default {
 button {
   cursor: pointer;
 
+  &:active {
+    transform: scale(.98);
+  }
+
   &.primary,
   &.secondary,
   &.neutral,

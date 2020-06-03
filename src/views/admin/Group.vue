@@ -2,10 +2,12 @@
   <div class="group-view">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-filters
-      :show="showFilters"
-      @close="showFilters = false"
-    ></app-filters>
+    <app-create-student
+      :user="createStudentInfo"
+      :group="group"
+      :show="Boolean(createStudentInfo.id)"
+      @created="studentCreated"
+    ></app-create-student>
 
     <div class="header">
       <div class="name">{{group.name}}</div>
@@ -29,7 +31,7 @@
           </div>
 
           <app-group-student
-            v-for="(student, index) in students"
+            v-for="(student, index) in group.students"
             :key="index"
             :student="student"
             class="app-group-student"
@@ -81,25 +83,25 @@
 
         <div class="results">
           <div
-            class="no-results"
-            v-show="searchLaunched && results.length === 0"
+            class="search-tip no-results"
+            v-show="searchLaunched && filteredStudents.length === 0"
           >Нікого не знайдено...</div>
 
           <div
-            class="no-results"
+            class="search-tip"
             v-show="!searchLaunched"
           >Введіть пошуковий запит</div>
 
-          <div v-show="searchLaunched">
-            <div class="title">Знайдено {{results.length}} осіб</div>
+          <div v-show="searchLaunched && filteredStudents.length">
+            <div class="title">Знайдено {{filteredStudents.length}} осіб</div>
 
             <div class="list">
               <app-search-student
-                v-for="(user, index) in results"
+                v-for="(user, index) in filteredStudents"
                 :key="index"
                 :user="user"
                 :isSelected="group.students.includes(user.id)"
-                @addStudent="addStudent(user.id)"
+                @addStudent="createStudentInfo = user"
               ></app-search-student>
             </div>
           </div>
@@ -114,27 +116,19 @@ import { mapGetters, mapActions } from 'vuex'
 
 import AppGroupStudent from '@/components/templates/admin/AppGroupStudent.vue'
 import AppSearchStudent from '@/components/templates/admin/AppSearchStudent.vue'
-import AppFilters from '@/components/templates/admin/AppFilters.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
+import AppCreateStudent from '@/components/templates/admin/AppCreateStudent.vue'
 
 export default {
-  components: {
-    AppGroupStudent,
-    AppSearchStudent,
-    AppButton,
-    AppFilters,
-    AppPreloader,
-  },
   data() {
     return {
-      showFilters: false,
       showPreloader: false,
       firstName: '',
       lastName: '',
       patronymic: '',
       searchLaunched: false,
-      students: [],
+      createStudentInfo: {},
     }
   },
   computed: {
@@ -142,54 +136,53 @@ export default {
       group: 'groups/group',
       results: 'user/searchResults',
     }),
+    filteredStudents() {
+      const {
+        group: { students = [] } = {},
+        results = [],
+      } = this
+
+      const studentsIDs = students.map(({ user }) => user.id)
+
+      return results.filter(({ id }) => !studentsIDs.includes(id))
+    },
   },
   methods: {
     ...mapActions({
       getGroupByID: 'groups/getByID',
-      addStudentToGroup: 'groups/addStudent',
       searchUsers: 'user/search',
       setAlert: 'alert/set',
-      getUsers: 'user/getUsers',
     }),
-    async addStudent(studentID) {
-      const { group: { id: groupID } } = this
+    async studentCreated() {
+      const delay = 1500
 
-      try {
-        this.showPreloader = true
+      this.createStudentInfo = {}
 
-        await this.addStudentToGroup({ studentID, groupID })
-        await this.loadGroup(groupID)
+      this.setAlert({
+        title: 'Студента створено',
+        isSuccess: true,
+        show: true,
+        delay,
+      })
 
-        this.setAlert({
-          title: 'Студента додано',
-          isSuccess: true,
-          text: '',
-          show: true,
-        })
-      } catch (e) {
-        this.setAlert({
-          title: 'Помилка...',
-          text: 'Нам не вдалось додати студента до групи',
-          isSuccess: false,
-          show: true,
-        })
-      } finally {
-        this.showPreloader = false
-      }
+      setTimeout(() => {
+        this.loadGroup()
+      }, delay)
     },
-    async loadGroup(groupID) {
+    async loadGroup() {
       try {
+        const {
+          params: { id: groupID },
+        } = this.$route
+
         this.showPreloader = true
 
-        const group = await this.getGroupByID(groupID)
-        const students = await this.getUsers(group.students)
-
-        this.students = students
+        await this.getGroupByID(groupID)
       } catch (e) {
         this.setAlert({
-          title: 'Неочікувана помилка',
-          text: 'Нам не вдалось отримати інформацію... Спробуйте пізніше',
-          delay: 3000,
+          title: 'Помилка',
+          text: 'Нам не вдалось отримати інформацію про групу',
+          delay: 2000,
           isSuccess: false,
           show: true,
         })
@@ -200,17 +193,9 @@ export default {
     async search() {
       const { firstName, lastName, patronymic } = this
 
-      if (!firstName && !lastName && !patronymic) {
-        return this.setAlert({
-          title: 'Помилка пошуку',
-          text: 'Вкажіть дані для пошуку (ім\'я, прізвище та по-батькові)',
-          delay: 2000,
-          isSuccess: false,
-          show: true,
-        })
+      const searchData = {
+        isNotInRoles: 'teacher',
       }
-
-      const searchData = {}
 
       if (firstName) searchData.firstName = firstName
       if (lastName) searchData.lastName = lastName
@@ -218,16 +203,30 @@ export default {
 
       this.showPreloader = true
 
-      return this.searchUsers(searchData).then(() => {
+      try {
+        await this.searchUsers(searchData)
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось виконати пошук',
+          show: true,
+          isSuccess: false,
+        })
+      } finally {
         this.showPreloader = false
         this.searchLaunched = true
-      })
+      }
     },
   },
   async created() {
-    const { $route: { params: { id } } } = this
-
-    await this.loadGroup(id)
+    await this.loadGroup()
+  },
+  components: {
+    AppGroupStudent,
+    AppSearchStudent,
+    AppButton,
+    AppPreloader,
+    AppCreateStudent,
   },
 }
 </script>
@@ -253,6 +252,17 @@ export default {
         text-decoration: underline !important;
       }
     }
+  }
+
+  .search-tip {
+    font-size: 1.3em;
+    text-align: center;
+    margin: 20px 0;
+    color: var(--color-font-dark);
+  }
+
+  .no-results {
+    color: var(--color-accent-red);
   }
 
   .content {
@@ -374,7 +384,7 @@ export default {
             }
           }
 
-          @media screen and (max-width: 750px) {
+          @media screen and (max-width: 1450px) {
             grid-template-columns: 1fr 1fr;
           }
 
