@@ -2,21 +2,53 @@
   <div
     class="app-student-answer"
     :class="{
-      'wrong-answer': !answer.isRight,
-      'right-answer': answer.isRight,
+      'percent-0-40': resultPercent >= 0 && resultPercent <= 40,
+      'percent-40-80': answer.resultPercent > 40 && resultPercent <= 80,
+      'percent-80-100': resultPercent > 80 && resultPercent <= 100,
     }"
   >
-    <div class="question">{{answer.task.question}}</div>
+    <div class="question">
+      <div
+        class="image"
+        v-if="answer.task.image"
+      >
+        <img
+          :src="`data:image/jpg;base64,${answer.task.image}`"
+          alt="attached image"
+        >
+      </div>
+
+      <div class="text">{{answer.task.question}}</div>
+    </div>
+
 
     <div class="answer">
       <span class="icon">
-        <font-awesome-icon
-          :icon="answer.isRight ? 'check' : 'times'"
-        ></font-awesome-icon>
+        {{resultPercent.toFixed(1)}}%
       </span>
 
       <span class="text">
-        // Тут типу відповідь
+        <div>
+          <div class="answers-list">
+            <div
+              v-for="(text, index) in answer.correct"
+              v-bind:key="index"
+              class="answer-text"
+            >
+              <span class="is-right">[-]</span>
+              <span class="content">{{text}}</span>
+            </div>
+
+            <div
+              v-for="(text, index) in answer.incorrect"
+              v-bind:key="index"
+              class="answer-text"
+            >
+              <span class="is-right">[-]</span>
+              <span class="content">{{text}}</span>
+            </div>
+          </div>
+        </div>
       </span>
     </div>
 
@@ -26,7 +58,13 @@
 
 <script>
 export default {
-  name: 'AppStudentAnswer',
+  computed: {
+    resultPercent() {
+      const { answer } = this
+
+      return (answer.receivedScore / answer.maxScore) * 100
+    },
+  },
   props: {
     answer: {
       type: Object,
@@ -50,7 +88,19 @@ export default {
   position: relative;
 
   .question {
-    color: var(--color-font-dark);
+    display: flex;
+    align-items: center;
+
+    .image {
+      img {
+        margin-right: 10px;
+        max-height: 100px;
+      }
+    }
+
+    .text {
+      color: var(--color-font-dark);
+    }
   }
 
   .answer {
@@ -60,9 +110,8 @@ export default {
 
     .icon {
       display: flex;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
+      border-radius: 5px;
+      padding: 5px 10px;
 
       font-size: 1.1em;
 
@@ -73,7 +122,17 @@ export default {
     }
 
     .text {
-      margin-left: 10px;
+      margin-left: 20px;
+
+      .answers-list {
+        .answer-text {
+          margin-bottom: 5px;
+        }
+
+        .is-right {
+          margin-right: 10px;
+        }
+      }
     }
   }
 
@@ -86,25 +145,40 @@ export default {
 
     height: 3px;
     width: 20%;
+    max-width: 100px;
 
     border-radius: 10px;
 
-    background: #1ED6BA;
+    background: var(--color-accent-green);
   }
 
-  &.right-answer {
-    .answer .icon {
-      background: #1ED6BA;
-    }
-  }
-
-  &.wrong-answer {
-    .answer .icon {
-      background: #D32323;
-    }
-
+  &.percent-0-40 {
     .line {
-      background: #D32323;
+      background: var(--color-accent-red);
+    }
+
+    .answer .icon {
+      background: var(--color-accent-red);
+    }
+  }
+
+  &.percent-40-80 {
+    .line {
+      background: var(--color-accent-orange);
+    }
+
+    .answer .icon {
+      background: var(--color-accent-orange);
+    }
+  }
+
+  &.percent-80-100 {
+    .line {
+      background: var(--color-accent-green);
+    }
+
+    .answer .icon {
+      background: var(--color-accent-green);
     }
   }
 }

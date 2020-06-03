@@ -56,7 +56,7 @@
               @click="$router.push({
                 name: 'testResults',
                 params: {
-                  attemptID: attempt.id,
+                  resultID: attempt.result.id,
                 },
               })"
             >Детальніше...</div>

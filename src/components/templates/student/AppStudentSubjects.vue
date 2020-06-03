@@ -54,8 +54,8 @@
           }"
         >
           <span v-if="ticket.used">Використаний</span>
-          <span v-if="!ticket.used">Невикористаний</span>
-          <span v-if="ticket.outstanding">Прострочений</span>
+          <span v-if="!ticket.outstanding && !ticket.used">Невикористаний</span>
+          <span v-if="ticket.outstanding && !ticket.used">Прострочений</span>
         </div>
       </div>
     </div>
@@ -179,13 +179,13 @@ export default {
       }
 
       .permission {
-        &.closed {
-          color: #1ED6BA;
+        &.opened {
+          color: var(--color-accent-green);
         }
 
-        &.opened,
+        &.closed,
         &.outstanding {
-          color: #E01616;
+          color: var(--color-accent-red);
         }
       }
 

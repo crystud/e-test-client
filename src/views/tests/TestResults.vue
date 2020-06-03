@@ -2,7 +2,7 @@
   <div class="app-test-results">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <template v-if="attempt.id">
+    <template v-if="result.id">
       <div class="results-wrap">
         <div class="student-info">
           <div class="wrap">
@@ -14,8 +14,8 @@
             </div>
 
             <div class="info">
-              <div class="name">Студент Студентович</div>
-              <div class="last-visit">Не в мережі</div>
+              <div class="name">{{self.lastName}} {{self.firstName}}</div>
+              <div class="last-visit">В мережі</div>
             </div>
           </div>
         </div>
@@ -23,8 +23,8 @@
         <div class="results-list">
           <div
             v-for="([ label, value ], index) in [
-              ['Оцінка (%)', `${attempt.result.percent}`],
-              ['Час', getPassingTime(attempt.startTime, attempt.endTime)],
+              ['Оцінка (%)', `${result.percent}`],
+              ['Час', getPassingTime(result.attempt.startTime, result.attempt.endTime)],
               ['Вірних', '-'],
               ['Невірних', '-'],
             ]"
@@ -39,7 +39,7 @@
 
       <div class="answers-list">
         <app-student-answer
-          v-for="(answer, index) in attempt.attemptTasks"
+          v-for="(answer, index) in result.resultTasks"
           v-bind:key="index"
           :answer="answer"
         ></app-student-answer>
@@ -49,15 +49,20 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import AppStudentAnswer from '@/components/templates/tests/AppStudentAnswer.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
+  computed: {
+    ...mapGetters({
+      self: 'user/info',
+    }),
+  },
   methods: {
     ...mapActions({
-      getResults: 'attempts/getByID',
+      getResults: 'results/getByID',
       setAlert: 'alert/set',
     }),
     getPassingTime(startTime, endTime) {
@@ -73,11 +78,11 @@ export default {
       return `${hoursText}${minutes} хв. ${seconds} сек.`
     },
     async loadResults() {
-      const { params: { attemptID: rawAttemptID } } = this.$route
+      const { params: { resultID: rawResultID } } = this.$route
 
-      const attemptID = Number(rawAttemptID)
+      const resultID = Number(rawResultID)
 
-      if (!attemptID) {
+      if (!resultID) {
         this.setAlert({
           title: 'Помилка',
           text: 'Не вдалось оприділити ID спроби...',
@@ -91,7 +96,7 @@ export default {
       try {
         this.showPreloader = true
 
-        this.attempt = await this.getResults(attemptID)
+        this.result = await this.getResults(resultID)
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -110,7 +115,7 @@ export default {
   data() {
     return {
       showPreloader: false,
-      attempt: {},
+      result: {},
     }
   },
   components: {
@@ -121,7 +126,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@extrasmall: ~"screen and (max-width: 430px)";
 @small: ~"screen and (max-width: 1050px)";
 @medium: ~"screen and (max-width: 1200px)";
 @large: ~"screen and (min-width: 1250px)";
@@ -156,7 +160,7 @@ export default {
         }
 
         .last-visit {
-          color: var(--color-font-dark);
+          color: var(--color-accent-green);
           margin-top: 5px;
         }
 

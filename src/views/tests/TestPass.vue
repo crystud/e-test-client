@@ -39,8 +39,8 @@
       <div class="status">
         Статус:
         {{
-          (userAnswers.filter(({ answers }) => answers.length > 0).length
-          / tasksList.length) * 100
+          ((userAnswers.filter(({ answers }) => answers.length > 0).length
+          / tasksList.length) * 100).toFixed(2)
         }}%
       </div>
 
@@ -204,7 +204,7 @@ export default {
       try {
         this.showPreloader = true
 
-        await this.sendAnswers({
+        const { result: { id: resultID } = {} } = await this.sendAnswers({
           payload: {
             tasks: responseTasks.map((response) => response || { answers: [] }),
           },
@@ -213,9 +213,20 @@ export default {
 
         localStorage.removeItem('attempt')
 
+        if (!resultID) {
+          this.setAlert({
+            title: 'Помилка',
+            text: 'Не вдалось оприділити ID результату',
+            show: true,
+            isSuccess: false,
+          })
+
+          return
+        }
+
         this.$router.push({
           name: 'testResults',
-          params: { attemptID },
+          params: { resultID },
         })
       } catch (e) {
         this.setAlert({

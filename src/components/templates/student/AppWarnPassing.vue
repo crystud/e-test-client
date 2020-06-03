@@ -36,13 +36,15 @@
             </div>
 
             <div
-              v-if="!active"
+              v-if="result.id"
               class="see-result"
               @click="$router.push({
                 name: 'testResults',
-                params: { attemptID },
+                params: {
+                  resultID: result.id,
+                },
               })"
-            >Результат ---%</div>
+            >Результат {{result.percent}}%</div>
 
             <div v-if="active">
               <div class="is-active active">Активна</div>
@@ -99,8 +101,8 @@
             >Невикористаний</span>
 
             <span
-              v-if="ticketInfo.outstanding"
-              class="denined"
+              v-if="ticketInfo.outstanding && !ticketInfo.used"
+              class="denied"
             >Прострочений</span>
           </div>
         </div>
