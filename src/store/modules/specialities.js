@@ -1,5 +1,3 @@
-import AsyncLoop from 'node-async-loop'
-
 import axios from '../../tools/axios'
 
 export default {
@@ -61,24 +59,18 @@ export default {
         return Promise.reject()
       }
     },
-    async getGroups({ dispatch }, specialties) {
-      return new Promise((resolve) => {
-        if (!specialties.length) return resolve([])
+    async attachSubject(_, payload) {
+      try {
+        const { data, status } = await axios.post('/specialties/addSubject', payload)
 
-        let groups = []
+        if (status !== 201) {
+          return Promise.reject()
+        }
 
-        return AsyncLoop(specialties, async (specialtyID, next) => {
-          const speciality = await dispatch('getByID', specialtyID)
-
-          if (!speciality.groups) {
-            return next()
-          }
-
-          groups = [...groups, ...speciality.groups]
-
-          return next()
-        }, () => resolve(groups))
-      })
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
     },
   },
 }

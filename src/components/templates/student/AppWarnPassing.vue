@@ -17,7 +17,7 @@
           class="attempts-list"
           v-if="attempts.length"
         >
-          <div class="title">Ваші спроби проходження</div>
+          <div class="title">Ваші спроби проходження (Спроб - {{attempts.length}})</div>
 
           <div
             v-for="({
@@ -34,6 +34,11 @@
             <div class="start-time">
               <div v-if="endTime">{{countPassingTime(startTime, endTime)}}</div>
             </div>
+
+            <div
+              class="date"
+              v-if="startTime && endTime"
+            >{{getNormalDate(startTime)}} - {{getNormalDate(endTime)}}</div>
 
             <div
               v-if="result.id"
@@ -188,8 +193,14 @@ export default {
 
       const date = new Date(time)
 
-      const datetime = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
-      const daytime = `${date.getHours()}:${date.getMinutes()}`
+      const day = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`
+      const month = `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`
+
+      const hours = `${date.getHours() < 10 ? '0' : ''}${date.getHours()}`
+      const minutes = `${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`
+
+      const datetime = `${day}/${month}/${date.getFullYear()}`
+      const daytime = `${hours}:${minutes}`
 
       return `${datetime} ${daytime}`
     },
@@ -299,6 +310,11 @@ export default {
           margin-bottom: 10px;
         }
 
+        .date {
+          margin-bottom: 5px;
+          color: var(--color-accent-orange);
+        }
+
         .see-result {
           color: var(--color-font-dark);
           cursor: pointer;
@@ -328,6 +344,28 @@ export default {
           color: var(--color-accent-green);
           background: var(--color-bg-main);
         }
+      }
+    }
+
+    @media screen and (max-width: 650px) {
+      .attempts-list {
+        max-height: 40vh;
+        border-bottom: 1px solid var(--color-bg-main);
+        border-right: 0;
+
+        .attempt {
+          background: var(--color-bg-main);
+          border-radius: 10px;
+
+          padding: 20px;
+          margin: 15px;
+
+          border-top: 0;
+        }
+      }
+
+      &.showing-attempts-list {
+        grid-template-columns: 1fr;
       }
     }
   }

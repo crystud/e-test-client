@@ -28,7 +28,7 @@ export default {
 
         commit('setSubjects', data)
 
-        return Promise.resolve()
+        return Promise.resolve(data)
       } catch (e) {
         return Promise.reject(e)
       }

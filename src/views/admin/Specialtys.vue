@@ -9,7 +9,6 @@
 
     <app-create-specialty
       :show="showCreate"
-      :college="editingCollege"
       @close="showCreate = false"
       @created="specialtyCreated"
     ></app-create-specialty>
@@ -17,14 +16,6 @@
     <div class="header">
       <div class="title">
         <div class="value">Спеціальності</div>
-
-        <div
-          class="subtitle"
-          @click="
-            editingCollege = {};
-            showAskCollege = true;
-          "
-        >{{editingCollege.name}}</div>
       </div>
 
       <div>
@@ -34,12 +25,18 @@
           @click="showCreate = true"
         >Створити спеціальність</app-button>
 
-        <app-button
+        <!-- <app-button
           appearance="primary"
           @click="showSync = true"
-        >Синхронізувати</app-button>
+        >Синхронізувати</app-button> -->
       </div>
     </div>
+
+    <app-edit-attached-subjects
+      :speciality="editAttachedSubjects"
+      :show="Boolean(editAttachedSubjects.id)"
+      @close="editAttachedSubjects = {}"
+    ></app-edit-attached-subjects>
 
     <app-specialities-chart
       v-if="specialities.length"
@@ -57,7 +54,7 @@
         v-for="(speciality, i) in specialities"
         v-bind:key="i"
         :specialty="speciality"
-        @editStudies="editStudies = { speciality, show: true }"
+        @editAttachedSubjects="editAttachedSubjects = speciality"
       ></app-specialty>
     </div>
   </div>
@@ -72,6 +69,7 @@ import AppSpecialty from '@/components/templates/admin/AppSpecialty.vue'
 import AppSyncSpecialtys from '@/components/templates/admin/AppSyncSpecialtys.vue'
 import AppSpecialitiesChart from '@/components/templates/admin/AppSpecialitiesChart.vue'
 import AppCreateSpecialty from '@/components/templates/admin/AppCreateSpecialty.vue'
+import AppEditAttachedSubjects from '@/components/templates/admin/AppEditAttachedSubjects.vue'
 
 export default {
   data() {
@@ -81,20 +79,8 @@ export default {
       editingCollege: {},
       showAskCollege: true,
       showPreloader: false,
-      editStudies: {
-        show: false,
-        speciality: {},
-      },
+      editAttachedSubjects: {},
     }
-  },
-  name: 'specialtys',
-  components: {
-    AppButton,
-    AppSpecialty,
-    AppSyncSpecialtys,
-    AppSpecialitiesChart,
-    AppCreateSpecialty,
-    AppPreloader,
   },
   computed: {
     ...mapGetters({
@@ -132,6 +118,15 @@ export default {
   },
   created() {
     this.fetchSpecialities()
+  },
+  components: {
+    AppButton,
+    AppSpecialty,
+    AppSyncSpecialtys,
+    AppEditAttachedSubjects,
+    AppSpecialitiesChart,
+    AppCreateSpecialty,
+    AppPreloader,
   },
 }
 </script>

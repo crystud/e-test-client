@@ -12,9 +12,9 @@
     ></app-data-list>
 
     <div
-      @click="$emit('editStudies')"
+      @click="$emit('editAttachedSubjects')"
       class="study-plan"
-    >Закріплені предмети</div>
+    >Закріплені предмети ({{specialty.subjects.length}})</div>
   </app-card>
 </template>
 

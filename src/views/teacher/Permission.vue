@@ -112,8 +112,14 @@ export default {
 
       const date = new Date(time)
 
-      const datetime = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
-      const daytime = `${date.getHours()}:${date.getMinutes()}`
+      const day = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`
+      const month = `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`
+
+      const hours = `${date.getHours() < 10 ? '0' : ''}${date.getHours()}`
+      const minutes = `${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`
+
+      const datetime = `${day}/${month}/${date.getFullYear()}`
+      const daytime = `${hours}:${minutes}`
 
       return `${datetime} ${daytime}`
     },
