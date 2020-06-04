@@ -11,13 +11,13 @@
     </div>
 
     <div class="info">
-      <div class="name">Студент студентович</div>
-      <div class="additional">Коміcія: математичних наук</div>
+      <div class="name">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</div>
+      <div class="additional">E-mail: {{user.email}}</div>
     </div>
 
     <div class="last-visit">
       <div class="text">
-        <span>онлайн</span>
+        <span>в мережі</span>
 
         <div
           class="circle"
@@ -31,22 +31,27 @@
 </template>
 
 <script>
-import AppCard from '../../ui/AppCard.vue'
+import AppCard from '@/components/ui/AppCard.vue'
 
 export default {
-  name: 'AppUserItem',
-  components: {
-    AppCard,
+  props: {
+    user: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
     go() {
+      const { user: { id } } = this
+
       this.$router.push({
         name: 'student',
-        params: {
-          id: 1,
-        },
+        params: { id },
       })
     },
+  },
+  components: {
+    AppCard,
   },
 }
 </script>

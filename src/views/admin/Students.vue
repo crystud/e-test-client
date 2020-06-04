@@ -1,20 +1,35 @@
 <template>
   <div class="app-students">
+    <app-preloader :show="showPreloader"></app-preloader>
+
     <div class="search-bar">
       <input
         type="text"
-        placeholder="Пошук студентів..."
+        placeholder="Прізвище"
+        v-model="lastName"
+        v-on:keyup="({ keyCode }) => keyCode === 13 ? search() : null"
       />
 
-      <app-select
-        class="select"
-        label="Спеціальність"
-        :values="values"
-      ></app-select>
+      <input
+        type="text"
+        placeholder="Ім'я"
+        class="border-left"
+        v-model="firstName"
+        v-on:keyup="({ keyCode }) => keyCode === 13 ? search() : null"
+      />
+
+      <input
+        type="text"
+        placeholder="Ім'я по-батькові"
+        class="border-left"
+        v-model="patronymic"
+        v-on:keyup="({ keyCode }) => keyCode === 13 ? search() : null"
+      />
 
       <app-button
         appearance="neutral"
         class="btn"
+        @click="search"
       >
         <font-awesome-icon
           icon="search"
@@ -22,10 +37,24 @@
       </app-button>
     </div>
 
-    <div class="students">
+    <div
+      v-if="searchLaunched && !searchResults.length"
+      class="search-tip no-results"
+    >Нікого не знайдено</div>
+
+    <div
+      class="search-tip"
+      v-if="!searchLaunched"
+    >Вкажіть дані та натисніть " <font-awesome-icon icon="search"></font-awesome-icon> "</div>
+
+    <div
+      class="students"
+      v-if="searchLaunched"
+    >
       <app-user-item
-        v-for="i in 17"
-        v-bind:key="i"
+        v-for="(user, index) in searchResults"
+        v-bind:key="index"
+        :user="user"
         class="user"
       ></app-user-item>
     </div>
@@ -33,26 +62,76 @@
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
-import AppSelect from '@/components/ui/AppSelect.vue'
+import { mapActions, mapGetters } from 'vuex'
 
+import AppButton from '@/components/ui/AppButton.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppUserItem from '@/components/templates/admin/AppUserItem.vue'
 
 export default {
-  name: 'students',
-  components: {
-    AppButton,
-    AppSelect,
-    AppUserItem,
+  computed: {
+    ...mapGetters({
+      searchResults: 'user/searchResults',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      searchUsers: 'user/search',
+      setAlert: 'alert/set',
+    }),
+    async search() {
+      try {
+        this.showPreloader = true
+
+        const {
+          firstName,
+          lastName,
+          patronymic,
+        } = this
+
+        if (!firstName && !lastName && !patronymic) {
+          this.setAlert({
+            title: 'Вкажіть дані для пошуку',
+            isSuccess: false,
+            show: true,
+          })
+
+          return
+        }
+
+        this.searchLaunched = true
+
+        await this.searchUsers({
+          roles: 'student',
+          firstName,
+          lastName,
+          patronymic,
+        })
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалося виконати пошук',
+          show: true,
+          isSuccess: false,
+        })
+      } finally {
+        this.showPreloader = false
+      }
+    },
   },
   data() {
     return {
-      values: [
-        { value: '121', label: 'Інженерія програмного забезпечення' },
-        { value: '122', label: 'Модельєри' },
-        { value: '123', label: 'Автоматизація' },
-      ],
+      showPreloader: false,
+      firstName: '',
+      lastName: '',
+      patronymic: '',
+      searchLaunched: false,
     }
+  },
+  components: {
+    AppButton,
+    AppUserItem,
+    AppPreloader,
   },
 }
 </script>
@@ -61,7 +140,7 @@ export default {
 .app-students {
   .search-bar {
     display: grid;
-    grid-template-columns: 1fr 250px 80px;
+    grid-template-columns: 1fr 1fr 1fr 80px;
 
     background: var(--color-bg-dark);
     border-radius: 10px;
@@ -70,6 +149,7 @@ export default {
       background: transparent;
       border: 0;
       font-size: 1em;
+      font-weight: 100;
 
       padding: 20px;
 
@@ -81,12 +161,12 @@ export default {
       }
     }
 
-    .borderLeft {
+    .border-left {
       border-left: 1px solid var(--color-bg-light);
     }
 
-    .select, .btn {
-      .borderLeft();
+    .btn {
+      .border-left();
     }
 
     .btn {
@@ -95,6 +175,13 @@ export default {
       color: var(--color-font-dark);
       border-radius: 0;
     }
+  }
+
+  .search-tip {
+    text-align: center;
+    margin: 80px 0;
+    font-size: 1.5em;
+    color: var(--color-font-dark);
   }
 
   .students {
@@ -117,7 +204,7 @@ export default {
 
   @media screen and (max-width: 1200px) {
     .students {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
     }
   }
 
@@ -133,7 +220,7 @@ export default {
     }
   }
 
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 750px) {
     .search-bar {
       grid-template-columns: 1fr;
 
@@ -144,6 +231,10 @@ export default {
       .select, .btn {
         border-left: 0;
         padding: 20px;
+      }
+
+      .border-left {
+        border-left: 0;
       }
 
       .btn, .select {
