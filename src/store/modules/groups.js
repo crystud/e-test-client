@@ -1,4 +1,3 @@
-import AsyncLoop from 'node-async-loop'
 import axios from '../../tools/axios'
 
 export default {
@@ -6,17 +5,7 @@ export default {
 
   state: {
     list: [],
-    group: {
-      name: null,
-      students: [],
-      number: null,
-      speciality: null,
-      course: null,
-      id: null,
-      startEducation: '',
-      endEducation: '',
-      active: null,
-    },
+    group: {},
   },
 
   getters: {
@@ -46,33 +35,6 @@ export default {
       } catch (e) {
         return Promise.reject()
       }
-    },
-    async get({ commit }, groupsIDS) {
-      return new Promise((resolve, reject) => {
-        if (!groupsIDS.length) {
-          commit('setList', [])
-
-          return resolve([])
-        }
-
-        const groups = []
-
-        return AsyncLoop(groupsIDS, async (groupID, next) => {
-          const { data, status } = await axios.get(`/groups/${groupID}`)
-
-          if (status !== 200) {
-            return reject(status)
-          }
-
-          groups.push(data)
-
-          return next()
-        }, () => {
-          commit('setList', groups)
-
-          return resolve(groups)
-        })
-      })
     },
     async getByID({ commit }, groupID) {
       try {

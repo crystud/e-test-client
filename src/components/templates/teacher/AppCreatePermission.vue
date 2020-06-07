@@ -222,8 +222,6 @@ export default {
 
         setTimeout(() => this.$emit('done'), 1500)
       } catch (e) {
-        console.log(e)
-
         this.setAlert({
           title: 'Помилка',
           text: 'Не вдалось створити дозвіл...',

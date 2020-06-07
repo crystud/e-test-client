@@ -14,13 +14,16 @@
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
+    "csvtojson": "^2.0.10",
     "font-awesome": "^4.7.0",
+    "fs": "^0.0.1-security",
     "jwt-decode": "^2.2.0",
     "node-async-loop": "^1.2.2",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.11",
     "vue-router": "^3.1.5",
-    "vuex": "^3.1.2"
+    "vuex": "^3.1.2",
+    "xlsx-parse-json": "^3.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.0",

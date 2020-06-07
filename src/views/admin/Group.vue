@@ -12,10 +12,22 @@
     <div class="header">
       <div class="name">{{group.name}}</div>
 
-      <router-link
-        :to="{ name: 'groups' }"
-        class="select-other"
-      >Обрати іншу групу...</router-link>
+      <div>
+        <router-link
+          :to="{ name: 'groups' }"
+          class="select-other"
+        >Обрати іншу групу...</router-link>
+
+        <router-link
+          class="invites-link"
+          :to="{
+            name: 'invites',
+            params: {
+              groupID: group.id || 0,
+            }
+          }"
+        >Створити запрошення</router-link>
+      </div>
     </div>
 
     <div class="content">
@@ -243,6 +255,14 @@ export default {
     .name {
       font-size: 2em;
       font-weight: 300;
+    }
+
+    .invites-link {
+      margin-left: 20px;
+      padding: 10px 18px;
+      background: var(--color-accent-blue);
+      border-radius: 7px;
+      color: #fff;
     }
 
     .select-other {

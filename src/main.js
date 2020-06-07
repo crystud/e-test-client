@@ -49,6 +49,8 @@ import {
   faMapMarkerAlt,
   faImage,
   faChevronDown,
+  faFileExcel,
+  faFileUpload,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -109,6 +111,8 @@ library.add(faRedo)
 library.add(faMapMarkerAlt)
 library.add(faImage)
 library.add(faChevronDown)
+library.add(faFileExcel)
+library.add(faFileUpload)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

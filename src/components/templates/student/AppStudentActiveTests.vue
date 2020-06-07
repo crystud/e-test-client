@@ -31,11 +31,6 @@ export default {
       },
     }
   },
-  watch: {
-    localStorage() {
-      console.log('change')
-    },
-  },
 }
 </script>
 
