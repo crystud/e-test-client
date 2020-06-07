@@ -8,8 +8,18 @@
       @close="showEntireInvitesList = false"
     ></app-entire-invites-list>
 
+    <app-warn-create-many-invites
+      :show="Boolean(showWarnCreateManyInvites && !showEntireInvitesList)"
+      :list="getExampleValues()"
+      :group="group"
+      @showFullList="showEntireInvitesList = true"
+      @close="showWarnCreateManyInvites = false"
+    ></app-warn-create-many-invites>
+
     <div class="sections">
       <div class="action-area">
+        <div class="global-title">Створення запрошень для групи П-42</div>
+
         <label
           v-if="!file.name"
           for="file"
@@ -146,6 +156,14 @@
               <div class="field">{{scoringBook}}</div>
             </div>
           </div>
+
+          <div class="create-invites-wrap">
+            <app-button
+              appearance="neutral"
+              class="create-invites"
+              @click="showWarnCreateManyInvites = true"
+            >Створити запрошення...</app-button>
+          </div>
         </div>
       </div>
 
@@ -180,7 +198,10 @@ import xlsxParser from 'xlsx-parse-json'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppDataList from '@/components/ui/AppDataList.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+
 import AppEntireInvitesList from '@/components/templates/admin/AppEntireInvitesList.vue'
+import AppWarnCreateManyInvites from '@/components/templates/admin/AppWarnCreateManyInvites.vue'
 
 export default {
   methods: {
@@ -195,7 +216,9 @@ export default {
 
       const list = []
 
-      for (let i = 0; i < (length || data.length); i += 1) {
+      const iterations = length < data.length ? length || data.length : data.length
+
+      for (let i = 0; i < iterations; i += 1) {
         const item = data[i]
 
         let firstName
@@ -216,7 +239,7 @@ export default {
           lastName,
           firstName,
           patronymic,
-          scoringBook: scoringBook.name ? item[scoringBook.name] : '-',
+          scoringBook: scoringBook.name ? parseInt(item[scoringBook.name], 10) : '-',
         })
       }
 
@@ -319,6 +342,7 @@ export default {
   data() {
     return {
       showEntireInvitesList: false,
+      showWarnCreateManyInvites: false,
       showPreloader: false,
       isFileOver: false,
       group: {},
@@ -334,9 +358,11 @@ export default {
     this.loadGroupInfo()
   },
   components: {
+    AppWarnCreateManyInvites,
     AppEntireInvitesList,
     AppPreloader,
     AppDataList,
+    AppButton,
   },
 }
 </script>
@@ -347,6 +373,10 @@ export default {
     display: grid;
     grid-template-columns: 1fr 300px;
     grid-gap: 20px;
+
+    @media screen and (max-width: 1250px) {
+      grid-template-columns: 1fr;
+    }
 
     align-items: flex-start;
 
@@ -366,6 +396,12 @@ export default {
     }
 
     .action-area {
+      .global-title {
+        font-size: 1.3em;
+        padding: 20px;
+        border-bottom: 1px solid var(--color-bg-main);
+      }
+
       .created-invites {
         border-top: 1px solid var(--color-bg-main);
         padding: 25px;
@@ -375,20 +411,24 @@ export default {
           grid-template-columns: 1fr auto;
           grid-gap: 20px;
           align-items: center;
+          margin-bottom: 30px;
 
           .invites-title {
             font-size: 1.5em;
-            margin-bottom: 20px;
           }
 
           .check-all {
-            padding: 10px;
             color: var(--color-accent-orange);
             cursor: pointer;
 
             &:hover {
               text-decoration: underline;
             }
+          }
+
+          @media screen and (max-width: 650px) {
+            grid-template-columns: 1fr;
+            grid-gap: 10px;
           }
         }
 
@@ -399,9 +439,31 @@ export default {
             grid-gap: 20px;
             margin-bottom: 10px;
 
+            @media screen and (max-width: 1175px) {
+              grid-template-columns: 1fr 1fr 1fr;
+              grid-gap: 10px;
+
+              padding-bottom: 10px;
+              border-bottom: 1px solid var(--color-bg-main);
+              margin-bottom: 20px;
+            }
+
+            @media screen and (max-width: 500px) {
+              grid-template-columns: 1fr;
+            }
+
             &.header-row {
               color: var(--color-font-dark);
             }
+          }
+        }
+
+        .create-invites-wrap {
+          text-align: right;
+
+          .create-invites {
+            background: var(--color-accent-green);
+            margin-top: 20px;
           }
         }
       }

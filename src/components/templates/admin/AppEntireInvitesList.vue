@@ -6,7 +6,7 @@
   >
     <div class="content">
       <div class="header">
-        <div class="title">Список запрошень</div>
+        <div class="title">Список запрошень ({{list.length}})</div>
 
         <div
           class="close"
@@ -69,7 +69,7 @@ export default {
 
   .header {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 40px;
     grid-gap: 20px;
 
     align-items: center;
@@ -98,6 +98,19 @@ export default {
       align-items: center;
 
       margin-bottom: 10px;
+
+      @media screen and (max-width: 1175px) {
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 10px;
+
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--color-bg-main);
+        margin-bottom: 20px;
+      }
+
+      @media screen and (max-width: 500px) {
+        grid-template-columns: 1fr;
+      }
 
       &.header-row {
         color: var(--color-font-dark);
