@@ -67,8 +67,16 @@ export default [
     path: '/invites/:groupID',
     name: 'invites',
     meta: {
-      title: 'Інвайти',
+      title: 'Створення запрошень для групи',
     },
     component: () => import('@/views/admin/Invites.vue'),
+  },
+  {
+    path: '/invites',
+    name: 'createdInvites',
+    meta: {
+      title: 'Створені запрошення',
+    },
+    component: () => import('@/views/admin/CreatedInvites.vue'),
   },
 ]

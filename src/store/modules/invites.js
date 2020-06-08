@@ -3,11 +3,19 @@ import axios from '../../tools/axios'
 export default {
   namespaced: true,
 
-  state: {},
+  state: {
+    list: [],
+  },
 
-  getters: {},
+  getters: {
+    list: ({ list }) => list,
+  },
 
-  mutations: {},
+  mutations: {
+    setInvites(state, list) {
+      state.list = list
+    },
+  },
 
   actions: {
     async createMany(_, payload) {
@@ -21,6 +29,21 @@ export default {
         return Promise.resolve(data)
       } catch (e) {
         return Promise.reject(e)
+      }
+    },
+    async get({ commit }, filters) {
+      try {
+        const { data, status } = await axios.get('/invites', { params: filters })
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setInvites', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
       }
     },
   },

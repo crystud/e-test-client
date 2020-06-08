@@ -98,6 +98,7 @@
             <div class="divider">Адміністратор</div>
 
             <app-home-link role="admin" link="statsCollege">Статистика нагрузки</app-home-link>
+            <app-home-link role="admin" link="createdInvites">Запрошення</app-home-link>
             <app-home-link role="admin" link="groups">Групи</app-home-link>
             <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
             <app-home-link role="admin" link="subjects">Предмети</app-home-link>
