@@ -2,9 +2,58 @@
   <div class="app-created-invites">
     <app-preloader :show="showPreloader"></app-preloader>
 
+    <app-invite-detail-info
+      :info="showMore"
+      @close="showMore = {}"
+    ></app-invite-detail-info>
+
     <div class="sections">
-      <div class="list">
-        list goes here...
+      <div class="list-wrap">
+        <div class="title">
+          Останні 25 запрошень
+        </div>
+
+        <div class="list">
+          <div class="row header-row">
+            <div class="fullname">ПІБ</div>
+            <div class="group">Група</div>
+            <div class="status">Статус</div>
+            <div class="detail">Детальніше</div>
+          </div>
+
+          <div
+            v-for="({ usedAt, student: { user, group } }, index) in invites"
+            v-bind:key="index"
+            class="row"
+          >
+            <div class="fullname">
+              {{user.lastName}} {{user.firstName}} {{user.patronymic}}
+            </div>
+
+            <div class="group">{{group.name || '-'}}</div>
+            <div
+              class="status"
+              :class="{
+                used: usedAt !== null,
+              }"
+            >
+              <font-awesome-icon
+                v-if="usedAt !== null"
+                icon="check"
+              ></font-awesome-icon>
+
+              <font-awesome-icon
+                v-else
+                icon="user-clock"
+              ></font-awesome-icon>
+            </div>
+
+            <div
+              class="detail"
+              @click="showMore = invites[index]"
+            >Детальніше...</div>
+          </div>
+        </div>
       </div>
 
       <div class="data-cards">
@@ -64,13 +113,16 @@ import { mapGetters, mapActions } from 'vuex'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppDataList from '@/components/ui/AppDataList.vue'
 import AppCard from '@/components/ui/AppCard.vue'
-import AppCircleChart from '../../components/ui/AppCircleChart.vue'
+import AppCircleChart from '@/components/ui/AppCircleChart.vue'
+
+import AppInviteDetailInfo from '@/components/templates/admin/AppInviteDetailInfo.vue'
 
 export default {
   data() {
     return {
       showPreloader: false,
       progress: 0,
+      showMore: {},
     }
   },
   methods: {
@@ -104,6 +156,7 @@ export default {
     }),
   },
   components: {
+    AppInviteDetailInfo,
     AppCircleChart,
     AppPreloader,
     AppDataList,
@@ -121,10 +174,47 @@ export default {
 
     align-items: flex-start;
 
-    .list {
+    .list-wrap {
       padding: 20px;
       border-radius: 10px;
       background: var(--color-bg-dark);
+
+      .title {
+        color: var(--color-font-dark);
+        margin-bottom: 15px;
+      }
+
+      .list {
+        .row {
+          display: grid;
+          grid-template-columns: 3fr 1fr 1fr 2fr;
+          grid-gap: 15px;
+          margin-bottom: 15px;
+
+          .group {
+            color: var(--color-font-dark);
+          }
+
+          .status {
+            color: var(--color-accent-orange);
+
+            &.used {
+              color: var(--color-accent-green);
+            }
+          }
+
+          .detail {
+            color: var(--color-accent-green);
+            cursor: pointer;
+          }
+
+          &.header-row {
+            &, * {
+              color: var(--color-font-dark);
+            }
+          }
+        }
+      }
     }
 
     .data-cards {

@@ -51,6 +51,7 @@ import {
   faChevronDown,
   faFileExcel,
   faFileUpload,
+  faUserClock,
 } from '@fortawesome/free-solid-svg-icons'
 
 import App from './App.vue'
@@ -113,6 +114,7 @@ library.add(faImage)
 library.add(faChevronDown)
 library.add(faFileExcel)
 library.add(faFileUpload)
+library.add(faUserClock)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
