@@ -1,3 +1,5 @@
+import jwtDecode from 'jwt-decode'
+
 import axios from '../../tools/axios'
 
 export default {
@@ -5,15 +7,20 @@ export default {
 
   state: {
     list: [],
+    invite: {},
   },
 
   getters: {
     list: ({ list }) => list,
+    invite: ({ invite }) => invite,
   },
 
   mutations: {
     setInvites(state, list) {
       state.list = list
+    },
+    setInvite(state, invite) {
+      state.invite = invite
     },
   },
 
@@ -40,6 +47,49 @@ export default {
         }
 
         commit('setInvites', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
+    async getByCode({ commit }, code) {
+      try {
+        const params = { code }
+
+        const { data, status } = await axios.get('/invites/findOneByCode', { params })
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setInvite', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
+    async activate({ commit }, payload) {
+      try {
+        const { data, status } = await axios.post('/invites/activate', payload)
+
+        if (status !== 201) {
+          return Promise.reject()
+        }
+
+        const { access, refresh } = data
+
+        commit('auth/setAccessToken', access, { root: true })
+        commit('auth/setRefreshToken', refresh, { root: true })
+        commit('auth/setAuthorized', true, { root: true })
+
+        const { user, roles } = jwtDecode(access)
+
+        commit('user/setInfo', {
+          ...user,
+          roles,
+        }, { root: true })
 
         return Promise.resolve(data)
       } catch (e) {

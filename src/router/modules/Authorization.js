@@ -38,6 +38,14 @@ export default [
         },
         component: () => import('@/components/templates/authorization/AppRestorePassword.vue'),
       },
+      {
+        path: '/join/invite',
+        name: 'inviteJoin',
+        meta: {
+          title: 'Реєстрація через інвайт-код',
+        },
+        component: () => import('@/components/templates/authorization/AppInviteJoin.vue'),
+      },
     ],
   },
 ]

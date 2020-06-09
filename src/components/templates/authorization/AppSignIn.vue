@@ -46,10 +46,17 @@
       <div class="line"></div>
     </div>
 
-    <router-link
-      class="section-link"
-      to="/join"
-    >Створити профіль</router-link>
+    <div class="join">
+      <router-link
+        class="section-link"
+        to="/join"
+      >Створити профіль</router-link>
+
+      <router-link
+        class="section-link"
+        :to="{ name: 'inviteJoin' }"
+      >Приєднатись з інвайт-кодом</router-link>
+    </div>
   </div>
 </template>
 
@@ -147,6 +154,14 @@ export default {
     text-align: center;
   }
 
+  .join {
+    text-align: center;
+
+    .section-link {
+      margin-bottom: 10px;
+    }
+  }
+
   .app-form-field {
     margin-bottom: 20px;
 
@@ -162,7 +177,7 @@ export default {
 
   .forgot-password-link,
   .section-link {
-    display: inline-block;
+    display: block;
   }
 
   .forgot-password-link {
