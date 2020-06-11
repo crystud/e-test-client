@@ -33,8 +33,8 @@
         <app-data-list
           class="app-data-list"
           :data="[
-            ['Від', getNormalDate(permission.startTime)],
-            ['До', getNormalDate(permission.endTime)],
+            ['Від', $moment(permission.startTime).format('Do MMMM YYYY, hh:mm')],
+            ['До', $moment(permission.endTime).format('Do MMMM YYYY, hh:mm')],
           ]"
         ></app-data-list>
       </app-card>
@@ -107,22 +107,6 @@ export default {
       getPermission: 'permissions/getByID',
       setAlert: 'alert/set',
     }),
-    getNormalDate(time) {
-      if (!time) return ''
-
-      const date = new Date(time)
-
-      const day = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`
-      const month = `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`
-
-      const hours = `${date.getHours() < 10 ? '0' : ''}${date.getHours()}`
-      const minutes = `${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`
-
-      const datetime = `${day}/${month}/${date.getFullYear()}`
-      const daytime = `${hours}:${minutes}`
-
-      return `${datetime} ${daytime}`
-    },
     async loadPermission() {
       try {
         const { params: { permissionID } } = this.$route

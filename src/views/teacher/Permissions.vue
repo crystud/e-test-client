@@ -79,8 +79,8 @@
           }"
         >
           <div class="test">{{permission.test.name}}</div>
-          <div class="start">{{getNormalDate(permission.startTime)}}</div>
-          <div class="end">{{getNormalDate(permission.endTime)}}</div>
+          <div class="start">{{$moment(permission.startTime).format('Do MMMM YYYY, hh:mm')}}</div>
+          <div class="end">{{$moment(permission.endTime).format('Do MMMM YYYY, hh:mm')}}</div>
           <div class="group">{{permission.group.name}}</div>
         </router-link>
       </div>
@@ -114,22 +114,6 @@ export default {
       getSubjects: 'teacher/getSubjects',
       setAlert: 'alert/set',
     }),
-    getNormalDate(time) {
-      if (!time) return ''
-
-      const date = new Date(time)
-
-      const day = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`
-      const month = `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`
-
-      const hours = `${date.getHours() < 10 ? '0' : ''}${date.getHours()}`
-      const minutes = `${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`
-
-      const datetime = `${day}/${month}/${date.getFullYear()}`
-      const daytime = `${hours}:${minutes}`
-
-      return `${datetime} ${daytime}`
-    },
     async loadSubjects() {
       try {
         this.showPreloader = true

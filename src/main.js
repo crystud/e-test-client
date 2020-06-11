@@ -54,6 +54,8 @@ import {
   faUserClock,
 } from '@fortawesome/free-solid-svg-icons'
 
+import moment from 'moment'
+
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
@@ -118,6 +120,9 @@ library.add(faUserClock)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+moment.locale('uk')
+
+Vue.prototype.$moment = moment
 Vue.config.productionTip = false
 
 new Vue({

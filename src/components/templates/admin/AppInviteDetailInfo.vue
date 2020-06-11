@@ -33,7 +33,7 @@
         <div
           v-if="info.usedAt !== null"
           class="used"
-        >Запрошення використано {{getNormalDate(info.usedAt)}}</div>
+        >Запрошення використано {{$moment(info.usedAt).format('Do MMMM YYYY, hh:mm')}}</div>
 
         <div
           v-else
@@ -49,7 +49,10 @@
         :data="[
           ['Номер залікової книги', info.student.scoringBook],
           ['Група', info.student.group.name || '-'],
-          ['Створено', getNormalDate(info.createAt) || '-'],
+          [
+            'Створено',
+            info.createAt ? $moment(info.createAt).format('Do MMMM YYYY, hh:mm') : '-'
+          ],
         ]"
       ></app-data-list>
     </div>
@@ -71,24 +74,6 @@ export default {
       type: Object,
       required: true,
       default: () => {},
-    },
-  },
-  methods: {
-    getNormalDate(time) {
-      if (!time) return ''
-
-      const date = new Date(time)
-
-      const day = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`
-      const month = `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`
-
-      const hours = `${date.getHours() < 10 ? '0' : ''}${date.getHours()}`
-      const minutes = `${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`
-
-      const datetime = `${day}/${month}/${date.getFullYear()}`
-      const daytime = `${hours}:${minutes}`
-
-      return `${datetime} ${daytime}`
     },
   },
   components: {

@@ -38,7 +38,9 @@
             <div
               class="date"
               v-if="startTime && endTime"
-            >{{getNormalDate(startTime)}} - {{getNormalDate(endTime)}}</div>
+            >
+              {{$moment(startTime).format('Do MMMM YYYY, hh:mm')}}
+              - {{$moment(endTime).format('Do MMMM YYYY, hh:mm')}}</div>
 
             <div
               v-if="result.id"
@@ -80,14 +82,23 @@
         <div class="content">
           <div class="header">
             <div class="name">{{ticketInfo.createAt}}</div>
-            <div class="created-at">Дозвіл створено {{getNormalDate(ticketInfo.createAt)}}</div>
+
+            <div class="created-at">
+              Дозвіл створено {{$moment(ticketInfo.createAt).format('Do MMMM YYYY, hh:mm')}}
+            </div>
           </div>
 
           <app-data-list
             class="app-data-list"
             :data="[
-              ['Початок доступу', getNormalDate(ticketInfo.permission.startTime)],
-              ['Кінець доступу', getNormalDate(ticketInfo.permission.endTime)],
+              [
+                'Початок доступу',
+                $moment(ticketInfo.permission.startTime).format('Do MMMM YYYY, hh:mm')
+              ],
+              [
+                'Кінець доступу',
+                $moment(ticketInfo.permission.endTime).format('Do MMMM YYYY, hh:mm')
+              ],
               ['Макс. к-сть спроб', ticketInfo.permission.maxCountOfUse || 'Безмежна'],
             ]"
           ></app-data-list>
@@ -187,22 +198,6 @@ export default {
       const hoursText = hours > 0 ? `${hours} год. ` : ''
 
       return `${hoursText}${minutes} хв. ${seconds} сек.`
-    },
-    getNormalDate(time) {
-      if (!time) return ''
-
-      const date = new Date(time)
-
-      const day = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`
-      const month = `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`
-
-      const hours = `${date.getHours() < 10 ? '0' : ''}${date.getHours()}`
-      const minutes = `${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`
-
-      const datetime = `${day}/${month}/${date.getFullYear()}`
-      const daytime = `${hours}:${minutes}`
-
-      return `${datetime} ${daytime}`
     },
     async checkState() {
       const { ticket } = this

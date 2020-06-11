@@ -238,6 +238,10 @@ export default {
 
           align-items: center;
         }
+
+        .data {
+          margin: 0;
+        }
       }
     }
 

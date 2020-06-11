@@ -40,7 +40,9 @@
           {{invite.student.user.patronymic}}
         </div>
 
-        <div class="created-at">Запрошення створено {{getNormalDate(invite.createAt)}}</div>
+        <div class="created-at">
+          Запрошення створено {{$moment(invite.createAt).format('Do MMMM YYYY, hh:mm')}}
+        </div>
 
         <app-data-list
           :data="[
@@ -173,22 +175,6 @@ export default {
       } finally {
         this.showPreloader = false
       }
-    },
-    getNormalDate(time) {
-      if (!time) return ''
-
-      const date = new Date(time)
-
-      const day = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`
-      const month = `${date.getMonth() < 10 ? '0' : ''}${date.getMonth()}`
-
-      const hours = `${date.getHours() < 10 ? '0' : ''}${date.getHours()}`
-      const minutes = `${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`
-
-      const datetime = `${day}/${month}/${date.getFullYear()}`
-      const daytime = `${hours}:${minutes}`
-
-      return `${datetime} ${daytime}`
     },
     async verifyCode(event = { target: {} }) {
       setTimeout(async () => {
