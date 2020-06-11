@@ -8,11 +8,13 @@ export default {
   state: {
     list: [],
     invite: {},
+    overview: {},
   },
 
   getters: {
     list: ({ list }) => list,
     invite: ({ invite }) => invite,
+    overview: ({ overview }) => overview,
   },
 
   mutations: {
@@ -21,6 +23,9 @@ export default {
     },
     setInvite(state, invite) {
       state.invite = invite
+    },
+    setOverview(state, overview) {
+      state.overview = overview
     },
   },
 
@@ -47,6 +52,21 @@ export default {
         }
 
         commit('setInvites', data)
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
+    async getOverview({ commit }) {
+      try {
+        const { data, status } = await axios.get('/invites/info')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        commit('setOverview', data)
 
         return Promise.resolve(data)
       } catch (e) {

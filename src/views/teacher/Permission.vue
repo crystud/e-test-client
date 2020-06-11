@@ -45,6 +45,10 @@
           @close="detailInfoTicketID = 0"
         ></app-ticket-detail-info>
 
+        <pre>
+          {{permission.tickets}}
+        </pre>
+
         <app-fade-card :show="!Boolean(detailInfoTicketID)">
           <div class="header">
             <h1>Активність проходження</h1>

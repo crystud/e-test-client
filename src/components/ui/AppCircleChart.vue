@@ -146,7 +146,7 @@ export default {
       stroke: var(--color-accent-green);
       stroke-width: 10px;
       stroke-linecap: round;
-      stroke-dasharray: 141.37;
+      stroke-dasharray: 100;
 
       transition: all .3s;
     }

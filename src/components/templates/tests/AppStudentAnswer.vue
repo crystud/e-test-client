@@ -21,35 +21,36 @@
       <div class="text">{{answer.task.question}}</div>
     </div>
 
-
     <div class="answer">
       <span class="icon">
         {{resultPercent.toFixed(1)}}%
       </span>
 
-      <span class="text">
-        <div>
-          <div class="answers-list">
-            <div
-              v-for="(text, index) in answer.correct"
-              v-bind:key="index"
-              class="answer-text"
-            >
-              <span class="is-right">[-]</span>
-              <span class="content">{{text}}</span>
-            </div>
+      <div class="answer-sections">
+        <div class="answers-list">
+          <div class="list-title correct">Правильні відповіді</div>
 
-            <div
-              v-for="(text, index) in answer.incorrect"
-              v-bind:key="index"
-              class="answer-text"
-            >
-              <span class="is-right">[-]</span>
-              <span class="content">{{text}}</span>
-            </div>
+          <div
+            v-for="(text, index) in answer.correct"
+            v-bind:key="index"
+            class="answer-text correct"
+          >
+            <span class="content">{{text}}</span>
           </div>
         </div>
-      </span>
+
+        <div class="answers-list">
+          <div class="list-title incorrect">Неправильні відповіді</div>
+
+          <div
+            v-for="(text, index) in answer.incorrect"
+            v-bind:key="index"
+            class="answer-text incorrect"
+          >
+            <span class="content">{{text}}</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="line"></div>
@@ -121,12 +122,43 @@ export default {
       align-items: center;
     }
 
-    .text {
+    .answer-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+
       margin-left: 20px;
+
+      .list-title {
+        font-size: 1em;
+        margin-bottom: 10px;
+        color: var(--color-font-dark);
+      }
 
       .answers-list {
         .answer-text {
           margin-bottom: 5px;
+
+          display: flex;
+          align-items: center;
+
+          &::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            margin-right: 10px;
+            border-radius: 10px;
+
+            border: 3px solid transparent;
+          }
+
+          &.correct::before {
+            border-color: var(--color-accent-green);
+          }
+
+          &.incorrect::before {
+            border-color: var(--color-accent-red);
+          }
         }
 
         .is-right {

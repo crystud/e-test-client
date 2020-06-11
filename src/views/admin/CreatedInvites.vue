@@ -57,14 +57,17 @@
       </div>
 
       <div class="data-cards">
-        <app-card class="app-card">
+        <app-card
+          v-if="overview.usedCount !== undefined"
+          class="app-card"
+        >
           <div class="header">
             Загальні дані
           </div>
 
           <div class="body">
             <app-circle-chart
-              :progress="47"
+              :progress="Math.round((overview.usedCount / overview.createdCount) * 100)"
               :radius="60"
               label="використ."
               class="circle-chart"
@@ -72,31 +75,8 @@
 
             <app-data-list
               :data="[
-                ['Створено', 673],
-                ['Використано', 464],
-              ]"
-              class="data"
-            ></app-data-list>
-          </div>
-        </app-card>
-
-        <app-card class="app-card">
-          <div class="header">
-            Підтведжено E-mail
-          </div>
-
-          <div class="body">
-            <app-circle-chart
-              :progress="73"
-              :radius="60"
-              label="підтверд."
-              class="circle-chart"
-            ></app-circle-chart>
-
-            <app-data-list
-              :data="[
-                ['Підтверджено', 473],
-                ['Очікують', 253],
+                ['Створено', overview.createdCount],
+                ['Використано', overview.usedCount],
               ]"
               class="data"
             ></app-data-list>
@@ -128,6 +108,7 @@ export default {
   methods: {
     ...mapActions({
       getInvites: 'invites/get',
+      getInvitesOverview: 'invites/getOverview',
       setAlert: 'alert/set',
     }),
     async fetchInvites() {
@@ -135,6 +116,7 @@ export default {
         this.showPreloader = true
 
         await this.getInvites()
+        await this.getInvitesOverview()
       } catch (e) {
         this.setAlert({
           title: 'Помилка',
@@ -153,6 +135,7 @@ export default {
   computed: {
     ...mapGetters({
       invites: 'invites/list',
+      overview: 'invites/overview',
     }),
   },
   components: {

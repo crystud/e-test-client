@@ -20,11 +20,13 @@
 
     <select
       v-if="studentGroups.length > 1"
-      v-model="groupID"
+      v-model="studentID"
+      @change="loadTickets"
     >
       <option
         v-for="(student, index) in studentGroups"
         v-bind:key="index"
+        :value="student"
       >{{student.group.name}}</option>
     </select>
 
@@ -33,6 +35,13 @@
         <div class="name">Назва</div>
         <div class="attempts">Макс. к-сть спроб</div>
         <div class="permission">Дозвіл</div>
+      </div>
+
+      <div
+        class="no-items"
+        v-if="!tickets.length"
+      >
+        Дозволів немає
       </div>
 
       <div
@@ -87,15 +96,22 @@ export default {
       try {
         this.showPreloader = true
 
-        const studentGroups = await this.getStudentGroups()
+        const { studentID } = this
 
-        const student = studentGroups[0] ? studentGroups[0] : null
+        if (!studentID.id) {
+          const studentGroups = await this.getStudentGroups()
+          const student = studentGroups[0] ? studentGroups[0] : null
 
-        if (student) {
           this.studentGroups = studentGroups
           this.student = student
 
           this.tickets = await this.getTickets(student.id)
+        }
+
+        if (studentID.id) {
+          this.student = studentID
+
+          this.tickets = await this.getTickets(studentID.id)
         }
       } catch (e) {
         this.setAlert({
@@ -117,6 +133,7 @@ export default {
       student: null,
       tickets: [],
       studentGroups: [],
+      studentID: {},
     }
   },
   async created() {
@@ -140,6 +157,12 @@ export default {
     .title {
       font-size: 1.5em;
       font-weight: 300;
+
+      margin-bottom: 5px;
+    }
+
+    select {
+      background: var(--color-bg-main);
     }
 
     .current-group {
@@ -150,6 +173,11 @@ export default {
 
   .tests {
     margin-top: 20px;
+
+    .no-items {
+      margin: 20px 0;
+      font-size: 1.2em;
+    }
 
     .row {
       display: grid;
