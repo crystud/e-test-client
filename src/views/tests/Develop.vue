@@ -120,9 +120,11 @@ export default {
         this.showPreloader = true
         this.test = await this.getTest(id)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати дані про тест...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати дані про тест...',
+          text,
           isSuccess: false,
         })
       } finally {

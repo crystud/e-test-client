@@ -76,9 +76,11 @@ export default {
 
         this.$emit('invitesCreated')
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось створити запрошення. Перевірте правильність даних'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось створити запрошення. Перевірте правильність даних',
+          text,
           isSuccess: false,
           delay: 3000,
           show: true,

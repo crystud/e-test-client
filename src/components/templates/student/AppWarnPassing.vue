@@ -208,9 +208,11 @@ export default {
 
           this.ticketInfo = await this.loadTicket(ticket)
         } catch (e) {
+          const text = e?.response.data.message || 'Не вдалось отримати інформацію про квиток'
+
           this.setAlert({
             title: 'Помилка',
-            text: 'Не вдалось отримати інформацію про квиток',
+            text,
             show: true,
             isSuccess: false,
           })
@@ -236,9 +238,11 @@ export default {
           },
         })
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати дані про квиток'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати дані про квиток',
+          text,
           isSuccess: false,
           show: true,
         })

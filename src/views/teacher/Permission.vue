@@ -119,9 +119,11 @@ export default {
 
         this.permission = await this.getPermission(permissionID)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати інформацію про дозвіл'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати інформацію про дозвіл',
+          text,
           isSuccess: false,
           show: true,
         })

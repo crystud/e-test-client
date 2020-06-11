@@ -127,9 +127,11 @@ export default {
 
         this.$emit('created')
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось створити студента'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось створити студента',
+          text,
           show: true,
           isSuccess: false,
         })

@@ -135,9 +135,9 @@ export default {
         return
       }
 
-      if (password.length < 7) {
+      if (password.length < 8) {
         this.setAlert({
-          title: 'мін. 7 символів у паролі',
+          title: 'мін. 8 символів у паролі',
           show: true,
           isSuccess: false,
           delay: 1500,
@@ -166,9 +166,11 @@ export default {
           name: 'homeUser',
         })
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось виконати запит...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось виконати запит...',
+          text,
           show: true,
           isSuccess: false,
         })
@@ -202,9 +204,11 @@ export default {
 
           await this.getInviteByCode(code)
         } catch (e) {
+          const text = e?.response.data.message || 'Не вдалось знайти запрошення з таким кодом...'
+
           this.setAlert({
             title: 'Помилка',
-            text: 'Не вдалось знайти запрошення з таким кодом...',
+            text,
             delay: 2500,
             show: true,
             isSuccess: false,

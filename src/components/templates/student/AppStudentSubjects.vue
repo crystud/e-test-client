@@ -114,9 +114,11 @@ export default {
           this.tickets = await this.getTickets(studentID.id)
         }
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось завантажити дозволи...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось завантажити дозволи...',
+          text,
           delay: 2000,
           show: true,
           isSuccess: false,

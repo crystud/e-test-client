@@ -76,9 +76,11 @@ export default {
 
         this.subjects = await this.getTeacherSubjects()
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати інформацію про предмет...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати інформацію про предмет...',
+          text,
           isSuccess: false,
           show: true,
         })

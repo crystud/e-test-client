@@ -191,9 +191,11 @@ export default {
 
         await this.getGroupByID(groupID)
       } catch (e) {
+        const text = e?.response.data.message || 'Нам не вдалось отримати інформацію про групу'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Нам не вдалось отримати інформацію про групу',
+          text,
           delay: 2000,
           isSuccess: false,
           show: true,
@@ -218,9 +220,11 @@ export default {
       try {
         await this.searchUsers(searchData)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось виконати пошук'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось виконати пошук',
+          text,
           show: true,
           isSuccess: false,
         })

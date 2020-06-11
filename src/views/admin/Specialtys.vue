@@ -105,8 +105,11 @@ export default {
 
         await this.getSpecialties()
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати спеціальності...'
+
         this.setAlert({
-          title: 'Не вдалось отримати спеціальності...',
+          title: 'Помилка',
+          text,
           delay: 1500,
           show: true,
           isSuccess: false,

@@ -156,9 +156,11 @@ export default {
 
         await this.getQuestion(questionID)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати інформацію про запитання'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати інформацію про запитання',
+          text,
           show: true,
           isSuccess: false,
         })

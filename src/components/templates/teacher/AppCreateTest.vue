@@ -175,9 +175,11 @@ export default {
           this.$emit('created', create)
         }
       } catch (e) {
+        const text = e?.response.data.message || 'Перевірте, чи усі поля було заповнено або спробуйте пізніше'
+
         this.setAlert({
-          title: 'Неочікувана помилка',
-          text: 'Перевірте, чи усі поля було заповнено або спробуйте пізніше',
+          title: 'Помилка',
+          text,
           isSuccess: false,
           show: true,
         })
@@ -221,9 +223,11 @@ export default {
 
       this.subjects = subjects
     } catch (e) {
+      const text = e?.response.data.message || 'Не вдалось прогрузити предмети... Спробуйте пізніше'
+
       this.setAlert({
         title: 'Помилка',
-        text: 'Не вдалось прогрузити предмети... Спробуйте пізніше',
+        text,
         isSuccess: false,
         show: true,
       })

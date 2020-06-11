@@ -101,9 +101,11 @@ export default {
 
           this.ticket = await this.loadTicket(ticketID)
         } catch (e) {
+          const text = e?.response.data.message || 'Не вдалось отримати інформацію про квиток'
+
           this.setAlert({
             title: 'Помилка',
-            text: 'Не вдалось отримати інформацію про квиток',
+            text,
             show: true,
             isSuccess: false,
           })

@@ -222,9 +222,11 @@ export default {
 
         setTimeout(() => this.$emit('done'), 1500)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось створити дозвіл...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось створити дозвіл...',
+          text,
           isSuccess: false,
           show: true,
         })

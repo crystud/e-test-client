@@ -91,30 +91,30 @@ export default {
       }
     },
     async activate({ commit }, payload) {
-      try {
-        const { data, status } = await axios.post('/invites/activate', payload)
+      return new Promise((resolve, reject) => {
+        axios.post('/invites/activate', payload).then((response) => {
+          const { data, status } = response || {}
 
-        if (status !== 201) {
-          return Promise.reject()
-        }
+          if (status !== 201) {
+            return Promise.reject()
+          }
 
-        const { access, refresh } = data
+          const { access, refresh } = data
 
-        commit('auth/setAccessToken', access, { root: true })
-        commit('auth/setRefreshToken', refresh, { root: true })
-        commit('auth/setAuthorized', true, { root: true })
+          commit('auth/setAccessToken', access, { root: true })
+          commit('auth/setRefreshToken', refresh, { root: true })
+          commit('auth/setAuthorized', true, { root: true })
 
-        const { user, roles } = jwtDecode(access)
+          const { user, roles } = jwtDecode(access)
 
-        commit('user/setInfo', {
-          ...user,
-          roles,
-        }, { root: true })
+          commit('user/setInfo', {
+            ...user,
+            roles,
+          }, { root: true })
 
-        return Promise.resolve(data)
-      } catch (e) {
-        return Promise.reject()
-      }
+          return resolve(data)
+        }).catch((e) => reject(e))
+      })
     },
   },
 }

@@ -113,9 +113,11 @@ export default {
 
         setTimeout(() => this.$emit('added'))
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось занести питання в тест...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось занести питання в тест...',
+          text,
           delay: 1500,
           show: true,
           isSuccess: false,

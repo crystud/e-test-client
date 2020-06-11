@@ -20,5 +20,7 @@ export default (axiosInstance, store) => {
     if (error?.response.status === 401) {
       await refresh(error.response)
     }
+
+    return Promise.reject(error)
   })
 }

@@ -118,9 +118,11 @@ export default {
         await this.getInvites()
         await this.getInvitesOverview()
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати список запрошень'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати список запрошень',
+          text,
           show: true,
           isSuccess: false,
         })

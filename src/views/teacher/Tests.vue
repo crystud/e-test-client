@@ -67,9 +67,11 @@ export default {
 
         this.subjects = await this.getTeacherSubjects()
       } catch (e) {
+        const text = e?.response.data.message || 'Сталась неочікувана помилка. Спробуйте пізніше...'
+
         this.setAlert({
           title: 'Неочікувана помилка',
-          text: 'Сталась неочікувана помилка. Спробуйте пізніше...',
+          text,
           show: true,
           isSuccess: false,
         })

@@ -70,9 +70,11 @@ export default {
 
         this.info = await this.getSpeciality(id)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати інформацію про спеціальність...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати інформацію про спеціальність...',
+          text,
           isSuccess: false,
         })
       } finally {

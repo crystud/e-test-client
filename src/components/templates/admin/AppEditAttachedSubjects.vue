@@ -99,9 +99,11 @@ export default {
 
           this.updatedSpeciality = await this.getSpeciality(id)
         } catch (e) {
+          const text = e?.response.data.message || 'Не вдалось отримати оновлену інформацію про спеціальність'
+
           this.setAlert({
             title: 'Помилка',
-            text: 'Не вдалось отримати оновлену інформацію про спеціальність',
+            text,
             show: true,
             isSuccess: false,
           })
@@ -119,9 +121,11 @@ export default {
         await this.attachSubjectAction({ speciality, subject })
         await this.updateSpeciality()
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось прикріпити предмет до спеціальності'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось прикріпити предмет до спеціальності',
+          text,
           show: true,
           isSuccess: false,
         })
@@ -135,9 +139,11 @@ export default {
 
         await this.getSubjects()
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати список предметів'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати список предметів',
+          text,
           show: true,
           isSuccess: false,
         })

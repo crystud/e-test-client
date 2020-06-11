@@ -108,9 +108,11 @@ export default {
           patronymic,
         })
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалося виконати пошук'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалося виконати пошук',
+          text,
           show: true,
           isSuccess: false,
         })

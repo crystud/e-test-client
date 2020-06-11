@@ -99,9 +99,11 @@ export default {
 
         this.info = await this.getSubject(subject.id)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати список тем в предметі'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати список тем в предметі',
+          text,
           show: true,
           isSuccess: false,
         })

@@ -229,9 +229,11 @@ export default {
           params: { resultID },
         })
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось надіслати результати...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось надіслати результати...',
+          text,
           show: true,
           delay: 2500,
           isSuccess: false,
@@ -352,9 +354,11 @@ export default {
 
         this.question = await this.getQuestion(id)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось прогрузити питання...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось прогрузити питання...',
+          text,
           show: true,
           isSuccess: false,
         })
@@ -421,9 +425,11 @@ export default {
         answers: [],
       }))
     } catch (e) {
+      const text = e?.response.data.message || 'Не вдалось прогрузити дані...'
+
       this.setAlert({
         title: 'Помилка',
-        text: 'Не вдалось прогрузити дані...',
+        text,
         isSuccess: false,
         show: true,
       })

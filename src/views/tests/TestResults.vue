@@ -98,9 +98,11 @@ export default {
 
         this.result = await this.getResults(resultID)
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати результати...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати результати...',
+          text,
           show: true,
           isSuccess: false,
         })

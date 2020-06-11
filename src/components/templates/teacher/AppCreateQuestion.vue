@@ -266,9 +266,11 @@ export default {
 
         setTimeout(() => this.$emit('created'))
       } catch (e) {
+        const text = e?.response.data.message || 'Створити запитання не вдалось'
+
         return this.setAlert({
           title: 'Помилка',
-          text: 'Створити запитання не вдалось',
+          text,
           delay: 1500,
           show: true,
           isSuccess: false,

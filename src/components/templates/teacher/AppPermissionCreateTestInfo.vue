@@ -82,9 +82,11 @@ export default {
 
         this.sendState()
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати інформацію про тест...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати інформацію про тест...',
+          text,
           isSuccess: false,
           show: true,
         })

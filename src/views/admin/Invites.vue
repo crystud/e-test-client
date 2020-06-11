@@ -328,9 +328,11 @@ export default {
 
         this.group = group
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати інформацію про групу'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати інформацію про групу',
+          text,
           isSuccess: false,
           show: true,
         })

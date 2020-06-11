@@ -122,9 +122,11 @@ export default {
 
         setTimeout(this.$emit('created'), 1400)
       } catch (e) {
+        const text = e?.response.data.message || 'Нам не вдалось створити тему. Спробуйте пізніше...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Нам не вдалось створити тему. Спробуйте пізніше...',
+          text,
           isSuccess: false,
           show: true,
           delay: 1500,

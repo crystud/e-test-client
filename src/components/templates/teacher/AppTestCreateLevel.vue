@@ -144,9 +144,11 @@ export default {
           this.$emit('close')
         }, 1500)
       } catch (e) {
+        const text = e?.response.data.message || 'Нам не вдалось створити рівень... Спробуйте пізніше'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Нам не вдалось створити рівень... Спробуйте пізніше',
+          text,
           delay: 2000,
           show: true,
           isSuccess: false,

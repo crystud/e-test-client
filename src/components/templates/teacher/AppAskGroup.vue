@@ -81,9 +81,11 @@ export default {
           this.showPreloader = true
           this.specialities = await this.getSpecialities()
         } catch (e) {
+          const text = e?.response.data.message || 'Не вдалось отримати список спеціальностей'
+
           this.setAlert({
             title: 'Помилка',
-            text: 'Не вдалось отримати список спеціальностей',
+            text,
             delay: 2000,
             isSuccess: false,
           })

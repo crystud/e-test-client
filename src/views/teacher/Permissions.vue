@@ -124,9 +124,11 @@ export default {
         this.subjects = subjects
         this.teaching = teaching
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати список предметів...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати список предметів...',
+          text,
         })
       } finally {
         this.showPreloader = false
@@ -140,9 +142,11 @@ export default {
 
         this.grantedPermissions = teaching ? await this.getSelfPermissions(teaching.id) : []
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати список дозволів...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати список дозволів...',
+          text,
         })
       } finally {
         this.showPreloader = false
