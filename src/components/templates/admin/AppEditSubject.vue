@@ -252,9 +252,11 @@ export default {
 
         this.searchHasDone = true
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось виконати пошук...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось виконати пошук...',
+          text,
           show: true,
           isSuccess: false,
           delay: 2000,

@@ -23,10 +23,8 @@
         <div class="results-list">
           <div
             v-for="([ label, value ], index) in [
-              ['Оцінка (%)', `${result.percent}`],
+              ['Результат', `${result.percent}%`],
               ['Час', getPassingTime(result.attempt.startTime, result.attempt.endTime)],
-              ['Вірних', '-'],
-              ['Невірних', '-'],
             ]"
             v-bind:key="index"
             class="item"
@@ -194,7 +192,7 @@ export default {
 
   .results-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
 
     justify-content: space-between;

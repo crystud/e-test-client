@@ -96,24 +96,43 @@
               v-if="question.task.type === 'NUMERICAL'"
               class="numbering-type"
             >
-              <div
-                class="option"
-                v-for="(option, index) in options"
-                :key="index"
+              <draggable
+                class="list-group"
+                tag="ul"
+                v-model="numbering"
+                :dragOptions="{
+                  animation: 0,
+                  group: 'description',
+                  disabled: false,
+                  ghostClass: 'ghost',
+                }"
+                @end="endDragging"
               >
-                <span class="number">{{index+1}}</span>
+                <transition-group
+                  type="transition"
+                  name="flip-list"
+                >
+                    <div
+                      v-for="option in numbering"
+                      :key="option.id"
+                      class="sortable-option"
+                    >
+                      <div
+                        v-if="option.answer.image"
+                        class="sortable-image"
+                      >
+                        <img
+                          :src="`data:image/jpg;base64,${option.answer.image}`"
+                          alt=""
+                        />
+                      </div>
 
-                <select v-on:change="(ev) => fillNumberingQuestion(ev, index)">
-                  <option>-</option>
-
-                  <option
-                    v-for="(numberingOption, localIndex) in options"
-                    :key="localIndex"
-                    :value="numberingOption.id"
-                    :selected="checkNumberingOptionSelected(numberingOption.id, index)"
-                  >{{numberingOption.answer.answerText}}</option>
-                </select>
-              </div>
+                      <div class="sortable-text">
+                        {{option.answer.answerText}}
+                      </div>
+                    </div>
+                </transition-group>
+              </draggable>
             </div>
 
             <div v-if="['SIMPLE_CHOICE', 'MULTIPLE_CHOICE'].includes(question.task.type)">
@@ -145,17 +164,13 @@
 <script>
 import { mapActions } from 'vuex'
 
+import draggable from 'vuedraggable'
+
 import AppAnswerOption from '@/components/templates/tests/AppAnswerOption.vue'
 import AppFinishWarning from '@/components/templates/tests/AppFinishWarning.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
-  name: 'testPass',
-  components: {
-    AppAnswerOption,
-    AppFinishWarning,
-    AppPreloader,
-  },
   computed: {
     tasksList() {
       const { attempt: { attemptTasks } = {} } = this
@@ -176,6 +191,29 @@ export default {
       sendAnswers: 'attempts/sendAnswers',
       getQuestion: 'attempts/getQuestion',
     }),
+    endDragging() {
+      const {
+        currentQuestion: { id: questionID },
+        numbering,
+      } = this
+
+      const question = this.userAnswers.findIndex(({ question: { id } }) => questionID === id)
+
+      if (question === -1) {
+        const answers = numbering.map(({ id }) => id)
+
+        this.userAnswers.push({
+          question: this.currentQuestion,
+          answers,
+        })
+      } else {
+        const answers = this.userAnswers
+
+        answers[question].answers = numbering.map(({ id }) => id)
+
+        this.userAnswers = answers
+      }
+    },
     async finish() {
       const {
         userAnswers,
@@ -253,30 +291,6 @@ export default {
 
       return parseInt(question.answers[index], 10) === parseInt(optionID, 10)
     },
-    fillNumberingQuestion(ev, index) {
-      const {
-        currentQuestion: { id: questionID },
-      } = this
-
-      const question = this.userAnswers.findIndex(({ question: { id } }) => questionID === id)
-
-      if (question === -1) {
-        const answers = []
-
-        answers[index] = ev.target.value
-
-        this.userAnswers.push({
-          question: this.currentQuestion,
-          answers,
-        })
-      } else {
-        const answers = this.userAnswers
-
-        answers[question].answers[index] = ev.target.value
-
-        this.userAnswers = answers
-      }
-    },
     fillTextInputQuestion(ev) {
       const {
         currentQuestion: { id: questionID },
@@ -353,6 +367,12 @@ export default {
         this.showPreloader = true
 
         this.question = await this.getQuestion(id)
+
+        if (this.question.task.type === 'NUMERICAL') {
+          this.numbering = this.options
+
+          this.endDragging()
+        }
       } catch (e) {
         const text = e?.response.data.message || 'Не вдалось прогрузити питання...'
 
@@ -437,12 +457,52 @@ export default {
       this.showPreloader = false
     }
   },
+  components: {
+    AppAnswerOption,
+    AppFinishWarning,
+    AppPreloader,
+    draggable,
+  },
 }
 </script>
 
 <style lang="less" scoped>
 .app-test-pass {
   user-select: none;
+
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
+
+  .no-move {
+    transition: transform 0s;
+  }
+
+  .sortable-option {
+    background: var(--color-bg-main);
+    border-radius: 10px;
+    padding: 20px;
+
+    margin-bottom: 20px;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 30px;
+
+    align-items: center;
+
+    cursor: move;
+
+    .sortable-image {
+      img {
+        max-height: 100px;
+      }
+    }
+
+    .sortable-text {
+      font-size: 1.1em;
+    }
+  }
 
   .markup {
     display: grid;
