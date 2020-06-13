@@ -18,24 +18,9 @@
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <filter id="dropshadow" height="130%">
-        <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
-        <feOffset dx="0" dy="0" result="offsetblur"/>
-
-        <feComponentTransfer>
-          <feFuncA type="linear" slope="0.5"/>
-        </feComponentTransfer>
-
-        <feMerge>
-          <feMergeNode/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
-
       <circle
         :style="{
           transform: `translate(0, ${radius * 2 + 20}px) rotate(-90deg)`,
-          filter: 'url(#dropshadow)',
         }"
         ref="circlePath"
         :r="radius"
