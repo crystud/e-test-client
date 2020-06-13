@@ -4,32 +4,34 @@ export default {
   namespaced: true,
 
   state: {
-    results: [],
     tickets: [],
+    studentGroups: [],
   },
 
   getters: {
-    results: ({ results }) => results,
     tickets: ({ tickets }) => tickets,
+    studentGroups: ({ studentGroups }) => studentGroups,
   },
 
   mutations: {
-    setResults(state, results) {
-      state.results = results
-    },
     setTickets(state, tickets) {
       state.tickets = tickets
+    },
+    setStudentGroups(state, groups) {
+      state.studentGroups = groups
     },
   },
 
   actions: {
-    async getGroups() {
+    async getGroups({ commit }) {
       try {
         const { data, status } = await axios.get('/students/own')
 
         if (status !== 200) {
           return Promise.reject()
         }
+
+        commit('setStudentGroups', data)
 
         return Promise.resolve(data)
       } catch (e) {

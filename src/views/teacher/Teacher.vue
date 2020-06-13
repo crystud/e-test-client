@@ -29,26 +29,37 @@
     </div>
 
     <div class="sections">
-      <div class="tests">
-        <app-teacher-attached-subject
-          v-for="(subject, index) in subjects"
-          v-bind:key="index"
-          :subject="subject"
-          :isOpened="openedIndex === index"
-          class="teaching-subject"
-          @click="openedIndex = index"
-          @create="
-            createTestSubject = subject
-            showCreateTest = true
-          "
-        ></app-teacher-attached-subject>
+      <div>
+        <app-fade-card
+          :show="!showCreateMessage"
+          class="tests"
+        >
+          <app-teacher-attached-subject
+            v-for="(subject, index) in subjects"
+            v-bind:key="index"
+            :subject="subject"
+            :isOpened="openedIndex === index"
+            class="teaching-subject"
+            @click="openedIndex = index"
+            @create="
+              createTestSubject = subject
+              showCreateTest = true
+            "
+          ></app-teacher-attached-subject>
+        </app-fade-card>
+
+        <app-fade-card :show="showCreateMessage">
+          <app-create-message
+            @close="showCreateMessage = false"
+            @sent="showCreateMessage = false"
+          ></app-create-message>
+        </app-fade-card>
       </div>
 
-      <app-student-messages
-        title="Ваші оголошення"
-        :showCreateMessage="true"
-        :messages="exampleMessages"
-      ></app-student-messages>
+      <app-teacher-messages
+        @showCreateMessage="showCreateMessage = true"
+        :showingCreateMessage="showCreateMessage"
+      ></app-teacher-messages>
     </div>
   </div>
 </template>
@@ -57,17 +68,21 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
-import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
+import AppTeacherMessages from '@/components/templates/teacher/AppTeacherMessages.vue'
 
 import AppTeacherActivity from '@/components/templates/teacher/AppTeacherActivity.vue'
 import AppTeacherAttachedSubject from '@/components/templates/teacher/AppTeacherAttachedSubject.vue'
 import AppCreateTest from '@/components/templates/teacher/AppCreateTest.vue'
+import AppCreateMessage from '@/components/templates/teacher/AppCreateMessage.vue'
+
+import AppFadeCard from '@/components/ui/AppFadeCard.vue'
 
 export default {
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
       getTeacherSubjects: 'teacher/getSubjects',
+      setAlert: 'alert/set',
     }),
     setFullHistory(isOpened) {
       this.fullIsOpened = isOpened
@@ -81,6 +96,7 @@ export default {
   data() {
     return {
       user: {},
+      showCreateMessage: false,
       showCreateTest: false,
       createTestSubject: {},
       fullIsOpened: false,
@@ -90,15 +106,6 @@ export default {
         ['У авторській розробці', '5 тестів'],
         ['Створено питань', '37'],
         ['Предметів викладаєте', '3'],
-      ],
-      exampleMessages: [
-        {
-          sender: 'Вчитель Вчительович',
-          time: '03.02.2020 16:45',
-          message: `
-            Проходимо тести. Доступ відкрив.
-          `,
-        },
       ],
     }
   },
@@ -111,27 +118,41 @@ export default {
       },
     } = this
 
-    if (!userID) {
-      this.user = this.self
-      this.subjects = await this.getTeacherSubjects()
+    try {
+      if (!userID) {
+        this.user = this.self
+        this.subjects = await this.getTeacherSubjects()
 
-      document.title = 'Ваш профіль -  CRYSTUD'
-    } else {
-      this.user = await this.getUser(userID)
+        document.title = 'Ваш профіль -  CRYSTUD'
+      } else {
+        this.user = await this.getUser(userID)
+      }
+
+      const { user } = this
+
+      document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
+    } catch (e) {
+      const text = e?.response.data.message || 'Не вдалось отримати інформацію про вчителя'
+
+      this.setAlert({
+        title: 'Помилка',
+        text,
+        delay: 1500,
+        show: true,
+        isSuccess: false,
+      })
+    } finally {
+      this.showPreloader = false
     }
-
-    const { user } = this
-
-    document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
-
-    this.showPreloader = false
   },
   components: {
     AppTeacherAttachedSubject,
     AppStudentPersonalInfo,
     AppTeacherActivity,
-    AppStudentMessages,
+    AppTeacherMessages,
+    AppCreateMessage,
     AppCreateTest,
+    AppFadeCard,
   },
 }
 </script>

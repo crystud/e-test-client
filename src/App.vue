@@ -85,7 +85,7 @@ body {
   --color-font-gray: #55636E;
 }
 
-#app, button, input {
+#app, button, input, textarea {
   font-family: 'Open Sans', sans-serif;
   font-weight: 300;
 }

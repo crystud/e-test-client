@@ -82,7 +82,13 @@
           <div v-if="(user.roles || []).includes('student')">
             <div class="divider">Студент</div>
 
-            <app-home-link role="student" link="homeUser">Домівка</app-home-link>
+            <app-home-link
+              v-for="student in studentGroups"
+              :key="student.id"
+              role="student"
+              link="studentHome"
+              :params="{ id: student.id }"
+            >Домівка ({{student.group.name}})</app-home-link>
           </div>
 
           <div v-if="(user.roles || []).includes('teacher')">
@@ -182,7 +188,6 @@ import AppStudentActiveTests from '@/components/templates/student/AppStudentActi
 import AppSettings from '@/components/templates/settings/AppSettings.vue'
 
 export default {
-  name: 'Home.vue',
   data() {
     return {
       isConfirmed: false,
@@ -198,7 +203,6 @@ export default {
           student: 'Студент',
           admin: 'Адміністратор',
           teacher: 'Викладач',
-          superadmin: 'Root',
         },
       },
     }
@@ -206,6 +210,7 @@ export default {
   computed: {
     ...mapGetters({
       user: 'user/info',
+      studentGroups: 'student/studentGroups',
     }),
   },
   methods: {

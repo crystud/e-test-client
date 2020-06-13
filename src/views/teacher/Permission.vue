@@ -45,10 +45,6 @@
           @close="detailInfoTicketID = 0"
         ></app-ticket-detail-info>
 
-        <pre>
-          {{permission.tickets}}
-        </pre>
-
         <app-fade-card :show="!Boolean(detailInfoTicketID)">
           <div class="header">
             <h1>Активність проходження</h1>
@@ -65,12 +61,17 @@
 
             <div
               class="row"
-              v-for="({ id, student: { user } }, index) in permission.tickets"
+              v-for="({
+                id,
+                student: { user },
+                attemptsCount,
+                average,
+              }, index) in permission.tickets"
               v-bind:key="index"
             >
               <div class="student">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</div>
-              <div class="avg">-</div>
-              <div class="count-of-passes">-</div>
+              <div class="avg">{{average ? `${average}%` : '-'}}</div>
+              <div class="count-of-passes">{{attemptsCount}}</div>
 
               <div
                 class="more-info"

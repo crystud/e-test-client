@@ -7,6 +7,17 @@
 
     <div class="card header create-message">
       <span class="text">Ваші оголошення</span>
+
+      <button
+        class="action-btn"
+        :class="{
+          hidden: showingCreateMessage,
+        }"
+        title="Створити повідомлення"
+        @click="$emit('showCreateMessage')"
+      >
+        <font-awesome-icon icon="plus"></font-awesome-icon>
+      </button>
     </div>
 
     <div
@@ -74,19 +85,16 @@ export default {
   },
   methods: {
     ...mapActions({
-      loadMoreMessages: 'messages/getByStudentID',
+      loadMoreMessages: 'messages/getSentMessages',
       setAlert: 'alert/set',
     }),
     async fetchMessages() {
-      const { initiate, $route } = this
+      const { initiate } = this
 
       try {
         this.showPreloader = true
 
-        await this.loadMoreMessages({
-          initiate,
-          studentID: $route.params.id,
-        })
+        await this.loadMoreMessages({ initiate })
 
         this.initiate = false
       } catch (e) {
@@ -113,6 +121,12 @@ export default {
   created() {
     this.fetchMessages()
   },
+  props: {
+    showingCreateMessage: {
+      type: Boolean,
+      required: true,
+    },
+  },
   components: {
     AppPreloader,
   },
@@ -126,6 +140,40 @@ export default {
   .header {
     font-weight: 400;
     font-size: 1.2em;
+
+    &.create-message {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-gap: 20px;
+      align-items: center;
+
+      padding: 0;
+
+      .text,
+      .action-btn {
+        padding: 18px;
+      }
+
+      .action-btn {
+        color: var(--color-accent-green);
+        background: #000;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.2);
+        border: 0;
+        border-radius: 0px 10px 10px 0;
+        font-size: 1.2em;
+
+        opacity: 1;
+        visibility: visible;
+
+        transition: all .3s;
+
+        &.hidden {
+          visibility: hidden;
+          opacity: 0;
+        }
+      }
+    }
   }
 
   .header,

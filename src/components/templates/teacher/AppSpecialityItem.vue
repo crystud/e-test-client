@@ -25,6 +25,7 @@
           v-for="(group, index) in (info.groups || [])"
           :key="index"
           class="group"
+          :class="{ selected: checkIsSelected(group.id) }"
           @click="$emit('selected', group)"
         >
           {{group.name}}
@@ -52,6 +53,11 @@ export default {
       getSpeciality: 'specialities/getByID',
       setAlert: 'alert/set',
     }),
+    checkIsSelected(groupID) {
+      return this
+        .selectedGroups
+        .filter((selectedGroup) => selectedGroup.id === groupID).length !== 0
+    },
     async loadDetailedInfo() {
       const { speciality: { id } } = this
 
@@ -104,6 +110,11 @@ export default {
       type: Boolean,
       required: true,
     },
+    selectedGroups: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
 }
 </script>
@@ -145,6 +156,8 @@ export default {
   .groups {
     margin-top: 0px;
 
+    user-select: none;
+
     .group {
       display: inline-block;
       margin: 0 10px 10px 0;
@@ -152,10 +165,16 @@ export default {
       border-radius: 5px;
       cursor: pointer;
       background: var(--color-bg-main);
-      transition: none;
+      border: 1px solid transparent;
+
+      transition: border-color .3s;
+
+      &.selected {
+        background: var(--color-accent-green);
+      }
 
       &:hover {
-        background: var(--color-accent-green);
+        border-color: var(--color-accent-green);
       }
     }
   }

@@ -19,6 +19,7 @@ import attempts from './modules/attempts'
 import results from './modules/results'
 import teacher from './modules/teacher'
 import invites from './modules/invites'
+import messages from './modules/messages'
 
 Vue.use(Vuex)
 
@@ -48,5 +49,6 @@ export default new Vuex.Store({
     user,
     teacher,
     invites,
+    messages,
   },
 })

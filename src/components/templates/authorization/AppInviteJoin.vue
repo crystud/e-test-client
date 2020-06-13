@@ -45,6 +45,7 @@
         </div>
 
         <app-data-list
+          class="app-data-list"
           :data="[
             ['Група', invite.student.group.name || '-'],
             ['Рік початку навчання', invite.student.group.startYear || '-'],
@@ -258,7 +259,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .app-invite-join {
   .title {
     font-size: 1.3em;
@@ -270,6 +271,8 @@ export default {
     border-bottom: 1px solid #1e2329;
 
     transition: all .3s;
+
+    color: #fff;
 
     &.invite-found {
       color: var(--color-font-dark);
@@ -284,13 +287,32 @@ export default {
     color: var(--color-accent-orange) !important;
   }
 
+  .fill-data {
+    .app-input {
+      margin-bottom: 15px;
+    }
+  }
+
+  .code-form, .fill-data {
+    .app-input {
+      background: #15191c;
+
+      input {
+        color: #fff !important;
+      }
+    }
+  }
+
   .code-form {
     display: grid;
     grid-template-columns: 1fr auto;
     grid-gap: 10px;
 
+    align-items: center;
+
     .check-code {
       background: var(--color-accent-green);
+      color: #fff;
     }
   }
 
@@ -298,6 +320,8 @@ export default {
     .student {
       font-size: 1.3em;
       font-weight: bold;
+
+      color: #fff;
     }
 
     .created-at {
@@ -305,16 +329,18 @@ export default {
       color: var(--color-accent-green);
     }
 
-    .app-input {
-      margin-bottom: 15px;
+    .app-data-list {
+      .item .value {
+        color: #fff !important;
+      }
     }
 
     .join-btn {
       margin-top: 20px;
       width: 100%;
 
-      background: var(--color-bg-main);
-      color: var(--color-font-dark);
+      background: #15191c;
+      color: #55636e;
       cursor: default;
 
       &.is-active {

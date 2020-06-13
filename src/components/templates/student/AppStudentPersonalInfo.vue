@@ -18,6 +18,19 @@
         class="additional"
         :data="data"
       ></app-data-list>
+
+      <div
+        v-if="user.students"
+        class="student-groups"
+      >
+        <div
+          v-for="student in user.students"
+          :key="student.id"
+          class="group"
+        >
+          {{student.group.name}}
+        </div>
+      </div>
     </div>
   </app-user-card>
 </template>
@@ -55,6 +68,19 @@ export default {
   grid-template-columns: @profile-image-size 1fr;
   grid-gap: 20px;
   align-items: center;
+
+  .student-groups {
+    margin-top: 20px;
+
+    .group {
+      display: inline-block;
+      border-radius: 5px;
+      padding: 5px 10px;
+
+      background: var(--color-accent-green);
+      color: #fff;
+    }
+  }
 
   .mobile {
     grid-template-columns: 1fr;

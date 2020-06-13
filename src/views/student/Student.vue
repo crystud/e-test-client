@@ -30,7 +30,7 @@
           ></app-student-results> -->
       </div>
 
-      <app-student-messages :messages="exampleMessages"></app-student-messages>
+      <app-student-messages></app-student-messages>
     </div>
   </div>
 </template>
@@ -75,28 +75,6 @@ export default {
         ['Середній результат', '78%'],
         ['Середній час проходження', '13 хвилин 16 секунд'],
       ],
-      exampleMessages: [
-        {
-          sender: 'Юрочко Ольга Михайлівна',
-          time: '03.02.2020 16:45',
-          message: `
-            Ви пройшли тест, но ще не здали
-            мій предмет без перездач.
-            Побачимось на наступних тестах.
-          `,
-        },
-        {
-          sender: 'Смиковчук Тетяна Володимирівна',
-          time: '03.02.2020 16:45',
-          message: `
-            Проміжний контроль по темах 5-6 до
-            завтра тренуєтесь, завтра з 10.00
-            до 12.00 здаєте в системі (пароль доступу скину)
-            Дотримуємось академічної доброчесності.і з контролями
-            ВСЕ
-          `,
-        },
-      ],
     }
   },
   async created() {
@@ -133,10 +111,10 @@ export default {
 
     this.showPreloader = true
 
-    if (!userID) {
+    if (this.$route.name === 'studentHome') {
       this.user = this.self
 
-      document.title = 'Ваш профіль -  CRYSTUD'
+      document.title = 'Ваш профіль - CRYSTUD'
     } else {
       this.user = await this.getUser(userID)
 

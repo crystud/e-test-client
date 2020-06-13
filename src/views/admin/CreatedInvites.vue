@@ -24,9 +24,15 @@
           <div
             v-for="({ usedAt, student: { user, group } }, index) in invites"
             v-bind:key="index"
-            class="row"
+            class="data-row row"
           >
-            <div class="fullname">
+            <div
+              class="fullname"
+              @click="$router.push({
+                name: 'student',
+                params: { id: user.id },
+              })"
+            >
               {{user.lastName}} {{user.firstName}} {{user.patronymic}}
             </div>
 
@@ -175,6 +181,16 @@ export default {
           grid-template-columns: 3fr 1fr 1fr 2fr;
           grid-gap: 15px;
           margin-bottom: 15px;
+
+          &.data-row {
+            .fullname {
+              cursor: pointer;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
 
           .group {
             color: var(--color-font-dark);

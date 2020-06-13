@@ -11,12 +11,10 @@
 
           <div
             class="is-used"
-            :class="{
-              used: ticket.used,
-            }"
+            :class="{ used: ticket.used }"
           >
-            <span v-if="ticket.used">Використаний</span>
-            <span v-else>Невикористаний</span>
+            <span v-if="ticket.used">Дозвіл використано</span>
+            <span v-else>Дозвіл не використано</span>
           </div>
         </div>
 
@@ -42,13 +40,16 @@
             v-bind:key="index"
             class="attempt"
           >
-            <div class="label">Спроба №{{index+1}}</div>
-            <div class="result">Результат: {{attempt.result.percent}}%</div>
+            <div class="attempt-header">
+              <div class="label">Спроба №{{index+1}}</div>
 
-            <div
-              class="is-active"
-              :class="{ active: attempt.active }"
-            >Активна: {{attempt.active ? 'Так' : 'Ні'}}</div>
+              <div
+                class="is-active"
+                :class="{ active: attempt.active }"
+              >Спроба {{attempt.active ? 'активна' : 'неактивна'}}</div>
+            </div>
+
+            <div class="result">Результат: {{attempt.result.percent}}%</div>
 
             <div
               v-if="attempt.result.id"
@@ -174,8 +175,6 @@ export default {
     }
 
     .list {
-      margin-top: 10px;
-
       .no-attempts {
         color: var(--color-font-dark);
         margin: 30px 0;
@@ -183,8 +182,17 @@ export default {
       }
 
       .attempt {
-        border-bottom: 1px solid var(--color-bg-main);
-        padding: 15px 0;
+        background: var(--color-bg-main);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+
+        .attempt-header {
+          display: grid;
+          grid-template-columns: 1fr auto;
+
+          align-items: center;
+        }
 
         .label {
           font-size: 1.2em;

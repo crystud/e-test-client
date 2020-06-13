@@ -22,14 +22,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
-  name: 'AppHomeLink',
   methods: {
     go() {
       if (this.$router.currentRoute.name !== this.link) {
-        this.$router.push({ name: this.link })
+        const { params } = this
+
+        this.$router.push({
+          name: this.link,
+          params,
+        })
       }
     },
   },
@@ -42,11 +44,11 @@ export default {
       type: String,
       require: true,
     },
-  },
-  computed: {
-    ...mapGetters({
-      user: 'user/self',
-    }),
+    params: {
+      type: Object,
+      require: false,
+      default: () => {},
+    },
   },
 }
 </script>
