@@ -71,6 +71,10 @@ export default {
     },
     async getByStudentID({ commit, getters }, { initiate, studentID: student }) {
       try {
+        if (initiate) {
+          commit('setMessages', [])
+        }
+
         const { page, limit, messages } = getters
 
         const pageValue = initiate ? 0 : page + 1

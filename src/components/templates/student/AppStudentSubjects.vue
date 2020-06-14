@@ -11,24 +11,12 @@
       <div class="title">Дозволи на проходження</div>
 
       <div
-        v-if="student"
+        v-if="student.id"
         class="current-group"
       >
         {{student.group.name}}
       </div>
     </div>
-
-    <select
-      v-if="studentGroups.length > 1"
-      v-model="studentID"
-      @change="loadTickets"
-    >
-      <option
-        v-for="(student, index) in studentGroups"
-        v-bind:key="index"
-        :value="student"
-      >{{student.group.name}}</option>
-    </select>
 
     <div class="tests">
       <div class="row header-title">
@@ -80,39 +68,21 @@ import AppWarnPassing from './AppWarnPassing.vue'
 import AppUserCard from './AppUserCard.vue'
 
 export default {
-  name: 'AppStudentSubjects',
-  components: {
-    AppUserCard,
-    AppPreloader,
-    AppWarnPassing,
-  },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
       getTickets: 'student/getTickets',
-      getStudentGroups: 'student/getGroups',
     }),
     async loadTickets() {
       try {
         this.showPreloader = true
 
-        const { studentID } = this
+        const {
+          student: { id: studentID },
+          $route: { params },
+        } = this
 
-        if (!studentID.id) {
-          const studentGroups = await this.getStudentGroups()
-          const student = studentGroups[0] ? studentGroups[0] : null
-
-          this.studentGroups = studentGroups
-          this.student = student
-
-          this.tickets = await this.getTickets(student.id)
-        }
-
-        if (studentID.id) {
-          this.student = studentID
-
-          this.tickets = await this.getTickets(studentID.id)
-        }
+        this.tickets = await this.getTickets(studentID || params.id)
       } catch (e) {
         const text = e?.response.data.message || 'Не вдалось завантажити дозволи...'
 
@@ -128,20 +98,38 @@ export default {
       }
     },
   },
+  watch: {
+    student() {
+      this.loadTickets()
+    },
+    studentID() {
+      this.loadTickets()
+    },
+  },
   data() {
     return {
       showPreloader: false,
       passingTicket: 0,
-      student: null,
       tickets: [],
-      studentGroups: [],
-      studentID: {},
     }
   },
-  async created() {
-    await this.loadTickets()
-
-    this.showPreloader = false
+  created() {
+    this.loadTickets()
+  },
+  props: {
+    student: {
+      type: Object,
+      required: true,
+    },
+    studentID: {
+      type: Number,
+      required: true,
+    },
+  },
+  components: {
+    AppUserCard,
+    AppPreloader,
+    AppWarnPassing,
   },
 }
 </script>

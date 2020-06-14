@@ -186,15 +186,17 @@ export default {
 
         this.alert = {
           title: 'Все чудово!',
-          text: 'Вас було успішно зареєстровано. Через 1.5 вас буде перенаправлено на ваш профіль.',
-          delay: 1500,
+          text: 'Вас було успішно зареєстровано',
+          delay: 1000,
           isSuccess: true,
           show: true,
         }
 
-        setTimeout(() => {
-          this.$router.push({ name: 'homeUser' })
-        }, 1500)
+        setTimeout(async () => {
+          await this.redirectToHome({
+            $router: this.$router,
+          })
+        }, 1000)
       }).catch(() => {
         this.alert = {
           title: 'Помилка...',

@@ -27,6 +27,10 @@
           v-for="student in user.students"
           :key="student.id"
           class="group"
+          :class="{
+            selected: selectedStudent.id === student.id,
+          }"
+          @click="selectedStudent.id === student.id ? null : $emit('changeStudent', student)"
         >
           {{student.group.name}}
         </div>
@@ -56,6 +60,11 @@ export default {
       required: true,
       default: () => {},
     },
+    selectedStudent: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
   },
 }
 </script>
@@ -76,9 +85,18 @@ export default {
       display: inline-block;
       border-radius: 5px;
       padding: 5px 10px;
+      margin: 0 10px 10px 0;
 
-      background: var(--color-accent-green);
-      color: #fff;
+      cursor: pointer;
+
+      background: var(--color-bg-main);
+      color: var(--color-font-main);
+
+      &.selected {
+        background: var(--color-accent-green);
+        color: #fff;
+        cursor: default;
+      }
     }
   }
 

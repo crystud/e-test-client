@@ -45,7 +45,7 @@ export default {
       const { user: { id } } = this
 
       this.$router.push({
-        name: 'student',
+        name: 'studentOverview',
         params: { id },
       })
     },

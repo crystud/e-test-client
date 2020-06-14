@@ -1,7 +1,7 @@
 export default [
   {
     path: '/admin/student/:id',
-    name: 'student',
+    name: 'studentOverview',
     meta: {
       title: 'Персональна сторінка студента',
     },

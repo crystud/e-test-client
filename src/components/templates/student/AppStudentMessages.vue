@@ -78,14 +78,18 @@ export default {
       setAlert: 'alert/set',
     }),
     async fetchMessages() {
-      const { initiate, $route } = this
+      const {
+        initiate,
+        student: { id: studentID },
+        $route: { params },
+      } = this
 
       try {
         this.showPreloader = true
 
         await this.loadMoreMessages({
           initiate,
-          studentID: $route.params.id,
+          studentID: studentID || params.id,
         })
 
         this.initiate = false
@@ -103,6 +107,19 @@ export default {
         this.showPreloader = false
       }
     },
+    refreshMessages() {
+      this.initiate = true
+
+      this.fetchMessages()
+    },
+  },
+  watch: {
+    student() {
+      this.refreshMessages()
+    },
+    studentID() {
+      this.refreshMessages()
+    },
   },
   data() {
     return {
@@ -115,6 +132,16 @@ export default {
   },
   components: {
     AppPreloader,
+  },
+  props: {
+    student: {
+      type: Object,
+      required: true,
+    },
+    studentID: {
+      type: Number,
+      required: true,
+    },
   },
 }
 </script>

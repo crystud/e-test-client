@@ -102,5 +102,39 @@ export default {
 
       return Promise.resolve()
     },
+    async redirectToHome({ dispatch, rootGetters }, { $router }) {
+      try {
+        const { roles = [] } = rootGetters['user/info']
+
+        if (roles.includes('student')) {
+          const [student] = await dispatch('student/getGroups', null, { root: true })
+
+          return $router.push({
+            name: 'studentHome',
+            params: {
+              id: student.id,
+            },
+          })
+        }
+
+        if (roles.includes('admin')) {
+          return $router.push({ name: 'statsCollege' })
+        }
+
+        if (roles.includes('teacher')) {
+          return $router.push({
+            name: 'homeTeacher',
+          })
+        }
+
+        if (roles.includes('user')) {
+          return this.$router.push({ name: 'userHome' })
+        }
+
+        return Promise.resolve()
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
   },
 }

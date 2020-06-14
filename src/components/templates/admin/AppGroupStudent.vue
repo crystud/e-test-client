@@ -46,7 +46,7 @@ export default {
       }
 
       this.$router.push({
-        name: 'student',
+        name: 'studentOverview',
         params: { id },
       })
     },

@@ -163,8 +163,8 @@ export default {
 
         await this.activate({ email, password, code })
 
-        this.$router.push({
-          name: 'homeUser',
+        await this.redirectToHome({
+          $router: this.$router,
         })
       } catch (e) {
         const text = e?.response.data.message || 'Не вдалось виконати запит...'

@@ -92,9 +92,10 @@ export default {
   methods: {
     ...mapActions({
       signIn: 'auth/signIn',
+      redirectToHome: 'auth/redirectToHome',
     }),
     validateSignIn() {
-      const { email, password } = this
+      const { email, password, $router } = this
 
       if (!email || !password) {
         this.alert = {
@@ -123,9 +124,11 @@ export default {
       return this.signIn({
         email,
         password,
-      }).then(() => {
-        this.$router.push({ name: 'homeUser' })
-      }).catch(() => {
+      }).then(async () => {
+        await this.redirectToHome({ $router })
+      }).catch((e) => {
+        console.log(e)
+
         this.alert = {
           title: 'Помилка входу',
           text: 'Увійти не вдалось. Перевірте правильність даних.',

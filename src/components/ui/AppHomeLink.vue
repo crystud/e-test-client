@@ -6,7 +6,9 @@
 >
   <div
     class="line"
-    :class="[this.$router.currentRoute.name === this.link  ? '' : 'line-hide']"
+    :class="{
+      'line-hide': !isActiveRoute,
+    }"
   >
     <div class="shadow"></div>
   </div>
@@ -25,7 +27,9 @@
 export default {
   methods: {
     go() {
-      if (this.$router.currentRoute.name !== this.link) {
+      const { isActiveRoute } = this
+
+      if (!isActiveRoute) {
         const { params } = this
 
         this.$router.push({
@@ -33,6 +37,27 @@ export default {
           params,
         })
       }
+    },
+  },
+  computed: {
+    isActiveRoute() {
+      const {
+        $route: { name, params: currentRouteParams = {} },
+        link,
+        params = {},
+      } = this
+
+      let paramsAreSame = true
+
+      Object
+        .keys(currentRouteParams)
+        .forEach((key) => {
+          if (parseInt(currentRouteParams[key], 10) !== parseInt(params[key], 10)) {
+            paramsAreSame = false
+          }
+        })
+
+      return name === link && paramsAreSame
     },
   },
   props: {

@@ -29,7 +29,7 @@
             <div
               class="fullname"
               @click="$router.push({
-                name: 'student',
+                name: 'studentOverview',
                 params: { id: user.id },
               })"
             >

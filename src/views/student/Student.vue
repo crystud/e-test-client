@@ -1,11 +1,16 @@
 <template>
-  <div class="app-student">
+  <div
+    class="app-student"
+    v-if="user.id"
+  >
     <app-preloader :show="showPreloader"></app-preloader>
 
     <div class="student-info">
       <app-student-personal-info
         class="drop-shadow"
         :user="user"
+        :selectedStudent="student"
+        @changeStudent="newStudent => student = newStudent"
         :data="[
           ['E-mail', user.email],
         ]"
@@ -21,16 +26,15 @@
       <div>
         <app-student-subjects
           class="drop-shadow"
-          v-if="(user.roles || []).includes('student')"
+          :student="student"
+          :studentID="parseInt($route.params.id || 0, 10)"
         ></app-student-subjects>
-
-        <!-- <app-student-results
-          class="drop-shadow"
-          v-if="(user.roles || []).includes('student')"
-          ></app-student-results> -->
       </div>
 
-      <app-student-messages></app-student-messages>
+      <app-student-messages
+        :student="student"
+        :studentID="parseInt($route.params.id || 0, 10)"
+      ></app-student-messages>
     </div>
   </div>
 </template>
@@ -41,19 +45,16 @@ import { mapGetters, mapActions } from 'vuex'
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
 import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
-// import AppStudentResults from '@/components/templates/student/AppStudentResults.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
-  name: 'AppStudent',
   components: {
     AppStudentPersonalInfo,
     AppStudentActivity,
     AppStudentSubjects,
     AppStudentMessages,
     AppPreloader,
-    // AppStudentResults,
   },
   computed: {
     ...mapGetters({
@@ -64,11 +65,13 @@ export default {
     ...mapActions({
       getUser: 'user/getUser',
       setAlert: 'alert/set',
+      redirectToHome: 'auth/redirectToHome',
     }),
   },
   data() {
     return {
       user: {},
+      student: {},
       showPreloader: false,
       studentActivity: [
         ['Останній тест пройдено', '03.03.2020 (87%)'],
@@ -84,43 +87,24 @@ export default {
       },
     } = this
 
-    const roles = (this.self.roles || [])
-
-    if (!userID && !roles.includes('student')) {
-      if (roles.includes('teacher')) {
-        return this.$router.push({
-          name: 'homeTeacher',
-        })
-      }
-
-      if (roles.includes('admin')) {
-        return this.$router.push({ name: 'statsCollege' })
-      }
-
-      if (roles.includes('user')) {
-        return this.$router.push({ name: 'userHome' })
-      }
-
-      return this.setAlert({
-        title: 'Доступ заборонено',
-        isSuccess: false,
-        delay: 1500,
-        show: true,
-      })
-    }
-
     this.showPreloader = true
 
-    if (this.$route.name === 'studentHome') {
+    const { name: routeName } = this.$route
+
+    if (routeName === 'studentHome') {
       this.user = this.self
 
       document.title = 'Ваш профіль - CRYSTUD'
-    } else {
-      this.user = await this.getUser(userID)
+    } else if (routeName === 'studentOverview') {
+      const user = await this.getUser(userID)
+      const { students: [defaultStudent = {}] } = user
 
-      const { user } = this
+      this.user = user
+      this.student = defaultStudent
 
-      document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
+      const { user: { lastName, firstName, patronymic } } = this
+
+      document.title = `${lastName} ${firstName} ${patronymic} - CRYSTUD`
     }
 
     this.showPreloader = false

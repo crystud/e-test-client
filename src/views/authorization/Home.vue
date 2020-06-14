@@ -177,7 +177,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import AppScreen from '@/components/ui/AppScreen.vue'
 import AppHomeLink from '@/components/ui/AppHomeLink.vue'
@@ -214,12 +214,37 @@ export default {
     }),
   },
   methods: {
+    ...mapActions({
+      loadStudentGroups: 'student/getGroups',
+      setAlert: 'alert/set',
+    }),
     exit() {
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
 
       this.$router.push({ name: 'signIn' })
     },
+  },
+  async created() {
+    const { user: { roles } } = this
+
+    if ((roles || []).includes('student')) {
+      try {
+        this.showPreloader = true
+
+        await this.loadStudentGroups()
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось отримати список ваших груп',
+          show: true,
+          delay: 2500,
+          isSuccess: false,
+        })
+      } finally {
+        this.showPreloader = false
+      }
+    }
   },
   components: {
     AppScreen,
