@@ -126,12 +126,10 @@ export default {
         password,
       }).then(async () => {
         await this.redirectToHome({ $router })
-      }).catch((e) => {
-        console.log(e)
-
+      }).catch(() => {
         this.alert = {
           title: 'Помилка входу',
-          text: 'Увійти не вдалось. Перевірте правильність даних.',
+          text: 'Увійти не вдалось',
           isSuccess: false,
           show: true,
         }
