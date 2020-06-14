@@ -6,7 +6,9 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <div class="card header create-message">
-      <span class="text">Ваші оголошення</span>
+      <span class="text">
+        Оголошення для {{$route.name === 'studentOverview' ? 'студента' : 'вас'}}
+      </span>
     </div>
 
     <div

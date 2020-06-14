@@ -17,7 +17,12 @@
           class="attempts-list"
           v-if="attempts.length"
         >
-          <div class="title">Ваші спроби проходження (Спроб - {{attempts.length}})</div>
+          <div class="title">
+            {{$route.name === 'studentOverview' ?
+              'Спроби проходження' :
+              'Ваші спроби проходження'
+            }} (Спроб - {{attempts.length}})
+          </div>
 
           <div
             v-for="({
@@ -66,7 +71,10 @@
               </div>
 
               <div
-                v-if="!countTimeUntilClosed(maxEndTime).isClosed"
+                v-if="
+                  !countTimeUntilClosed(maxEndTime).isClosed
+                  && $route.name !== 'studentOverview'
+                "
                 @click="$router.push({
                   name: 'testPass',
                   params: {
@@ -81,7 +89,7 @@
 
         <div class="content">
           <div class="header">
-            <div class="name">{{ticketInfo.createAt}}</div>
+            <div class="name">{{ticketInfo.permission.test.name}}</div>
 
             <div class="created-at">
               Дозвіл створено {{$moment(ticketInfo.createAt).format('Do MMMM YYYY, hh:mm')}}
@@ -118,22 +126,25 @@
 
             <span
               v-if="ticketInfo.outstanding && !ticketInfo.used"
-              class="denied"
-            >Прострочений</span>
+            >
+              /
+              <span class="denied"> Прострочений</span>
+            </span>
           </div>
         </div>
       </div>
 
       <div class="btns">
         <button
-          class="leave"
-          @click="$emit('cancel')"
-        >Скасувати</button>
-
-        <button
+          v-if="$route.name !== 'studentOverview'"
           class="pass"
           @click="pass"
         >Почати</button>
+
+        <button
+          class="leave"
+          @click="$emit('cancel')"
+        >Закрити</button>
       </div>
     </app-modal-window>
   </div>
@@ -413,7 +424,7 @@ export default {
 
       &.leave {
         background: var(--color-bg-main);
-        color: var(--color-accent-red);
+        color: var(--color-font-dark);
       }
 
       &.pass {
