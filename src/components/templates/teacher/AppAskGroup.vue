@@ -61,6 +61,7 @@
         >Скасувати</app-button>
 
         <app-button
+          v-if="multiple"
           appearance="neutral"
           class="submit-selected"
           :class="{

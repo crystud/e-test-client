@@ -59,7 +59,7 @@
       <div class="list">
         <div class="row header-row">
           <div class="test">Назва тесту</div>
-          <div class="start">Початок активності</div>
+          <div class="start">Створено</div>
           <div class="end">Кінець активності</div>
           <div class="group">Група</div>
         </div>
@@ -79,8 +79,8 @@
           }"
         >
           <div class="test">{{permission.test.name}}</div>
-          <div class="start">{{$moment(permission.startTime).format('Do MMMM YYYY, hh:mm')}}</div>
-          <div class="end">{{$moment(permission.endTime).format('Do MMMM YYYY, hh:mm')}}</div>
+          <div class="start">{{$moment(permission.createAt).format('Do MMMM YYYY, HH:mm')}}</div>
+          <div class="end">{{$moment(permission.endTime).format('Do MMMM YYYY, HH:mm')}}</div>
           <div class="group">{{permission.group.name}}</div>
         </router-link>
       </div>

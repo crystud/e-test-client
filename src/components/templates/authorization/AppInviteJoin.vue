@@ -41,7 +41,7 @@
         </div>
 
         <div class="created-at">
-          Запрошення створено {{$moment(invite.createAt).format('Do MMMM YYYY, hh:mm')}}
+          Запрошення створено {{$moment(invite.createAt).format('Do MMMM YYYY, HH:mm')}}
         </div>
 
         <app-data-list

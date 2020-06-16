@@ -12,8 +12,8 @@
       </app-card>
 
       <app-card class="app-card expires-in">
-        <div class="label">Закінчується через</div>
-        <div class="value">2 год. 37 хв.</div>
+        <div class="label">Тип вибору результату</div>
+        <div class="value">{{resultSelectingMethods[permission.resultSelectingMethod] || '-'}}</div>
       </app-card>
 
       <app-card class="test-info">
@@ -33,8 +33,8 @@
         <app-data-list
           class="app-data-list"
           :data="[
-            ['Від', $moment(permission.startTime).format('Do MMMM YYYY, hh:mm')],
-            ['До', $moment(permission.endTime).format('Do MMMM YYYY, hh:mm')],
+            ['Від', $moment(permission.startTime).format('Do MMMM YYYY, HH:mm')],
+            ['До', $moment(permission.endTime).format('Do MMMM YYYY, HH:mm')],
           ]"
         ></app-data-list>
       </app-card>
@@ -48,14 +48,12 @@
         <app-fade-card :show="!Boolean(detailInfoTicketID)">
           <div class="header">
             <h1>Активність проходження</h1>
-
-            <div class="live">наживо</div>
           </div>
 
           <div class="list">
             <div class="row header-row">
               <div class="student">Студент</div>
-              <div class="avg">Сер. результат</div>
+              <div class="avg">Результат</div>
               <div class="count-of-passes">К-сть проходжень</div>
             </div>
 
@@ -105,6 +103,11 @@ export default {
       showPreloader: false,
       detailInfoTicketID: 0,
       permission: {},
+      resultSelectingMethods: [
+        { name: 'Останній результат', value: 'LAST_RESULT' },
+        { name: 'Найкращий результат', value: 'BEST_RESULT' },
+        { name: 'Середній результат', value: 'AVG_RESULT' },
+      ],
     }
   },
   methods: {
@@ -219,15 +222,6 @@ export default {
             background: var(--color-accent-blue);
             transform: scale(1);
           }
-        }
-
-        .live {
-          padding: 5px 10px;
-          border-radius: 5px;
-          background: var(--color-accent-green);
-
-          transform: scale(1);
-          animation: 2s liveAnimation infinite;
         }
       }
     }

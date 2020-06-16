@@ -40,7 +40,7 @@
     >
       <div class="sender">
         <div class="name">{{sender.lastName}} {{sender.firstName}} {{sender.patronymic}}</div>
-        <div class="sendtime">Надіслано {{$moment(createAt).format('Do MMMM YYYY, hh:mm')}}</div>
+        <div class="sendtime">Надіслано {{$moment(createAt).format('Do MMMM YYYY, HH:mm')}}</div>
       </div>
 
       <div class="content">

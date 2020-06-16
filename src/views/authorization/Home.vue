@@ -88,7 +88,7 @@
               role="student"
               link="studentHome"
               :params="{ id: student.id }"
-            >Домівка ({{student.group.name}})</app-home-link>
+            >{{student.group.name}}</app-home-link>
           </div>
 
           <div v-if="(user.roles || []).includes('teacher')">

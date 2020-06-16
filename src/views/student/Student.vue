@@ -83,10 +83,10 @@ export default {
   async created() {
     const {
       self,
+      $router,
       $route: {
         params: { id: userID },
       },
-      $router,
     } = this
 
     this.showPreloader = true

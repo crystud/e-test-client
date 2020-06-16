@@ -44,8 +44,8 @@
               class="date"
               v-if="startTime && endTime"
             >
-              {{$moment(startTime).format('Do MMMM YYYY, hh:mm')}}
-              - {{$moment(endTime).format('Do MMMM YYYY, hh:mm')}}</div>
+              {{$moment(startTime).format('Do MMMM YYYY, HH:mm')}}
+              - {{$moment(endTime).format('Do MMMM YYYY, H:mm')}}</div>
 
             <div
               v-if="result.id"
@@ -92,7 +92,7 @@
             <div class="name">{{ticketInfo.permission.test.name}}</div>
 
             <div class="created-at">
-              Дозвіл створено {{$moment(ticketInfo.createAt).format('Do MMMM YYYY, hh:mm')}}
+              Дозвіл створено {{$moment(ticketInfo.createAt).format('Do MMMM YYYY, HH:mm')}}
             </div>
           </div>
 
@@ -101,11 +101,11 @@
             :data="[
               [
                 'Початок доступу',
-                $moment(ticketInfo.permission.startTime).format('Do MMMM YYYY, hh:mm')
+                $moment(ticketInfo.permission.startTime).format('Do MMMM YYYY, HH:mm')
               ],
               [
                 'Кінець доступу',
-                $moment(ticketInfo.permission.endTime).format('Do MMMM YYYY, hh:mm')
+                $moment(ticketInfo.permission.endTime).format('Do MMMM YYYY, HH:mm')
               ],
               ['Макс. к-сть спроб', ticketInfo.permission.maxCountOfUse || 'Безмежна'],
             ]"

@@ -33,7 +33,7 @@
         <div
           v-if="info.usedAt !== null"
           class="used"
-        >Запрошення використано {{$moment(info.usedAt).format('Do MMMM YYYY, hh:mm')}}</div>
+        >Запрошення використано {{$moment(info.usedAt).format('Do MMMM YYYY, HH:mm')}}</div>
 
         <div
           v-else
@@ -51,7 +51,7 @@
           ['Група', info.student.group.name || '-'],
           [
             'Створено',
-            info.createAt ? $moment(info.createAt).format('Do MMMM YYYY, hh:mm') : '-'
+            info.createAt ? $moment(info.createAt).format('Do MMMM YYYY, HH:mm') : '-'
           ],
         ]"
       ></app-data-list>

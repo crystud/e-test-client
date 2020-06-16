@@ -13,7 +13,6 @@
 
         <select
           class="test-select"
-          placeholder="12"
           v-model="testID"
         >
           <optgroup
@@ -34,10 +33,19 @@
           </optgroup>
         </select>
 
-        <app-permission-create-test-info
-          :testID="testID || 0"
-          @filledStateUpdate="value => testFilled = value"
-        ></app-permission-create-test-info>
+        <div class="tip">Тип вибірки результату:</div>
+
+        <select
+          class="test-select"
+          v-model="resultSelectingMethod"
+        >
+          <option
+            v-for="({ name, value }, index) in resultSelectingMethods"
+            v-bind:key="index"
+            :value="value"
+            selected
+          >{{name}}</option>
+        </select>
 
         <div class="count-of-attempts">
           <div class="tip">Максимальна к-сть спроб (0 для безмежної кількості)</div>
@@ -106,7 +114,6 @@ import { mapGetters, mapActions } from 'vuex'
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
-import AppPermissionCreateTestInfo from '@/components/templates/teacher/AppPermissionCreateTestInfo.vue'
 
 export default {
   data() {
@@ -124,6 +131,12 @@ export default {
         time: '',
         date: '',
       },
+      resultSelectingMethod: {},
+      resultSelectingMethods: [
+        { name: 'Останній результат', value: 'LAST_RESULT' },
+        { name: 'Найкращий результат', value: 'BEST_RESULT' },
+        { name: 'Середній результат', value: 'AVG_RESULT' },
+      ],
     }
   },
   methods: {
@@ -152,23 +165,12 @@ export default {
         },
         testID,
         maxAttempts,
-        testFilled,
+        resultSelectingMethod,
         group: { id: group },
       } = this
 
       const end = this.toISOString(endDate, endTime)
       const start = this.toISOString(startDate, startTime)
-
-      if (testFilled < 100) {
-        this.setAlert({
-          title: 'Створення неможливе',
-          text: 'В тесті недостатньо запитань',
-          show: true,
-          isSuccess: false,
-        })
-
-        return
-      }
 
       if (!testID) {
         this.setAlert({
@@ -208,6 +210,7 @@ export default {
           startTime: start,
           endTime: end,
           maxCountOfUse: parseInt(maxAttempts, 10),
+          resultSelectingMethod,
           test: testID,
           group,
         })
@@ -235,11 +238,15 @@ export default {
       }
     },
   },
+  created() {
+    const { resultSelectingMethods: [defaultMethod] = [{}] } = this
+
+    this.resultSelectingMethod = defaultMethod.value
+  },
   components: {
     AppModalWindow,
     AppInput,
     AppPreloader,
-    AppPermissionCreateTestInfo,
   },
   computed: {
     ...mapGetters({
@@ -251,11 +258,28 @@ export default {
       const { show } = this
 
       if (show) {
-        this.showPreloader = true
+        try {
+          this.showPreloader = true
 
-        this.subjectsList = await this.getSubjects()
+          this.subjectsList = await this.getSubjects()
 
-        this.showPreloader = false
+          const [subject = {}] = this.subjectsList
+          const { tests = [] } = subject
+          const [test = {}] = tests
+
+          this.testID = test.id || null
+        } catch (e) {
+          const text = e?.response.data.message || 'Не вдалось отримати список тестів'
+
+          this.setAlert({
+            title: 'Помилка',
+            isSuccess: false,
+            show: true,
+            text,
+          })
+        } finally {
+          this.showPreloader = false
+        }
       }
     },
   },
@@ -304,7 +328,7 @@ export default {
       width: 100%;
       background: var(--color-bg-main);
       border: 1px solid var(--color-bg-main);
-      border-radius: 0;
+      border-radius: 5px;
       color: var(--color-font-main);
       padding: 10px;
       font-size: 1em;
