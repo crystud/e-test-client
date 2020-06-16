@@ -2,7 +2,9 @@
   <div
     class="app-student-active-tests"
     :class="{
-      active: attempt.id && $route.name !== 'testPass',
+      active: attempt.id
+        && $route.name !== 'testPass'
+        && user.roles.includes('student'),
     }"
     @click="attempt.id ? $router.push({
       name: 'testPass',
@@ -21,7 +23,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
+  computed: {
+    ...mapGetters({
+      user: 'user/info',
+    }),
+  },
   data() {
     return {
       get attempt() {

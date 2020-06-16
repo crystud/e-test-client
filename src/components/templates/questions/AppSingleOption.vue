@@ -67,6 +67,16 @@
                 {{image.name}}
               </span>
             </label>
+
+            <div
+              class="remove-image"
+              @click="options[index].image = ''"
+              v-if="image"
+            >
+              <font-awesome-icon icon="times"></font-awesome-icon>
+
+              <span class="text">Вилучити зображення</span>
+            </div>
           </div>
 
           <button
@@ -187,6 +197,28 @@ export default {
 
   .title {
     color: var(--color-font-dark);
+  }
+
+  .remove-image {
+    padding: 15px;
+    background: var(--color-bg-dark);
+    border-radius: 10px;
+    cursor: pointer;
+
+    &:hover {
+      .text {
+        color: var(--color-font-main);
+      }
+    }
+
+    svg {
+      color: var(--color-accent-red);
+    }
+
+    .text {
+      margin-left: 10px;
+      color: var(--color-font-dark);
+    }
   }
 
   .list {

@@ -61,6 +61,14 @@
               {{attachedFile.name}}
             </div>
           </label>
+
+          <div
+            class="remove-image"
+            @click="attachedFile = {}"
+            v-if="attachedFile.name"
+          >
+            <font-awesome-icon icon="times"></font-awesome-icon>
+          </div>
         </div>
       </div>
 
@@ -319,9 +327,17 @@ export default {
     }
   }
 
+  .remove-image {
+    padding: 15px;
+    background: var(--color-bg-main);
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--color-accent-red);
+  }
+
   .test-info {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     grid-gap: 10px;
     align-items: center;
 

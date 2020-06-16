@@ -8,6 +8,14 @@
       @finish="finish"
     ></app-finish-warning>
 
+    <pre>
+      {{finishTime}}
+    </pre>
+
+    <pre>
+      {{attempt}}
+    </pre>
+
     <div class="markup">
       <div class="leftbar">
         <div class="questions">
@@ -207,6 +215,11 @@ export default {
       sendAnswers: 'attempts/sendAnswers',
       getQuestion: 'attempts/getQuestion',
     }),
+    countFinishTime() {
+      const { attempt: { startTime } = {} } = this
+
+      console.log(startTime)
+    },
     endDragging() {
       const {
         currentQuestion: { id: questionID },
@@ -412,6 +425,7 @@ export default {
       question: {},
       userAnswers: [],
       numbering: [],
+      finishTime: {},
       taskTypes: {
         SIMPLE_CHOICE: 'Простий вибір',
         MULTIPLE_CHOICE: 'Множинний вибір',
@@ -422,7 +436,7 @@ export default {
         SIMPLE_CHOICE: 'Варіанти відповідей',
         MULTIPLE_CHOICE: 'Варіанти відповідей',
         SHORT_ANSWER: 'Введіть відповідь',
-        NUMERICAL: 'Послідовність',
+        NUMERICAL: 'Сортування',
       },
     }
   },
@@ -449,7 +463,7 @@ export default {
 
         setTimeout(() => {
           this.$router.push({ name: 'homeUser' })
-        }, 2000)
+        }, delay)
 
         return
       }
@@ -460,6 +474,8 @@ export default {
         question,
         answers: [],
       }))
+
+      this.timerInterval = setInterval(this.countFinishTime, 1000)
     } catch (e) {
       const text = e?.response.data.message || 'Не вдалось прогрузити дані...'
 
