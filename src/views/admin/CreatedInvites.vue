@@ -7,6 +7,11 @@
       @close="showMore = {}"
     ></app-invite-detail-info>
 
+    <app-invites-filters
+      @updateState="updateFiltersState"
+      class="invites-filters"
+    ></app-invites-filters>
+
     <div class="sections">
       <div class="list-wrap">
         <div class="title">
@@ -60,6 +65,20 @@
             >Детальніше...</div>
           </div>
         </div>
+
+        <div
+          v-if="lastFetchCount === limit"
+          class="fetch-more"
+        >
+          <app-button
+            appearance="neutral"
+            class="load-more-btn"
+            @click="
+              page += 1
+              fetchInvites()
+            "
+          >Показати більше</app-button>
+        </div>
       </div>
 
       <div class="data-cards">
@@ -100,8 +119,10 @@ import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppDataList from '@/components/ui/AppDataList.vue'
 import AppCard from '@/components/ui/AppCard.vue'
 import AppCircleChart from '@/components/ui/AppCircleChart.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 
 import AppInviteDetailInfo from '@/components/templates/admin/AppInviteDetailInfo.vue'
+import AppInvitesFilters from '@/components/templates/admin/AppInvitesFilters.vue'
 
 export default {
   data() {
@@ -109,6 +130,11 @@ export default {
       showPreloader: false,
       progress: 0,
       showMore: {},
+      filters: {},
+      page: 0,
+      limit: 25,
+      invites: [],
+      lastFetchCount: 0,
     }
   },
   methods: {
@@ -117,12 +143,30 @@ export default {
       getInvitesOverview: 'invites/getOverview',
       setAlert: 'alert/set',
     }),
+    updateFiltersState(newState) {
+      this.filters = newState
+
+      this.invites = []
+      this.page = 0
+
+      this.fetchInvites()
+    },
     async fetchInvites() {
       try {
+        const { filters, limit, page } = this
+
         this.showPreloader = true
 
-        await this.getInvites()
+        const invites = await this.getInvites({
+          ...filters,
+          limit,
+          offset: page * limit,
+        })
+
         await this.getInvitesOverview()
+
+        this.lastFetchCount = invites.length
+        this.invites = [...this.invites, ...invites]
       } catch (e) {
         const text = e?.response.data.message || 'Не вдалось отримати список запрошень'
 
@@ -142,15 +186,16 @@ export default {
   },
   computed: {
     ...mapGetters({
-      invites: 'invites/list',
       overview: 'invites/overview',
     }),
   },
   components: {
     AppInviteDetailInfo,
+    AppInvitesFilters,
     AppCircleChart,
     AppPreloader,
     AppDataList,
+    AppButton,
     AppCard,
   },
 }
@@ -158,6 +203,20 @@ export default {
 
 <style lang="less" scoped>
 .app-created-invites {
+  .invites-filters {
+    margin-bottom: 20px;
+  }
+
+  .fetch-more {
+    text-align: center;
+    margin-top: 40px;
+
+    .load-more-btn {
+      padding: 10px 20px;
+      background: var(--color-bg-main);
+    }
+  }
+
   .sections {
     display: grid;
     grid-template-columns: 5fr 3fr;
