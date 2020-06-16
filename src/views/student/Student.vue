@@ -82,14 +82,21 @@ export default {
   },
   async created() {
     const {
+      self,
       $route: {
         params: { id: userID },
       },
+      $router,
     } = this
 
     this.showPreloader = true
 
     const { name: routeName } = this.$route
+
+    if (routeName === 'homeUser'
+    && !self.roles.includes('student')) {
+      return this.redirectToHome({ $router })
+    }
 
     if (routeName === 'studentHome') {
       this.user = this.self

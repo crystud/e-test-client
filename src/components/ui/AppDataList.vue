@@ -6,7 +6,7 @@
 
       class="item"
     >
-      <div class="property">{{label}}</div>
+      <div class="property">{{label}}:</div>
       <div class="value">{{value}}</div>
     </div>
   </div>

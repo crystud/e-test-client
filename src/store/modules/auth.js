@@ -117,14 +117,12 @@ export default {
           })
         }
 
-        if (roles.includes('admin')) {
-          return $router.push({ name: 'statsCollege' })
+        if (roles.includes('teacher')) {
+          return $router.push({ name: 'homeTeacher' })
         }
 
-        if (roles.includes('teacher')) {
-          return $router.push({
-            name: 'homeTeacher',
-          })
+        if (roles.includes('admin')) {
+          return $router.push({ name: 'statsCollege' })
         }
 
         if (roles.includes('user')) {
