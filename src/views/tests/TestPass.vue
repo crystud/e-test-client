@@ -24,7 +24,23 @@
                   loadQuestion()
                 }
               }"
-            >Питання №{{index+1}}</li>
+            >
+              <span class="text">Питання №{{index+1}}</span>
+
+              <span
+                class="is-answered"
+                :class="{
+                  'answered': userAnswers[index].answers.length,
+                }"
+              >
+                <font-awesome-icon
+                  :icon="
+                    userAnswers[index].answers.length ?
+                      'check' : 'question'
+                  "
+                ></font-awesome-icon>
+              </span>
+            </li>
           </ul>
         </div>
 
@@ -537,6 +553,18 @@ export default {
             position: relative;
             cursor: pointer;
             transition: all .3s;
+
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-gap: 10px;
+
+            .is-answered {
+              color: var(--color-font-dark);
+
+              &.answered {
+                color: var(--color-accent-green);
+              }
+            }
 
             &:hover {
               background: var(--color-bg-main);
