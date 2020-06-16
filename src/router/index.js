@@ -17,6 +17,14 @@ Vue.use(VueRouter)
 const routes = [
   ...Authorization,
   {
+    path: '/user/home',
+    name: 'userHome',
+    meta: {
+      title: 'Домівка користувача',
+    },
+    component: () => import('@/views/user/Home.vue'),
+  },
+  {
     path: '/',
     component: () => import('@/views/authorization/Home'),
     meta: {

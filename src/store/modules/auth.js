@@ -102,6 +102,14 @@ export default {
 
       return Promise.resolve()
     },
+    exit({ commit }, $router) {
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+
+      commit('user/setInfo', {}, { root: true })
+
+      $router.push({ name: 'signIn' })
+    },
     async redirectToHome({ dispatch, rootGetters }, { $router }) {
       try {
         const { roles = [] } = rootGetters['user/info']
@@ -126,7 +134,7 @@ export default {
         }
 
         if (roles.includes('user')) {
-          return this.$router.push({ name: 'userHome' })
+          return $router.push({ name: 'userHome' })
         }
 
         return Promise.resolve()

@@ -164,7 +164,7 @@
         </div>
 
         <button
-          @click="exit"
+          @click="exit($router)"
           class="logout"
         >Вихід</button>
       </div>
@@ -217,13 +217,8 @@ export default {
     ...mapActions({
       loadStudentGroups: 'student/getGroups',
       setAlert: 'alert/set',
+      exit: 'auth/exit',
     }),
-    exit() {
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
-
-      this.$router.push({ name: 'signIn' })
-    },
   },
   async created() {
     const { user: { roles } } = this
