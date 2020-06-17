@@ -11,6 +11,19 @@
     <div class="markup">
       <div class="leftbar">
         <div class="questions">
+          <div
+            class="time-left"
+            :class="{
+              good: secondsLeft > 180,
+              warning: secondsLeft < 180 && secondsLeft > 60,
+              bad: secondsLeft < 60,
+            }"
+          >
+            <div class="label">Залишилось часу</div>
+
+            <div class="value">{{timeLeft}}</div>
+          </div>
+
           <ul>
             <li
               v-for="(task, index) in tasksList"
@@ -53,11 +66,16 @@
       </div>
 
       <div class="status">
-        Статус:
-        {{
-          ((userAnswers.filter(({ answers }) => answers.length > 0).length
-          / tasksList.length) * 100).toFixed(2)
-        }}%
+        <div class="content">
+          Статус: {{currentStatus.toFixed(2)}}%
+        </div>
+
+        <div
+          class="progress"
+          :style="{
+            width: `${currentStatus}%`,
+          }"
+        ></div>
       </div>
 
       <div class="current-question">
@@ -196,6 +214,12 @@ export default {
     options() {
       return this.question.attemptAnswers || []
     },
+    currentStatus() {
+      const { userAnswers, tasksList } = this
+
+      return ((userAnswers.filter(({ answers }) => answers.length > 0).length
+            / tasksList.length) * 100)
+    },
   },
   methods: {
     ...mapActions({
@@ -210,15 +234,24 @@ export default {
     countFinishTime() {
       const {
         attempt: { maxEndTime } = {},
-        $moment,
       } = this
 
-      const endTime = $moment(maxEndTime)
-      const currentTime = $moment()
+      const endTime = new Date(maxEndTime)
+      const currentTime = new Date()
 
-      const diff = endTime.diff(currentTime)
+      const diff = Math.round((endTime - currentTime) / 1000) - 3600 * 3
 
-      console.log($moment(diff).format('hh:mm:ss'))
+      this.secondsLeft = diff
+      this.timeLeft = this.countPassingTime(diff > 0 ? diff : 0)
+    },
+    countPassingTime(timeLeft) {
+      const hours = Math.floor(timeLeft / 3600)
+      const minutes = Math.floor((timeLeft - (hours * 3600)) / 60)
+      const seconds = timeLeft % 60
+
+      const hoursText = hours > 0 ? `${hours} год. ` : ''
+
+      return `${hoursText}${minutes} хв. ${seconds} сек.`
     },
     endDragging() {
       const {
@@ -425,7 +458,8 @@ export default {
       question: {},
       userAnswers: [],
       numbering: [],
-      finishTime: {},
+      timeLeft: '',
+      secondsLeft: 0,
       taskTypes: {
         SIMPLE_CHOICE: 'Простий вибір',
         MULTIPLE_CHOICE: 'Множинний вибір',
@@ -475,6 +509,8 @@ export default {
         answers: [],
       }))
 
+      this.countFinishTime()
+
       this.timerInterval = setInterval(this.countFinishTime, 1000)
     } catch (e) {
       const text = e?.response.data.message || 'Не вдалось прогрузити дані...'
@@ -501,6 +537,23 @@ export default {
 <style lang="less" scoped>
 .app-test-pass {
   user-select: none;
+
+  .time-left {
+    border-bottom: 1px solid var(--color-bg-main);
+    padding: 20px;
+
+    .label {
+      color: var(--color-font-dark);
+    }
+
+    .value {
+      color: var(--color-font-dark);
+    }
+
+    &.good .value { color: var(--color-accent-green) }
+    &.warning .value { color: var(--color-accent-orange) }
+    &.bad .value { color: var(--color-accent-red) }
+  }
 
   .flip-list-move {
     transition: transform 0.5s;
@@ -637,6 +690,30 @@ export default {
       border-bottom: 1px solid var(--color-bg-main);
 
       padding: 20px;
+
+      position: relative;
+
+      .content {
+        position: relative;
+        z-index: 105;
+      }
+
+      .progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+
+        width: auto;
+        height: 1px;
+        border-radius: 10px;
+
+        background: var(--color-accent-green);
+        opacity: 1;
+
+        transition: all .3s;
+
+        z-index: 100;
+      }
     }
 
     .current-question {
