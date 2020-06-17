@@ -103,11 +103,11 @@ export default {
       showPreloader: false,
       detailInfoTicketID: 0,
       permission: {},
-      resultSelectingMethods: [
-        { name: 'Останній результат', value: 'LAST_RESULT' },
-        { name: 'Найкращий результат', value: 'BEST_RESULT' },
-        { name: 'Середній результат', value: 'AVG_RESULT' },
-      ],
+      resultSelectingMethods: {
+        LAST_RESULT: 'Останній результат',
+        BEST_RESULT: 'Найкращий результат',
+        AVG_RESULT: 'Середній результат',
+      },
     }
   },
   methods: {

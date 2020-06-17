@@ -8,14 +8,6 @@
       @finish="finish"
     ></app-finish-warning>
 
-    <pre>
-      {{finishTime}}
-    </pre>
-
-    <pre>
-      {{attempt}}
-    </pre>
-
     <div class="markup">
       <div class="leftbar">
         <div class="questions">
@@ -216,9 +208,17 @@ export default {
       getQuestion: 'attempts/getQuestion',
     }),
     countFinishTime() {
-      const { attempt: { startTime } = {} } = this
+      const {
+        attempt: { maxEndTime } = {},
+        $moment,
+      } = this
 
-      console.log(startTime)
+      const endTime = $moment(maxEndTime)
+      const currentTime = $moment()
+
+      const diff = endTime.diff(currentTime)
+
+      console.log($moment(diff).format('hh:mm:ss'))
     },
     endDragging() {
       const {

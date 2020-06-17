@@ -19,6 +19,7 @@
     "fs": "^0.0.1-security",
     "jwt-decode": "^2.2.0",
     "moment": "^2.26.0",
+    "moment-timezone": "^0.5.31",
     "node-async-loop": "^1.2.2",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.11",

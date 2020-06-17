@@ -115,17 +115,27 @@
             <span>Статус: </span>
 
             <span
-              v-if="ticketInfo.used"
+              v-if="ticketInfo.unstarted"
+              class="unstarted"
+            >
+              Дозвіл відкриється
+              {{$moment(ticketInfo.permission.startTime).format('Do MMMM YYYY, HH:mm')}}
+            </span>
+
+            <span
+              v-if="ticketInfo.used && !ticketInfo.unstarted"
               class="denied"
             >Використаний</span>
 
             <span
-              v-if="!ticketInfo.used"
+              v-if="!ticketInfo.used && !ticketInfo.unstarted"
               class="granted"
             >Невикористаний</span>
 
             <span
-              v-if="ticketInfo.outstanding && !ticketInfo.used"
+              v-if="ticketInfo.outstanding
+                  && !ticketInfo.used
+                  && !ticketInfo.unstarted"
             >
               /
               <span class="denied"> Прострочений</span>
@@ -136,7 +146,7 @@
 
       <div class="btns">
         <button
-          v-if="$route.name !== 'studentOverview'"
+          v-if="$route.name !== 'studentOverview' && !ticketInfo.unstarted"
           class="pass"
           @click="pass"
         >Почати</button>
@@ -403,6 +413,7 @@ export default {
 
       .granted { color: var(--color-accent-green) }
       .denied { color: var(--color-accent-red) }
+      .unstarted { color: var(--color-accent-orange) }
     }
   }
 

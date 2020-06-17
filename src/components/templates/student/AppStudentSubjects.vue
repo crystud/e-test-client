@@ -45,14 +45,19 @@
         <div
           class="permission"
           :class="{
-            closed: ticket.used,
-            opened: !ticket.used,
-            outstanding: ticket.outstanding,
+            opened: !ticket.used && !ticket.unstarted,
+            outstanding: ticket.outstanding && !ticket.unstarted && !ticket.attempts.length,
+            closed: ticket.used && !ticket.unstarted || ticket.attempts.length,
+            unstarted: ticket.unstarted,
           }"
         >
-          <span v-if="ticket.used">Використаний</span>
-          <span v-if="!ticket.outstanding && !ticket.used">Невикористаний</span>
-          <span v-if="ticket.outstanding && !ticket.used">Прострочений</span>
+          <span v-if="ticket.unstarted">Очікується час доступу</span>
+          <span v-else-if="ticket.used || ticket.attempts.length">Використаний</span>
+          <span v-else-if="
+            !ticket.outstanding
+            && !ticket.used
+            && !ticket.attempts.length">Невикористаний</span>
+          <span v-else-if="ticket.outstanding && !ticket.used">Прострочений</span>
         </div>
       </div>
     </div>
@@ -189,13 +194,6 @@ export default {
         color: var(--color-font-dark);
       }
 
-      .result {
-        &.bad { color: #E01616 }
-        &.warning { color: #FC7136 }
-        &.good { color: #1ED6BA }
-        &.neutral { color: var(--color-font-dark) }
-      }
-
       .permission {
         &.opened {
           color: var(--color-accent-green);
@@ -204,6 +202,10 @@ export default {
         &.closed,
         &.outstanding {
           color: var(--color-accent-red);
+        }
+
+        &.unstarted {
+          color: var(--color-accent-orange);
         }
       }
 

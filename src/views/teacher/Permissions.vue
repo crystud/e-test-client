@@ -79,8 +79,15 @@
           }"
         >
           <div class="test">{{permission.test.name}}</div>
-          <div class="start">{{$moment(permission.createAt).format('Do MMMM YYYY, HH:mm')}}</div>
-          <div class="end">{{$moment(permission.endTime).format('Do MMMM YYYY, HH:mm')}}</div>
+
+          <div class="start">
+            {{$moment(permission.createAt).format('Do MMMM YYYY, HH:mm')}}
+          </div>
+
+          <div class="end">
+            {{$moment(permission.endTime).format('Do MMMM YYYY, HH:mm')}}
+          </div>
+
           <div class="group">{{permission.group.name}}</div>
         </router-link>
       </div>

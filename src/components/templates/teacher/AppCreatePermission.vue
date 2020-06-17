@@ -149,7 +149,7 @@ export default {
       const [hours, minutes] = time.split(':')
       const [year, month, day] = date.split('-')
 
-      const dateObject = new Date(Date.UTC(year, month - 1, day, hours, minutes))
+      const dateObject = new Date(year, month - 1, day, hours, minutes)
 
       return dateObject.toISOString()
     },

@@ -55,7 +55,7 @@ import {
   faQuestion,
 } from '@fortawesome/free-solid-svg-icons'
 
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 import App from './App.vue'
 import './registerServiceWorker'
@@ -123,6 +123,7 @@ library.add(faQuestion)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 moment.locale('uk')
+moment.tz.guess(true)
 
 Vue.prototype.$moment = moment
 Vue.config.productionTip = false

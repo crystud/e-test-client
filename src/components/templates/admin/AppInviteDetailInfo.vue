@@ -33,7 +33,9 @@
         <div
           v-if="info.usedAt !== null"
           class="used"
-        >Запрошення використано {{$moment(info.usedAt).format('Do MMMM YYYY, HH:mm')}}</div>
+        >
+          Запрошення використано {{$moment(info.usedAt).utc(true).format('Do MMMM YYYY, HH:mm')}}
+        </div>
 
         <div
           v-else
