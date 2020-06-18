@@ -9,7 +9,10 @@
       <div class="header">
         <div class="title">Оберіть тему</div>
 
-        <button class="refresh">
+        <button
+          class="refresh"
+          @click="loadSubject"
+        >
           <font-awesome-icon icon="redo"></font-awesome-icon>
         </button>
       </div>
@@ -142,6 +145,7 @@ export default {
 
     .title {
       font-size: 1.3em;
+      color: var(--color-font-dark);
     }
 
     button {

@@ -273,6 +273,17 @@ export default {
               color: var(--color-font-dark);
             }
           }
+
+          @media screen and (max-width: 500px) {
+            grid-template-columns: 1fr;
+            border-bottom: 1px solid var(--color-bg-main);
+            padding-bottom: 20px;
+
+            .fullname {
+              font-size: 1.4em;
+              font-weight: bold;
+            }
+          }
         }
       }
     }
@@ -310,7 +321,7 @@ export default {
 
       .data-cards {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         grid-gap: 20px;
 
         .app-card {
@@ -319,7 +330,7 @@ export default {
 
         .body {
           text-align: center;
-          grid-template-columns: 1fr !important;
+          grid-template-columns: 1fr 1fr;
         }
 
         .data {

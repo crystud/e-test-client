@@ -23,6 +23,19 @@ export default {
   },
 
   actions: {
+    async getByID(_, studentID) {
+      try {
+        const { data, status } = await axios.get(`/students/${studentID}`)
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
     async getGroups({ commit }) {
       try {
         const { data, status } = await axios.get('/students/own')

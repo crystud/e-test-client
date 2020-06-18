@@ -5,21 +5,26 @@
   >
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <div class="student-info">
+    <div
+      class="student-info"
+      :class="{
+        'student-overiew': !student.invite,
+      }"
+    >
       <app-student-personal-info
         class="drop-shadow"
         :user="user"
         :selectedStudent="student"
-        @changeStudent="newStudent => student = newStudent"
+        @changeStudent="(student) => loadStudent(student.id)"
         :data="[
           ['E-mail', user.email],
         ]"
       ></app-student-personal-info>
 
-      <app-student-activity
+      <app-student-invite
         class="drop-shadow"
-        :data="studentActivity"
-      ></app-student-activity>
+        :data="student.invite"
+      ></app-student-invite>
     </div>
 
     <div class="sections">
@@ -43,7 +48,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
-import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
+import AppStudentInvite from '@/components/templates/student/AppStudentInvite.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
@@ -51,7 +56,7 @@ import AppPreloader from '@/components/ui/AppPreloader.vue'
 export default {
   components: {
     AppStudentPersonalInfo,
-    AppStudentActivity,
+    AppStudentInvite,
     AppStudentSubjects,
     AppStudentMessages,
     AppPreloader,
@@ -66,27 +71,40 @@ export default {
       getUser: 'user/getUser',
       setAlert: 'alert/set',
       redirectToHome: 'auth/redirectToHome',
+      getStudent: 'student/getByID',
     }),
+    async loadStudent(studentID = null) {
+      const {
+        $route: {
+          params: { id: userID },
+        },
+      } = this
+
+      const user = await this.getUser(userID)
+
+      const { students: [defaultStudent = {}] } = user
+
+      const fetchingID = studentID || defaultStudent.id
+
+      this.student = await this.getStudent(fetchingID)
+      this.user = user
+
+      const { user: { lastName, firstName, patronymic } } = this
+
+      document.title = `${lastName} ${firstName} ${patronymic} - CRYSTUD`
+    },
   },
   data() {
     return {
       user: {},
       student: {},
       showPreloader: false,
-      studentActivity: [
-        ['Останній тест пройдено', '03.03.2020 (87%)'],
-        ['Середній результат', '78%'],
-        ['Середній час проходження', '13 хвилин 16 секунд'],
-      ],
     }
   },
   async created() {
     const {
       self,
       $router,
-      $route: {
-        params: { id: userID },
-      },
     } = this
 
     this.showPreloader = true
@@ -103,15 +121,7 @@ export default {
 
       document.title = 'Ваш профіль - CRYSTUD'
     } else if (routeName === 'studentOverview') {
-      const user = await this.getUser(userID)
-      const { students: [defaultStudent = {}] } = user
-
-      this.user = user
-      this.student = defaultStudent
-
-      const { user: { lastName, firstName, patronymic } } = this
-
-      document.title = `${lastName} ${firstName} ${patronymic} - CRYSTUD`
+      await this.loadStudent()
     }
 
     this.showPreloader = false
@@ -127,6 +137,10 @@ export default {
     display: grid;
     grid-template-columns: 5fr 4fr;
     grid-gap: 20px;
+
+    &.student-overiew {
+      grid-template-columns: 1fr;
+    }
 
     margin-bottom: 20px;
   }

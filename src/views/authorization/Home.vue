@@ -94,8 +94,7 @@
           <div v-if="(user.roles || []).includes('teacher')">
             <div class="divider">Вчитель</div>
 
-            <app-home-link role="teacher" link="homeTeacher">Домівка вчителя</app-home-link>
-            <app-home-link role="teacher" link="TeacherOwnTests">Мої тести</app-home-link>
+            <app-home-link role="teacher" link="homeTeacher">Профіль</app-home-link>
             <app-home-link role="teacher" link="questionsBank">Банк питань</app-home-link>
             <app-home-link role="teacher" link="permissions">Дозволи на проходження</app-home-link>
           </div>
@@ -103,7 +102,6 @@
           <div v-if="(user.roles || []).includes('admin')">
             <div class="divider">Адміністратор</div>
 
-            <app-home-link role="admin" link="statsCollege">Статистика нагрузки</app-home-link>
             <app-home-link role="admin" link="createdInvites">Запрошення</app-home-link>
             <app-home-link role="admin" link="groups">Групи</app-home-link>
             <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>

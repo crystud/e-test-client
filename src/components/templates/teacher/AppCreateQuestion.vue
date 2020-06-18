@@ -30,6 +30,13 @@
           </div>
         </div>
 
+        <div
+          class="test-addition"
+          v-if="test"
+        >
+          Створене питання буде автоматично занесено до тесту №{{test.id}} "{{test.name}}"
+        </div>
+
         <div class="test-info">
           <app-input
             appearance="secondary"
@@ -122,15 +129,6 @@ import AppTextInputOption from '@/components/templates/questions/AppTextInputOpt
 import AppDraggingOption from '@/components/templates/questions/AppDraggingOption.vue'
 
 export default {
-  components: {
-    AppPreloader,
-    AppDataList,
-    AppInput,
-    AppSingleOption,
-    AppMultiOption,
-    AppTextInputOption,
-    AppDraggingOption,
-  },
   data() {
     return {
       showPreloader: false,
@@ -158,6 +156,7 @@ export default {
       setAlert: 'alert/set',
       createQuestion: 'questions/create',
       addAnswers: 'questions/addAnswers',
+      addQuestionToTest: 'questions/addToTest',
     }),
     setAttachedImage({ target: { files: [image] } }) {
       const reader = new FileReader()
@@ -200,51 +199,61 @@ export default {
       } = this
 
       if (!type) {
-        return this.setAlert({
+        this.setAlert({
           title: 'Оберіть тип, та задайте варіанти відповіді',
           show: true,
           delay: 1500,
           isSuccess: false,
         })
+
+        return
       }
 
       if (!question) {
-        return this.setAlert({
+        this.setAlert({
           title: 'Вкажіть текст запитання',
           show: true,
           delay: 1500,
           isSuccess: false,
         })
+
+        return
       }
 
       if (!ready) {
-        return this.setAlert({
+        this.setAlert({
           title: 'Помилка',
           text: error,
           show: true,
           delay: 1500,
           isSuccess: false,
         })
+
+        return
       }
 
       if (type === 'MULTIPLE_CHOICE' && questions.length <= 1) {
-        return this.setAlert({
+        this.setAlert({
           title: 'Варіантів відповідей недостатньо',
           text: 'Створіть ще варіанти відповідей',
           isSuccess: false,
           delay: 1500,
           show: true,
         })
+
+        return
       }
 
       if (!questions.length) {
-        return this.setAlert({
+        this.setAlert({
           title: 'Варіантів відповідей немає',
           text: 'Створіть варіанти відповідей',
           isSuccess: false,
           delay: 1500,
           show: true,
         })
+
+        return
       }
 
       try {
@@ -265,8 +274,17 @@ export default {
           test,
         })
 
+        if (this.test) {
+          const { test: { id: insertToTestID } } = this
+
+          await this.addQuestionToTest({
+            questionsIDs: [test],
+            testID: insertToTestID,
+          })
+        }
+
         this.setAlert({
-          title: 'Запитання створено',
+          title: `Запитання створено${this.test ? ' та занесено до тесту' : ''}`,
           isSuccess: true,
           show: true,
           delay: 1000,
@@ -274,9 +292,9 @@ export default {
 
         setTimeout(() => this.$emit('created'))
       } catch (e) {
-        const text = e?.response.data.message || 'Створити запитання не вдалось'
+        const text = 'Створити запитання не вдалось'
 
-        return this.setAlert({
+        this.setAlert({
           title: 'Помилка',
           text,
           delay: 1500,
@@ -286,27 +304,42 @@ export default {
       } finally {
         this.showPreloader = false
       }
-
-      return false
     },
   },
   props: {
     topic: {
       type: Object,
       required: true,
+    },
+    test: {
+      type: Object,
+      required: false,
       default: () => {},
     },
     show: {
       type: Boolean,
       required: true,
-      default: () => false,
     },
+  },
+  components: {
+    AppPreloader,
+    AppDataList,
+    AppInput,
+    AppSingleOption,
+    AppMultiOption,
+    AppTextInputOption,
+    AppDraggingOption,
   },
 }
 </script>
 
 <style lang="less" scoped>
 .app-create-question {
+  .test-addition {
+    color: var(--color-accent-orange);
+    margin: 30px 0;
+  }
+
   .title,
   .content {
     padding: 0 20px;

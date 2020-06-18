@@ -9,6 +9,11 @@
       <div class="title">Виберіть питання до тесту</div>
 
       <div class="content">
+        <div
+          class="no-items"
+          v-if="!questions.length"
+        >Запитань в темі немає...</div>
+
         <div class="list">
           <div
             v-for="({ question, type, id }, index) in questions"
@@ -195,6 +200,14 @@ export default {
   }
 
   .content {
+    .no-items {
+      color: var(--color-font-dark);
+      text-align: center;
+
+      margin: 40px 0;
+      font-size: 1.3em;
+    }
+
     .list {
       max-height: 60vh;
       overflow-y: auto;

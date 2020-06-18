@@ -104,5 +104,14 @@ export default {
         }, () => resolve(questions))
       })
     },
+    async addTopicToTest(_, questionData) {
+      const { data, status } = await axios.post('/tests/addTopic', questionData)
+
+      if (status !== 201) {
+        return Promise.reject()
+      }
+
+      return Promise.resolve(data)
+    },
   },
 }

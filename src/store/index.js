@@ -9,7 +9,6 @@ import groups from './modules/groups'
 import user from './modules/user'
 import alert from './modules/alert'
 import tests from './modules/tests'
-import levels from './modules/levels'
 import student from './modules/student'
 import topics from './modules/topics'
 import questions from './modules/questions'
@@ -38,7 +37,6 @@ export default new Vuex.Store({
     questions,
     topics,
     student,
-    levels,
     alert,
     tests,
     theme,
