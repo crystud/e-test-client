@@ -24,7 +24,7 @@
 
       <app-teacher-activity
         class="drop-shadow"
-        :data="activity"
+        :teachers="user.teachers"
       ></app-teacher-activity>
     </div>
 
@@ -82,6 +82,7 @@ export default {
     ...mapActions({
       getUser: 'user/getUser',
       getTeacherSubjects: 'teacher/getSubjects',
+      getTeacher: 'teacher/getByID',
       setAlert: 'alert/set',
     }),
     setFullHistory(isOpened) {
@@ -110,23 +111,13 @@ export default {
     }
   },
   async created() {
-    this.showPreloader = true
-
-    const {
-      $route: {
-        params: { id: userID },
-      },
-    } = this
-
     try {
-      if (!userID) {
-        this.user = this.self
-        this.subjects = await this.getTeacherSubjects()
+      this.showPreloader = true
 
-        document.title = 'Ваш профіль -  CRYSTUD'
-      } else {
-        this.user = await this.getUser(userID)
-      }
+      document.title = 'Ваш профіль -  CRYSTUD'
+
+      this.user = await this.getUser(this.self.id)
+      this.subjects = await this.getTeacherSubjects()
 
       const { user } = this
 

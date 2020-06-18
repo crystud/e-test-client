@@ -2,10 +2,6 @@
   <div class="app-test-develop">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <pre>
-      {{test}}
-    </pre>
-
     <app-ask-topic
       :show="Boolean(
         (showAddQuestion || showCreateQuestion || showImportEntireSubject)
@@ -370,10 +366,12 @@ export default {
       }
 
       .list-item {
-        color: var(--color-accent-green);
+        color: var(--color-font-dark);
         position: relative;
 
         &:hover {
+          color: var(--color-accent-green);
+
           &::before {
             height: 40%;
           }
@@ -401,6 +399,8 @@ export default {
 
           transition: all .3s;
         }
+
+        transition: all .3s;
       }
     }
 

@@ -10,7 +10,7 @@
     <div class="info">
       <div class="basic-info">
         <div class="name">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</div>
-        <div class="last-visit">Остання активність: 37 хвилин тому</div>
+        <!-- <div class="last-visit">Остання активність: 37 хвилин тому</div> -->
       </div>
 
       <app-data-list

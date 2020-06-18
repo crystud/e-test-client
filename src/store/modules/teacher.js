@@ -98,5 +98,31 @@ export default {
         return Promise.reject()
       }
     },
+    async getByID(_, teacherID) {
+      try {
+        const { data, status } = await axios.get(`/teachers/${teacherID}`)
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
+    async getStats() {
+      try {
+        const { data, status } = await axios.get('/teachers/getInfo/own')
+
+        if (status !== 200) {
+          return Promise.reject()
+        }
+
+        return Promise.resolve(data)
+      } catch (e) {
+        return Promise.reject()
+      }
+    },
   },
 }
