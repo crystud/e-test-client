@@ -117,6 +117,8 @@ export default {
         if (roles.includes('student')) {
           const [student] = await dispatch('student/getGroups', null, { root: true })
 
+          console.log('student', student.id)
+
           return $router.push({
             name: 'studentHome',
             params: {

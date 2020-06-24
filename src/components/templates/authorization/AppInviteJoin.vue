@@ -113,6 +113,7 @@ export default {
       getInviteByCode: 'invites/getByCode',
       activate: 'invites/activate',
       setAlert: 'alert/set',
+      redirectToHome: 'auth/redirectToHome',
     }),
     async join() {
       const {
@@ -167,6 +168,8 @@ export default {
           $router: this.$router,
         })
       } catch (e) {
+        console.error(e)
+
         const text = e?.response.data.message || 'Не вдалось виконати запит...'
 
         this.setAlert({

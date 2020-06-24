@@ -102,27 +102,28 @@ export default {
     }
   },
   async created() {
-    const {
-      self,
-      $router,
-    } = this
+    const { $router } = this
 
     this.showPreloader = true
 
     const { name: routeName } = this.$route
 
     if (routeName === 'homeUser'
-    && !self.roles.includes('student')) {
+    && !this.self.roles.includes('student')) {
       return this.redirectToHome({ $router })
     }
 
     if (routeName === 'studentHome') {
       this.user = this.self
 
+      console.log(this.self, this.user)
+
       document.title = 'Ваш профіль - CRYSTUD'
     } else if (routeName === 'studentOverview') {
       await this.loadStudent()
     }
+
+    console.log(1)
 
     this.showPreloader = false
 
