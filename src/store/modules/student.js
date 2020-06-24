@@ -51,15 +51,17 @@ export default {
         return Promise.reject(e)
       }
     },
-    async getTickets({ commit, rootGetters }, studentID) {
+    async getTickets({ commit, rootGetters }, { student, filters }) {
       try {
         let userID
 
-        if (!studentID) {
+        if (!student) {
           userID = rootGetters['user/info'].id
         }
 
-        const { data, status } = await axios.get(`/tickets/findByStudent/${studentID || userID}`)
+        const { data, status } = await axios.get(`/tickets/findByStudent/${student || userID}`, {
+          params: filters,
+        })
 
         if (status !== 200) {
           return Promise.reject()

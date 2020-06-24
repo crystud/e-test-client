@@ -22,6 +22,7 @@
       ></app-student-personal-info>
 
       <app-student-invite
+        v-if="student.invite"
         class="drop-shadow"
         :data="student.invite"
       ></app-student-invite>
@@ -30,7 +31,6 @@
     <div class="sections">
       <div>
         <app-student-subjects
-          class="drop-shadow"
           :student="student"
           :studentID="parseInt($route.params.id || 0, 10)"
         ></app-student-subjects>

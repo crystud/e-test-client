@@ -8,14 +8,14 @@
           <div class="wrap">
             <div class="profile-image">
               <img
-                src="https://www.thispersondoesnotexist.com/image"
+                :src="require('@/assets/no_user.png')"
                 alt="student's profile image"
               />
             </div>
 
             <div class="info">
               <div class="name">{{self.lastName}} {{self.firstName}}</div>
-              <div class="last-visit">В мережі</div>
+              <!-- <div class="last-visit">В мережі</div> -->
             </div>
           </div>
         </div>

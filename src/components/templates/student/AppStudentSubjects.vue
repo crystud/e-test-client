@@ -1,67 +1,74 @@
 <template>
-  <app-user-card class="subjects-info">
-    <app-preloader :show="showPreloader"></app-preloader>
+  <div class="wrap">
+    <app-ticket-filters
+      @updateState="updateFiltersState"
+      class="invites-filters"
+    ></app-ticket-filters>
 
-    <app-warn-passing
-      :ticket="passingTicket"
-      @cancel="passingTicket = 0"
-    ></app-warn-passing>
+    <app-user-card class="subjects-info">
+      <app-preloader :show="showPreloader"></app-preloader>
 
-    <div class="header">
-      <div class="title">Дозволи на проходження</div>
+      <app-warn-passing
+        :ticket="passingTicket"
+        @cancel="passingTicket = 0"
+      ></app-warn-passing>
 
-      <div
-        v-if="student.id"
-        class="current-group"
-      >
-        {{student.group.name}}
-      </div>
-    </div>
-
-    <div class="tests">
-      <div class="row header-title">
-        <div class="name">Назва</div>
-        <div class="attempts">Макс. к-сть спроб</div>
-        <div class="permission">Дозвіл</div>
-      </div>
-
-      <div
-        class="no-items"
-        v-if="!tickets.length"
-      >
-        Дозволів немає
-      </div>
-
-      <div
-        class="row cursor-pointer"
-        v-for="(ticket, index) in tickets"
-        :key="index"
-        @click="passingTicket = ticket.id"
-      >
-        <div class="name">{{ticket.permission.test.name}}</div>
-
-        <div class="attempts">{{ticket.permission.maxCountOfUse ||  'Без обмежень'}}</div>
+      <div class="header">
+        <div class="title">Дозволи на проходження</div>
 
         <div
-          class="permission"
-          :class="{
-            opened: !ticket.used && !ticket.unstarted,
-            outstanding: ticket.outstanding && !ticket.unstarted && !ticket.attempts.length,
-            closed: ticket.used && !ticket.unstarted || ticket.attempts.length,
-            unstarted: ticket.unstarted,
-          }"
+          v-if="student.id"
+          class="current-group"
         >
-          <span v-if="ticket.unstarted">Очікується час доступу</span>
-          <span v-else-if="ticket.used || ticket.attempts.length">Використаний</span>
-          <span v-else-if="
-            !ticket.outstanding
-            && !ticket.used
-            && !ticket.attempts.length">Невикористаний</span>
-          <span v-else-if="ticket.outstanding && !ticket.used">Прострочений</span>
+          {{student.group.name}}
         </div>
       </div>
-    </div>
-  </app-user-card>
+
+      <div class="tests">
+        <div class="row header-title">
+          <div class="name">Назва</div>
+          <div class="attempts">Макс. к-сть спроб</div>
+          <div class="permission">Дозвіл</div>
+        </div>
+
+        <div
+          class="no-items"
+          v-if="!tickets.length"
+        >
+          Дозволів немає
+        </div>
+
+        <div
+          class="row cursor-pointer"
+          v-for="(ticket, index) in tickets"
+          :key="index"
+          @click="passingTicket = ticket.id"
+        >
+          <div class="name">{{ticket.permission.test.name}}</div>
+
+          <div class="attempts">
+            <span class="count-of-use">Макс. к-сть спроб:</span>
+            {{ticket.permission.maxCountOfUse ||  'Без обмежень'}}
+          </div>
+
+          <div
+            class="permission"
+            :class="{
+              opened: !ticket.used && !ticket.unstarted,
+              outstanding: ticket.outstanding && !ticket.unstarted,
+              closed: ticket.used && !ticket.unstarted,
+              unstarted: ticket.unstarted,
+            }"
+          >
+            <span v-if="ticket.unstarted">Очікується час доступу</span>
+            <span v-else-if="ticket.used">Використаний</span>
+            <span v-else-if="!ticket.outstanding && !ticket.used">Невикористаний</span>
+            <span v-else-if="ticket.outstanding && !ticket.used">Прострочений</span>
+          </div>
+        </div>
+      </div>
+    </app-user-card>
+  </div>
 </template>
 
 <script>
@@ -69,8 +76,9 @@ import { mapActions } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
-import AppWarnPassing from './AppWarnPassing.vue'
-import AppUserCard from './AppUserCard.vue'
+import AppWarnPassing from '@/components/templates/student/AppWarnPassing.vue'
+import AppTicketFilters from '@/components/templates/student/AppTicketFilters.vue'
+import AppUserCard from '@/components/templates/student/AppUserCard.vue'
 
 export default {
   methods: {
@@ -78,6 +86,11 @@ export default {
       setAlert: 'alert/set',
       getTickets: 'student/getTickets',
     }),
+    updateFiltersState(newState) {
+      this.filters = newState
+
+      this.loadTickets()
+    },
     async loadTickets() {
       try {
         this.showPreloader = true
@@ -85,9 +98,13 @@ export default {
         const {
           student: { id: studentID },
           $route: { params },
+          filters,
         } = this
 
-        this.tickets = await this.getTickets(studentID || params.id)
+        this.tickets = await this.getTickets({
+          student: studentID || params.id,
+          filters,
+        })
       } catch (e) {
         const text = e?.response.data.message || 'Не вдалось завантажити дозволи...'
 
@@ -116,6 +133,7 @@ export default {
       showPreloader: false,
       passingTicket: 0,
       tickets: [],
+      filters: {},
     }
   },
   created() {
@@ -135,11 +153,20 @@ export default {
     AppUserCard,
     AppPreloader,
     AppWarnPassing,
+    AppTicketFilters,
   },
 }
 </script>
 
 <style lang="less" scoped>
+.wrap {
+  background: transparent;
+}
+
+.invites-filters {
+  margin-bottom: 20px;
+}
+
 .subjects-info {
   margin-bottom: 20px;
 
@@ -190,6 +217,10 @@ export default {
         }
       }
 
+      .count-of-use {
+        display: none;
+      }
+
       &.header-title {
         color: var(--color-font-dark);
       }
@@ -219,6 +250,10 @@ export default {
 
         .name {
           font-size: 1.3em;
+        }
+
+        .count-of-use {
+          display: inline;
         }
 
         &:last-child {

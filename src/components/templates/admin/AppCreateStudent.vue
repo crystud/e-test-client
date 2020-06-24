@@ -18,7 +18,7 @@
           <div class="user">
             <div class="image">
               <img
-                src="https://www.thispersondoesnotexist.com/image"
+                :src="require('@/assets/no_user.png')"
                 alt="user's image"
               />
             </div>

@@ -7,6 +7,7 @@
       :group="group"
       :show="Boolean(createStudentInfo.id)"
       @created="studentCreated"
+      @close="createStudentInfo = {}"
     ></app-create-student>
 
     <div class="header">
@@ -30,7 +31,10 @@
       </div>
     </div>
 
-    <div class="content">
+    <div
+      class="content"
+      v-if="group.id"
+    >
       <div class="students">
         <div class="title">Студенти в групі</div>
 

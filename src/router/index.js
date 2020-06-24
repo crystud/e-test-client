@@ -9,7 +9,6 @@ import Tests from './modules/Tests'
 import Student from './modules/Student'
 import Admin from './modules/Admin'
 import Teacher from './modules/Teacher'
-import Superadmin from './modules/Superadmin'
 import User from './modules/User'
 
 Vue.use(VueRouter)
@@ -36,7 +35,6 @@ const routes = [
       ...Student,
       ...Admin,
       ...Teacher,
-      ...Superadmin,
       ...User,
     ],
   },

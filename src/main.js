@@ -126,6 +126,12 @@ moment.locale('uk')
 moment.tz.guess(true)
 
 Vue.prototype.$moment = moment
+Vue.prototype.$defaultAvatar = import('@/assets/no_user.png')
+Vue.prototype.$getBase64Image = async () => null
+
+// return `data:image/jpg;base64,${Buffer.from(image.data).toString()}`
+
+
 Vue.config.productionTip = false
 
 new Vue({

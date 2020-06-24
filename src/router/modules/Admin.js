@@ -1,13 +1,5 @@
 export default [
   {
-    path: '/admin',
-    name: 'college',
-    meta: {
-      title: 'Навчальний заклад',
-    },
-    component: () => import('@/views/admin/College.vue'),
-  },
-  {
     path: '/admin/specialities',
     name: 'specialtys',
     meta: {

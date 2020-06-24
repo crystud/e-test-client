@@ -51,6 +51,19 @@ export default {
         return Promise.reject(e)
       }
     },
+    async getAvatar() {
+      try {
+        // const { data, status } = await axios.get(`/users/${userID}/avatar`)
+
+        // if (status !== 200) {
+        //   return Promise.reject()
+        // }
+
+        return Promise.resolve(null)
+      } catch (e) {
+        return Promise.reject(e)
+      }
+    },
     async search({ commit }, searchData) {
       try {
         const { data, status } = await axios.get('/users', {

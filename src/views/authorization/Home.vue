@@ -24,7 +24,7 @@
         <div class="user">
           <div class="avatar">
             <img
-              src="https://www.thispersondoesnotexist.com/image"
+              :src="require('@/assets/no_user.png')"
               alt="profile image"
             />
           </div>
@@ -34,48 +34,11 @@
 
         <div class="roles">
           <div
-              v-for="(role, index) in user.roles"
-              :key="index"
-              class="role"
-              :class="[`role-${role}`]"
+            v-for="(role, index) in user.roles"
+            :key="index"
+            class="role"
+            :class="[`role-${role}`]"
           >{{ localization.role[role] }}</div>
-        </div>
-
-        <div class="stats">
-          <div class="item">
-            <div class="icon">
-              <font-awesome-icon icon="chart-line" />
-            </div>
-
-            <div class="status">
-              <font-awesome-icon icon="check" />
-            </div>
-
-            <div class="value">
-              <div class="number">-</div>
-              <div class="title">Рейтинг</div>
-            </div>
-          </div>
-
-          <div class="line"></div>
-
-          <div class="item">
-            <div class="icon">
-              <font-awesome-icon icon="home" />
-            </div>
-
-            <div class="status">
-              <font-awesome-icon icon="times" />
-            </div>
-
-            <div class="value">
-              <div class="number">
-                0
-              </div>
-
-              <div class="title">Пропусків</div>
-            </div>
-          </div>
         </div>
 
         <div class="menu" @click="sidebar.opened = false">
@@ -195,6 +158,7 @@ export default {
       showCreateTest: false,
       showPreloader: false,
       settingsOpen: false,
+      avatar: '',
       localization: {
         role: {
           user: 'Користувач',
@@ -216,10 +180,17 @@ export default {
       loadStudentGroups: 'student/getGroups',
       setAlert: 'alert/set',
       exit: 'auth/exit',
+      getUserAvatar: 'user/getAvatar',
     }),
   },
   async created() {
-    const { user: { roles } } = this
+    const { user: { roles, id: userID } } = this
+
+    this.showPreloader = true
+
+    this.avatar = await this.getUserAvatar(userID)
+
+    this.showPreloader = false
 
     if ((roles || []).includes('student')) {
       try {
@@ -325,8 +296,8 @@ export default {
   }
 
   @media screen and (max-width: 700px) {
-    grid-template-areas: 'pagename pagename pagename' 'settings createTest logout';
-    grid-template-columns: 30px auto 80px;
+    grid-template-areas: 'pagename pagename pagename' 'settings logout createTest';
+    grid-template-columns: 30px 80px auto;
 
     justify-content: flex-start;
   }
@@ -445,52 +416,6 @@ export default {
 
       .role-superadmin {
         color: #6660ED;
-      }
-    }
-
-    .stats {
-      display: flex;
-      margin-top: 25px;
-      justify-content: center;
-      align-items: center;
-      padding: 0 45px;
-
-      .item {
-        display: flex;
-        align-items: center;
-        margin: 0 30px;
-
-        .icon {
-          height: 18px;
-          width: 18px;
-          color: var(--color-font-gray);
-        }
-
-        .status {
-          margin-left: 5px;
-          color: var(--color-accent-orange);
-        }
-
-        .value {
-          margin-left: 7px;
-
-          .number {
-            color: var(--color-font-main);
-            font-size: 16px;
-            text-align: center;
-          }
-
-          .title {
-            color: var(--color-font-gray);
-            font-size: 14px;
-          }
-        }
-      }
-
-      .line {
-        height: 45px;
-        width: 1px;
-        background: var(--color-font-gray);
       }
     }
 
