@@ -24,7 +24,9 @@
         <div class="user">
           <div class="avatar">
             <img
-              :src="require('@/assets/no_user.png')"
+              :src="userAvatar ?
+                `data:image/png;base64,${userAvatar}`
+                : require('@/assets/no_user.png')"
               alt="profile image"
             />
           </div>
@@ -158,7 +160,6 @@ export default {
       showCreateTest: false,
       showPreloader: false,
       settingsOpen: false,
-      avatar: '',
       localization: {
         role: {
           user: 'Користувач',
@@ -172,6 +173,7 @@ export default {
   computed: {
     ...mapGetters({
       user: 'user/info',
+      userAvatar: 'user/avatar',
       studentGroups: 'student/studentGroups',
     }),
   },
@@ -179,18 +181,14 @@ export default {
     ...mapActions({
       loadStudentGroups: 'student/getGroups',
       setAlert: 'alert/set',
+      getAvatar: 'user/getAvatar',
       exit: 'auth/exit',
-      getUserAvatar: 'user/getAvatar',
     }),
   },
   async created() {
-    const { user: { roles, id: userID } } = this
+    const { user: { roles } } = this
 
-    this.showPreloader = true
-
-    this.avatar = await this.getUserAvatar(userID)
-
-    this.showPreloader = false
+    await this.getAvatar()
 
     if ((roles || []).includes('student')) {
       try {

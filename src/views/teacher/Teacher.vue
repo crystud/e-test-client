@@ -59,6 +59,7 @@
       <app-teacher-messages
         @showCreateMessage="showCreateMessage = true"
         :showingCreateMessage="showCreateMessage"
+        :user="user"
       ></app-teacher-messages>
     </div>
   </div>

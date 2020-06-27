@@ -116,14 +116,10 @@ export default {
     if (routeName === 'studentHome') {
       this.user = this.self
 
-      console.log(this.self, this.user)
-
       document.title = 'Ваш профіль - CRYSTUD'
     } else if (routeName === 'studentOverview') {
       await this.loadStudent()
     }
-
-    console.log(1)
 
     this.showPreloader = false
 

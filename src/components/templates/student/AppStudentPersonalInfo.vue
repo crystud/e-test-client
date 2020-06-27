@@ -20,7 +20,7 @@
       ></app-data-list>
 
       <div
-        v-if="user.students"
+        v-if="user.students && $route.name !== 'homeTeacher'"
         class="student-groups"
       >
         <div

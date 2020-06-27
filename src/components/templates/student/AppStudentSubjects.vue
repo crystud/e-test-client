@@ -2,6 +2,7 @@
   <div class="wrap">
     <app-ticket-filters
       @updateState="updateFiltersState"
+      :filters="filters"
       class="invites-filters"
     ></app-ticket-filters>
 
@@ -133,7 +134,10 @@ export default {
       showPreloader: false,
       passingTicket: 0,
       tickets: [],
-      filters: {},
+      filters: {
+        onlyIsNotOutstanding: true,
+        onlyUnused: true,
+      },
     }
   },
   created() {

@@ -91,6 +91,8 @@ export default {
     async fetchMessages() {
       const { initiate } = this
 
+      console.log('fetch', initiate)
+
       try {
         this.showPreloader = true
 
@@ -124,6 +126,10 @@ export default {
   props: {
     showingCreateMessage: {
       type: Boolean,
+      required: true,
+    },
+    user: {
+      type: Object,
       required: true,
     },
   },

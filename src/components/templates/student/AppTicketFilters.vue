@@ -1,9 +1,9 @@
 <template>
   <div class="app-invites-filters">
     <app-checkbox
-      :checked="onlyUnused"
+      :checked="filtersList.onlyUnused"
       @change="isSelected => {
-        onlyUnused = isSelected
+        filtersList.onlyUnused = isSelected
         emitCurrentState()
       }"
       label="Тільки невикористані"
@@ -11,9 +11,9 @@
     ></app-checkbox>
 
     <app-checkbox
-      :checked="onlyIsNotOutstanding"
+      :checked="filtersList.onlyIsNotOutstanding"
       @change="isSelected => {
-        onlyIsNotOutstanding = isSelected
+        filtersList.onlyIsNotOutstanding = isSelected
         emitCurrentState()
       }"
       label="Тільки непрострочені"
@@ -28,18 +28,33 @@ import AppCheckbox from '@/components/ui/AppCheckbox.vue'
 export default {
   data() {
     return {
-      onlyUnused: false,
-      onlyIsNotOutstanding: false,
+      filtersList: {},
     }
   },
   methods: {
     emitCurrentState() {
-      const { onlyUnused, onlyIsNotOutstanding } = this
+      const { filtersList } = this
 
-      return this.$emit('updateState', {
-        onlyUnused,
-        onlyIsNotOutstanding,
-      })
+      return this.$emit('updateState', filtersList)
+    },
+    setFilters() {
+      const { filters } = this
+
+      this.filtersList = filters
+    },
+  },
+  watch: {
+    filters() {
+      this.setFilters()
+    },
+  },
+  created() {
+    this.setFilters()
+  },
+  props: {
+    filters: {
+      type: Object,
+      required: true,
     },
   },
   components: {

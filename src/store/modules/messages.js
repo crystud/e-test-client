@@ -32,6 +32,10 @@ export default {
   actions: {
     async getSentMessages({ commit, getters }, { initiate }) {
       try {
+        if (initiate) {
+          commit('setMessages', [])
+        }
+
         const { page, limit, messages } = getters
 
         const pageValue = initiate ? 0 : page + 1

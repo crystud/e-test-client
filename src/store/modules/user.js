@@ -11,6 +11,7 @@ export default {
       roles: jwtDecode(localStorage.accessToken || '').roles,
     }) : {},
     searchResults: [],
+    avatar: {},
   },
 
   getters: {
@@ -18,6 +19,7 @@ export default {
     user: ({ user }) => user,
     searchResults: ({ searchResults }) => searchResults,
     info: ({ info }) => info,
+    avatar: ({ avatar }) => avatar,
   },
 
   mutations: {
@@ -32,6 +34,9 @@ export default {
     },
     setInfo(state, info) {
       state.info = info
+    },
+    setAvatar(state, avatar) {
+      state.avatar = avatar
     },
   },
 
@@ -51,15 +56,22 @@ export default {
         return Promise.reject(e)
       }
     },
-    async getAvatar() {
+    async getAvatar({ commit }, userID) {
       try {
-        // const { data, status } = await axios.get(`/users/${userID}/avatar`)
+        const {
+          data: avatar = '',
+          status,
+        } = await axios.get(userID ? `/users/${userID}/avatar` : '/users/avatar')
 
-        // if (status !== 200) {
-        //   return Promise.reject()
-        // }
+        if (status !== 200) {
+          return Promise.reject()
+        }
 
-        return Promise.resolve(null)
+        if (!userID) {
+          commit('setAvatar', avatar)
+        }
+
+        return Promise.resolve(avatar)
       } catch (e) {
         return Promise.reject(e)
       }

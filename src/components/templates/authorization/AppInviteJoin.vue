@@ -168,8 +168,6 @@ export default {
           $router: this.$router,
         })
       } catch (e) {
-        console.error(e)
-
         const text = e?.response.data.message || 'Не вдалось виконати запит...'
 
         this.setAlert({

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 const baseUrl = new URL(global.window.origin)
-const apiUrl = `${baseUrl.protocol}//${baseUrl.hostname}:4040`
+const apiUrl = `${baseUrl.protocol}//${baseUrl.hostname}:${process.env.VUE_APP_PORT || 4000}`
 
 Vue.prototype.$apiURL = apiUrl
 
