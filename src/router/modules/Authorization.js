@@ -46,6 +46,14 @@ export default [
         },
         component: () => import('@/components/templates/authorization/AppInviteJoin.vue'),
       },
+      {
+        path: '/join/invite/qrcode/:code',
+        name: 'inviteJoinQRCode',
+        meta: {
+          title: 'QR-код реєстрація',
+        },
+        component: () => import('@/components/templates/authorization/AppInviteJoin.vue'),
+      },
     ],
   },
 ]

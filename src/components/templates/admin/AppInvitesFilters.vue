@@ -50,9 +50,17 @@ export default {
 
 <style lang="less" scoped>
 .app-invites-filters {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: flex-start;
+  grid-gap: 10px;
+
+  @media screen and (max-width: 550px) {
+    grid-template-columns: 1fr;
+  }
+
   .app-checkbox {
-    display: inline-block;
-    margin-right: 15px;
+    display: block;
   }
 }
 </style>

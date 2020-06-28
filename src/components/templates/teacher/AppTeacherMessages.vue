@@ -91,8 +91,6 @@ export default {
     async fetchMessages() {
       const { initiate } = this
 
-      console.log('fetch', initiate)
-
       try {
         this.showPreloader = true
 

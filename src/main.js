@@ -53,6 +53,7 @@ import {
   faFileUpload,
   faUserClock,
   faQuestion,
+  faQrcode,
 } from '@fortawesome/free-solid-svg-icons'
 
 import moment from 'moment-timezone'
@@ -119,6 +120,7 @@ library.add(faFileExcel)
 library.add(faFileUpload)
 library.add(faUserClock)
 library.add(faQuestion)
+library.add(faQrcode)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

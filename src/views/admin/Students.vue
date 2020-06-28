@@ -151,7 +151,7 @@ export default {
       background: transparent;
       border: 0;
       font-size: 1em;
-      font-weight: 100;
+      font-weight: 100 !important;
 
       padding: 20px;
 
@@ -159,7 +159,6 @@ export default {
 
       &::placeholder {
         color: var(--color-font-dark);
-        font: 1em 'Exo 2', 'Lato', Arial;
       }
     }
 

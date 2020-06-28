@@ -100,7 +100,7 @@ export default {
         roles,
       }, { root: true })
 
-      return Promise.resolve()
+      return Promise.resolve(access)
     },
     exit({ commit }, $router) {
       localStorage.removeItem('accessToken')

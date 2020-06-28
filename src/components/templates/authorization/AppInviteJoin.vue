@@ -34,6 +34,14 @@
         v-if="invite.id"
         class="fill-data"
       >
+        <div class="avatar">
+          <img
+            :src="invite.student.user.avatar
+              ? `data:image/png;base64,${invite.student.user.avatar}`
+              : require('@/assets/no_user.png')"
+          >
+        </div>
+
         <div class="student">
           {{invite.student.user.lastName}}
           {{invite.student.user.firstName}}
@@ -221,6 +229,20 @@ export default {
       }, 0)
     },
   },
+  created() {
+    const {
+      $route: {
+        name,
+        params: { code },
+      },
+    } = this
+
+    if (name === 'inviteJoinQRCode') {
+      this.code = code
+
+      this.verifyCode()
+    }
+  },
   data() {
     return {
       code: '',
@@ -291,6 +313,16 @@ export default {
   .fill-data {
     .app-input {
       margin-bottom: 15px;
+    }
+
+    .avatar {
+      text-align: center;
+      margin-bottom: 20px;
+
+      img {
+        max-width: 150px;
+        border-radius: 10px;
+      }
     }
   }
 

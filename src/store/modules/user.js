@@ -11,7 +11,7 @@ export default {
       roles: jwtDecode(localStorage.accessToken || '').roles,
     }) : {},
     searchResults: [],
-    avatar: {},
+    avatar: '',
   },
 
   getters: {

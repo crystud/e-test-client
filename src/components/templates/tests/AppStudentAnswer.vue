@@ -31,6 +31,11 @@
           <div class="list-title correct">Правильні відповіді</div>
 
           <div
+            class="no-answers bad"
+            v-if="!answer.correct.length"
+          >Немає правильних відповідей</div>
+
+          <div
             v-for="(text, index) in answer.correct"
             v-bind:key="index"
             class="answer-text correct"
@@ -41,6 +46,11 @@
 
         <div class="answers-list">
           <div class="list-title incorrect">Неправильні відповіді</div>
+
+          <div
+            class="no-answers good"
+            v-if="!answer.incorrect.length"
+          >Немає неправильних відповідей</div>
 
           <div
             v-for="(text, index) in answer.incorrect"
@@ -106,8 +116,14 @@ export default {
 
   .answer {
     margin-top: 20px;
-    display: flex;
+    display: grid;
     align-items: center;
+    grid-gap: 30px;
+    grid-template-columns: auto 1fr;
+
+    @media screen and (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
 
     .icon {
       display: flex;
@@ -127,12 +143,21 @@ export default {
       grid-template-columns: 1fr 1fr;
       grid-gap: 20px;
 
-      margin-left: 20px;
+      @media screen and (max-width: 800px) {
+        grid-template-columns: 1fr;
+      }
 
       .list-title {
         font-size: 1em;
         margin-bottom: 10px;
         color: var(--color-font-dark);
+      }
+
+      .no-answers {
+        font-size: 1.1em;
+
+        &.bad { color: var(--color-accent-red) }
+        &.good { color: var(--color-accent-green) }
       }
 
       .answers-list {

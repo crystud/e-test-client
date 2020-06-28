@@ -289,6 +289,10 @@ export default {
     grid-gap: 10px;
     justify-content: flex-end;
 
+    @media screen and (max-width: 550px) {
+      grid-template-columns: 1fr;
+    }
+
     .close, .send-message {
       background: var(--color-bg-main);
     }

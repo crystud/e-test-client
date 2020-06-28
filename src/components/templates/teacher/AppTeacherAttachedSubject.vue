@@ -172,6 +172,12 @@ export default {
         transition: all .3s;
         transform: scale(0.9);
       }
+
+      @media screen and (max-width: 500px) {
+        .create-test {
+          display: none;
+        }
+      }
     }
   }
 

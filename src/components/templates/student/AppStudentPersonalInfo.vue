@@ -2,7 +2,7 @@
   <app-user-card class="app-student-info">
     <div class="profile-image">
       <img
-        :src="require('@/assets/no_user.png')"
+        :src="userAvatar || require('@/assets/no_user.png')"
         alt="student profile image"
       />
     </div>
@@ -40,14 +40,26 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import AppUserCard from './AppUserCard.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 
 export default {
-  name: 'AppStudentPersonalInfo',
-  components: {
-    AppUserCard,
-    AppDataList,
+  computed: {
+    ...mapGetters({
+      self: 'user/info',
+      selfAvatar: 'user/avatar',
+    }),
+    userAvatar() {
+      const { user, self, selfAvatar } = this
+
+      if (user.id === self.id) {
+        return selfAvatar ? `data:image/png;base64,${selfAvatar}` : null
+      }
+
+      return user.avatar ? `data:image/png;base64,${user.avatar}` : null
+    },
   },
   props: {
     data: {
@@ -65,6 +77,10 @@ export default {
       required: false,
       default: () => {},
     },
+  },
+  components: {
+    AppUserCard,
+    AppDataList,
   },
 }
 </script>
