@@ -365,12 +365,16 @@ export default {
         background: var(--color-bg-main);
         border-radius: 50%;
 
-        display: flex;
+        position: relative;
         overflow: hidden;
 
         img {
-          width: 100%;
+          position: absolute;
+          top: 0;
+          bottom: 0;
           margin: auto;
+
+          width: 100%;
         }
       }
 

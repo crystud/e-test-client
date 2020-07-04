@@ -138,7 +138,15 @@ export default {
     overflow: hidden;
     border-radius: 50%;
 
+    position: relative;
+
     img {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+
+      margin: auto;
+
       width: 100%;
     }
   }

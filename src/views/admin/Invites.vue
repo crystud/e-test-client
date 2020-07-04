@@ -2,18 +2,30 @@
   <div class="app-invites">
     <app-preloader :show="showPreloader"></app-preloader>
 
+    <app-avatar-detail-info
+      :file="avatarDetailInfo"
+      :invites="getExampleValues()"
+      :attachedStudent="checkFileHasStudent(avatarDetailInfo.name)"
+      @close="avatarDetailInfo = {}"
+    ></app-avatar-detail-info>
+
     <app-entire-invites-list
       :show="showEntireInvitesList"
-      :list="getExampleValues()"
+      :list="showEntireInvitesList ? getExampleValues() : []"
+      :avatars="avatars"
+      :nonHandleableStudents="nonHandleableStudents"
       @close="showEntireInvitesList = false"
+      @setGeneratedAvatars="avatars => generatedAvatars = avatars"
     ></app-entire-invites-list>
 
     <app-warn-create-many-invites
-      :show="Boolean(showWarnCreateManyInvites && !showEntireInvitesList)"
+      :show="Boolean(showWarnCreateManyInvites && !showEntireInvitesList && !avatarDetailInfo.name)"
       :list="getExampleValues()"
       :group="group"
+      :nonHandleableStudents="nonHandleableStudents"
       @showFullList="showEntireInvitesList = true"
       @close="showWarnCreateManyInvites = false"
+      @setAvatarDetailInfo="setAvatarDetailInfo"
     ></app-warn-create-many-invites>
 
     <div class="sections">
@@ -64,7 +76,9 @@
         >
           <div class="tip">
             Для того, щоб ми зрозуміли які поля за що відповідають,
-            перетягніть, будь ласка, значення одного з рядків на своє місце
+            перетягніть, будь ласка, значення одного з рядків на своє місце.
+            Прикріплені фото профілів будуть розпізнані за наступним шаблоном:
+            <b>НОМЕР_ЗАЛІКОВОЇ_КНИГИ.jpg</b>
           </div>
 
           <div class="count">Елементів у імпорті: <span>{{data.length}}</span></div>
@@ -167,20 +181,81 @@
         </div>
       </div>
 
-      <div class="group-info">
-        <div class="title">Група</div>
+      <div>
+        <div class="group-info">
+          <div class="title">Група</div>
 
-        <app-data-list
-          v-if="group.id"
-          :data="[
-            ['Назва', group.name],
-            ['Спеціальність', `[${group.speciality.code}] ${group.speciality.name}`],
-            ['Курс', group.course],
-            ['Початок навчання', `${group.startYear} р.`],
-          ]"
-        ></app-data-list>
+          <app-data-list
+            v-if="group.id"
+            :data="[
+              ['Назва', group.name],
+              ['Спеціальність', `[${group.speciality.code}] ${group.speciality.name}`],
+              ['Курс', group.course],
+              ['Початок навчання', `${group.startYear} р.`],
+            ]"
+          ></app-data-list>
+        </div>
+
+        <label
+          for="avatarsSelect"
+          class="attach-images"
+          :class="{
+            selected: avatars.length,
+          }"
+        >
+          <div class="icon">
+            <font-awesome-icon
+              icon="image"
+            ></font-awesome-icon>
+          </div>
+
+          <div class="text">
+            <span v-if="!avatars.length">Прикріпити зображення профілів</span>
+            <span v-else>Обрано {{avatars.length}} файлів</span>
+          </div>
+        </label>
+
+        <div
+          v-if="avatars.length"
+          class="invites-avatars-list"
+        >
+          <div class="title">Закріплені фото профілів</div>
+
+          <div class="avatars-list">
+            <div
+              v-for="(file, index) in avatars"
+              :key="index"
+              class="avatar"
+              :title="file.name"
+              @click="avatarDetailInfo = file"
+            >
+              <div
+                class="has-student"
+                :class="[
+                  (checkFileHasStudent(file.name).scoringBook ? 'checked' : 'unchecked'),
+                ]"
+              >
+                <font-awesome-icon
+                  :icon="checkFileHasStudent(file.name).scoringBook ? 'check' : 'times'"
+                ></font-awesome-icon>
+              </div>
+
+              <div class="name">
+                {{file.name.substring(0, 20)}}{{file.name.length > 20 ? '...' : ''}}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <input
+      type="file"
+      multiple
+      id="avatarsSelect"
+      @change="handleAvatarsAttach"
+      accept="image/png,image/jpg,image/jpeg"
+    />
 
     <input
       type="file"
@@ -188,7 +263,7 @@
       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       class="file-input"
       @change="processFileInput"
-    >
+    />
   </div>
 </template>
 
@@ -202,17 +277,61 @@ import AppButton from '@/components/ui/AppButton.vue'
 
 import AppEntireInvitesList from '@/components/templates/admin/AppEntireInvitesList.vue'
 import AppWarnCreateManyInvites from '@/components/templates/admin/AppWarnCreateManyInvites.vue'
+import AppAvatarDetailInfo from '@/components/templates/admin/AppAvatarDetailInfo.vue'
 
 export default {
+  computed: {
+    nonHandleableStudents() {
+      const { avatars, checkFileHasStudent } = this
+
+      const results = []
+
+      avatars.forEach(({ name }) => {
+        if (!checkFileHasStudent(name).scoringBook) {
+          results.push(name)
+        }
+      })
+
+      return results
+    },
+  },
   methods: {
     ...mapActions({
       getGroup: 'groups/getByID',
       setAlert: 'alert/set',
     }),
+    setAvatarDetailInfo(filename) {
+      const { avatars } = this
+
+      avatars.forEach((file) => {
+        if (file.name === filename) {
+          this.avatarDetailInfo = file
+        }
+      })
+    },
+    checkFileHasStudent(filename) {
+      const { getExampleValues } = this
+
+      const dataList = getExampleValues()
+
+      if (!dataList.length || !filename) {
+        return {}
+      }
+
+      const [scoringBookFilenameValue] = filename.split('.')
+
+      const [attachedStudent] = dataList
+        .filter(({ scoringBook }) => Number(scoringBookFilenameValue) === Number(scoringBook))
+
+      return attachedStudent || {}
+    },
+    handleAvatarsAttach({ target: { files = [] } = {} }) {
+      this.avatars = files
+    },
     getExampleValues({ length } = {}) {
       const { data, fieldNames } = this
 
-      const [fullname, scoringBook] = fieldNames
+      const [fullname, scoringBookRaw] = fieldNames
 
       const list = []
 
@@ -224,6 +343,7 @@ export default {
         let firstName
         let lastName
         let patronymic
+        let avatar = null
 
         if (fullname.name) {
           const name = item[fullname.name];
@@ -235,11 +355,18 @@ export default {
           patronymic = '-'
         }
 
+        const scoringBook = scoringBookRaw.name ? parseInt(item[scoringBookRaw.name], 10) : null
+
+        if (this.generatedAvatars[scoringBook]) {
+          [, avatar] = this.generatedAvatars[scoringBook].split('base64,')
+        }
+
         list.push({
           lastName,
           firstName,
           patronymic,
-          scoringBook: scoringBook.name ? parseInt(item[scoringBook.name], 10) : '-',
+          scoringBook,
+          avatar,
         })
       }
 
@@ -349,6 +476,9 @@ export default {
       isFileOver: false,
       group: {},
       file: {},
+      avatarDetailInfo: {},
+      generatedAvatars: [],
+      avatars: [],
       data: [],
       fieldNames: [
         { label: 'ПІБ', param: 'fullname', name: null },
@@ -362,6 +492,7 @@ export default {
   components: {
     AppWarnCreateManyInvites,
     AppEntireInvitesList,
+    AppAvatarDetailInfo,
     AppPreloader,
     AppDataList,
     AppButton,
@@ -371,6 +502,78 @@ export default {
 
 <style lang="less" scoped>
 .app-invites {
+  .invites-avatars-list {
+    background: var(--color-bg-dark);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+
+    .title {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+
+    .avatars-list {
+      .avatar {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-gap: 10px;
+
+        margin-bottom: 10px;
+
+        cursor: pointer;
+
+        &:hover {
+          .name {
+            color: var(--color-font-main);
+          }
+        }
+
+        .name {
+          color: var(--color-font-dark);
+        }
+
+        .has-student {
+          &.checked { color: var(--color-accent-green) }
+          &.unchecked { color: var(--color-accent-red) }
+        }
+      }
+    }
+  }
+
+  #avatarsSelect {
+    display: none;
+  }
+
+  .attach-images {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+
+    margin-top: 20px;
+    border-radius: 10px;
+
+    background: var(--color-bg-dark);
+    color: var(--color-font-dark);
+    cursor: pointer;
+
+    transition: all .1s;
+
+    &.selected {
+      &, &:hover {
+        color: var(--color-accent-green);
+      }
+    }
+
+    .icon {
+      margin-right: 15px;
+    }
+
+    &:hover {
+      color: var(--color-font-main);
+    }
+  }
+
   .sections {
     display: grid;
     grid-template-columns: 1fr 300px;

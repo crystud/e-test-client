@@ -25,6 +25,24 @@
           </div>
         </div>
 
+        <div
+          v-if="nonHandleableStudents.length"
+          class="non-handleable-students"
+        >
+          <div class="title">Зображення, що не мають закріпленого студента</div>
+
+          <div class="list">
+            <div
+              v-for="file in nonHandleableStudents"
+              :key="file"
+              class="picture"
+              @click="$emit('setAvatarDetailInfo', file)"
+            >
+              {{file}}
+            </div>
+          </div>
+        </div>
+
         <div class="btns">
           <app-button
             appearance="neutral"
@@ -113,6 +131,10 @@ export default {
       type: Array,
       required: true,
     },
+    nonHandleableStudents: {
+      type: Array,
+      required: true,
+    },
   },
   components: {
     AppModalWindow,
@@ -147,6 +169,64 @@ export default {
 
         &:hover {
           text-decoration: underline;
+        }
+      }
+    }
+
+    .non-handleable-students {
+      margin: 20px 0;
+
+      .title {
+        color: var(--color-font-dark);
+        padding-left: 15px;
+
+        position: relative;
+
+        &::before {
+          content: "";
+
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          margin: auto;
+
+          width: 7px;
+          height: 7px;
+          border-radius: 10px;
+
+          background: var(--color-accent-red);
+        }
+      }
+
+      .list {
+        margin-top: 10px;
+
+        .picture {
+          display: inline-block;
+          background: var(--color-bg-main);
+          border-radius: 5px;
+          padding: 10px 15px;
+          cursor: pointer;
+
+          position: relative;
+
+          &::before {
+            content: "";
+
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+
+            max-width: 70%;
+            width: 40px;
+            height: 2px;
+
+            background: var(--color-accent-red);
+            border-radius: 10px;
+          }
         }
       }
     }

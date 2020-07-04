@@ -2,6 +2,18 @@
   <div class="app-created-invites">
     <app-preloader :show="showPreloader"></app-preloader>
 
+    <app-ask-group
+      :show="Boolean(createInvites.show && !createInvites.group.id)"
+      @close="createInvites = {
+        show: false,
+        group: {},
+      }"
+      @selected="({ id: groupID }) => $router.push({
+        name: 'invites',
+        params: { groupID },
+      })"
+    ></app-ask-group>
+
     <app-invite-detail-info
       :info="showMore"
       @close="showMore = {}"
@@ -82,6 +94,14 @@
       </div>
 
       <div class="data-cards">
+        <app-button
+          appearance="neutral"
+          class="create-invites-btn"
+          @click="createInvites.show = true"
+        >
+          Створити запрошення
+        </app-button>
+
         <app-card
           v-if="overview.usedCount !== undefined"
           class="app-card"
@@ -123,11 +143,16 @@ import AppButton from '@/components/ui/AppButton.vue'
 
 import AppInviteDetailInfo from '@/components/templates/admin/AppInviteDetailInfo.vue'
 import AppInvitesFilters from '@/components/templates/admin/AppInvitesFilters.vue'
+import AppAskGroup from '@/components/templates/teacher/AppAskGroup.vue'
 
 export default {
   data() {
     return {
       showPreloader: false,
+      createInvites: {
+        show: false,
+        group: {},
+      },
       progress: 0,
       showMore: {},
       filters: {},
@@ -194,6 +219,7 @@ export default {
     AppInvitesFilters,
     AppCircleChart,
     AppPreloader,
+    AppAskGroup,
     AppDataList,
     AppButton,
     AppCard,
@@ -203,6 +229,14 @@ export default {
 
 <style lang="less" scoped>
 .app-created-invites {
+  .create-invites-btn {
+    width: 100%;
+    margin-bottom: 20px;
+
+    background: var(--color-accent-green);
+    color: #fff;
+  }
+
   .invites-filters {
     margin-bottom: 20px;
   }

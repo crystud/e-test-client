@@ -24,31 +24,33 @@
       class="info"
     >
       <div class="avatar-section">
-        <div
-          v-if="qrCode === null"
-          class="avatar section-image"
-        >
+        <div class="avatar section-image">
           <img
             :src="info.student.user.avatar
               ? `data:image/png;base64,${info.student.user.avatar}`
               : require('@/assets/no_user.png')"
           />
-        </div>
 
-        <div
-          v-if="qrCode"
-          class="section-image"
-        >
-          <img
-            :src="qrCode"
-            @click="qrCode = null"
-          />
+          <div
+            class="qr-code-image"
+            :class="{
+              show: qrCode.show,
+            }"
+          >
+            <img
+              :src="qrCode.data"
+              @click="qrCode.show = false"
+            />
+          </div>
         </div>
 
         <app-button
           appearance="neutral"
-          v-if="qrCode === null && !info.usedAt"
           class="generate-qr-code"
+          v-if="!info.usedAt"
+          :class="{
+            hidden: !Boolean(qrCode.show === false && !info.usedAt),
+          }"
           @click="generateQRCode"
         >
           <font-awesome-icon
@@ -123,7 +125,7 @@ export default {
 
       const inviteURL = `${global.window.origin}/join/invite/qrcode/${info.code}`
 
-      QRCode.toDataURL(inviteURL, (err, url) => {
+      QRCode.toDataURL(inviteURL, (err, data) => {
         if (err) {
           return this.setAlert({
             title: 'Не вдалось згенерувати Qr-код',
@@ -132,7 +134,10 @@ export default {
           })
         }
 
-        this.qrCode = url
+        this.qrCode = {
+          show: true,
+          data,
+        }
 
         return false
       })
@@ -140,12 +145,15 @@ export default {
   },
   data() {
     return {
-      qrCode: null,
+      qrCode: {
+        show: false,
+        data: '',
+      },
     }
   },
   watch: {
     info() {
-      this.qrCode = null
+      this.qrCode.show = false
     },
   },
   props: {
@@ -210,13 +218,54 @@ export default {
     .avatar-section {
       text-align: center;
 
-      .section-image img,
-      .generate-qr-code {
-        max-width: 200px;
+      .section-image {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
       }
 
-      .section-image img {
-        border-radius: 10px;
+      .section-image img,
+      .generate-qr-code,
+      img {
+        width: 180px;
+        display: block;
+      }
+
+      .qr-code-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background: rgba(0, 0, 0, 0);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &, img {
+          transition: all .2s;
+        }
+
+        img {
+          border-radius: 10px;
+          max-width: 80%;
+          max-height: 80%;
+          cursor: pointer;
+
+          opacity: 0;
+          transform: scale(.7) rotate(20deg);
+        }
+
+        &.show {
+          background: rgba(0, 0, 0, .6);
+
+          img {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+          }
+        }
       }
 
       .qr-code {
@@ -237,12 +286,19 @@ export default {
         color: var(--color-accent-green);
         font-size: 1em;
         padding: 10px;
-        width: 100%;
+        max-width: 100%;
 
         margin-top: 10px;
+        transition: all .3s;
 
         .icon {
           margin-right: 10px;
+        }
+
+        &.hidden {
+          opacity: .7;
+          color: var(--color-font-dark);
+          cursor: default;
         }
       }
     }

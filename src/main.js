@@ -54,6 +54,7 @@ import {
   faUserClock,
   faQuestion,
   faQrcode,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons'
 
 import moment from 'moment-timezone'
@@ -121,6 +122,7 @@ library.add(faFileUpload)
 library.add(faUserClock)
 library.add(faQuestion)
 library.add(faQrcode)
+library.add(faExclamationTriangle)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
