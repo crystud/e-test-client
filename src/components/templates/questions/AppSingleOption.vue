@@ -10,7 +10,7 @@
     <div class="list">
       <div
         class="option"
-        v-for="({ question, image }, index) in options"
+        v-for="({ image }, index) in options"
         :key="index"
       >
         <div class="option-title">Варіант відповіді №{{index+1}}</div>
@@ -23,60 +23,60 @@
         >
 
         <div class="controls">
-          <div>
-            <button
-              class="is-right-switch"
-              :class="{
-                wrong: rightOption !== index,
-                right: rightOption === index,
+          <button
+            class="is-right-switch"
+            :class="{
+              wrong: rightOption !== index,
+              right: rightOption === index,
+            }"
+            @click="
+              rightOption = index
+              emitCurrentState()
+            "
+          >
+            <span v-if="rightOption !== index">Невірна відповідь</span>
+            <span v-else>Вірна відповідь</span>
+          </button>
+
+          <label
+            :for="`attach-image-${index}`"
+            class="attach-image"
+          >
+            <input
+              type="file"
+              accept="image/png,image/jpg,image/gif"
+              :id="`attach-image-${index}`"
+              @change="({ target: { files: [ image ] } }) => {
+                setImage({ image, index })
+                emitCurrentState(image)
               }"
-              @click="
-                rightOption = index
-                emitCurrentState()
-              "
             >
-              <span v-if="rightOption !== index">Невірна відповідь</span>
-              <span v-else>Вірна відповідь</span>
-            </button>
 
-            <label
-              :for="`attach-image-${index}`"
-              class="attach-image"
+            <span
+              class="icon"
+              v-if="!image || !image.name"
             >
-              <input
-                type="file"
-                accept="image/png,image/jpg,image/gif"
-                :id="`attach-image-${index}`"
-                @change="({ target: { files: [ image ] } }) => {
-                  setImage({ image, index })
-                  emitCurrentState(image)
-                }"
-              >
+              <font-awesome-icon icon="image"></font-awesome-icon>
+            </span>
 
-              <span
-                class="icon"
-                v-if="!image || !image.name"
-              >
-                <font-awesome-icon icon="image"></font-awesome-icon>
-              </span>
-
-              <span
-                class="filename"
-                v-if="image && image.name"
-              >
-                {{image.name}}
-              </span>
-            </label>
-
-            <div
-              class="remove-image"
-              @click="options[index].image = ''"
-              v-if="image"
+            <span
+              class="filename"
+              v-if="image && image.name"
             >
-              <font-awesome-icon icon="times"></font-awesome-icon>
+              {{image.name.length > 10
+                ? `${image.name.substring(0, 10)}...`
+                : image.name }}
+            </span>
+          </label>
 
-              <span class="text">Вилучити зображення</span>
-            </div>
+          <div
+            class="remove-image"
+            @click="options[index].image = ''"
+            v-if="image && image.name"
+          >
+            <font-awesome-icon icon="times"></font-awesome-icon>
+
+            <span class="text">Вилучити зображення</span>
           </div>
 
           <button
@@ -111,7 +111,7 @@ import { mapActions } from 'vuex'
 export default {
   data() {
     return {
-      options: [1, 2, 3, 4].map(() => ({ question: '', image: '', correct: false })),
+      options: [1, 2, 3, 4].map(() => ({ question: '', image: '' })),
       rightOption: null,
     }
   },
@@ -158,7 +158,7 @@ export default {
       reader.onload = () => {
         const { result = '' } = reader
 
-        const data = result.split('base64,')[1]
+        const [, data] = result.split('base64,')
 
         this.options[index].image = {
           name: image.name,
@@ -181,7 +181,36 @@ export default {
       reader.readAsDataURL(image)
     },
   },
+  props: {
+    defaultOptions: {
+      type: Array,
+      required: false,
+      default: () => null,
+    },
+    defaultRightOption: {
+      type: Number,
+      required: false,
+      default: () => null,
+    },
+  },
+  watch: {
+    defaultOptions() {
+      const { defaultOptions, defaultRightOption } = this
+
+      if (defaultOptions) {
+        this.options = defaultOptions
+        this.rightOption = defaultRightOption
+      }
+    },
+  },
   created() {
+    const { defaultOptions, defaultRightOption } = this
+
+    if (defaultOptions) {
+      this.options = defaultOptions
+      this.rightOption = defaultRightOption
+    }
+
     this.emitCurrentState()
   },
 }
@@ -240,18 +269,16 @@ export default {
       .controls {
         padding: 20px;
 
-        display: grid;
-        grid-template-columns: 1fr auto;
-
-        div {
-          display: flex;
-          align-items: center;
+        button, label, div {
+          width: auto;
+          display: inline-block;
+          margin: 5px;
         }
 
         .attach-image {
           background: var(--color-bg-dark);
           color: var(--color-font-dark);
-          padding: 15px;
+          padding: 10px 15px;
           margin: 0 10px;
           border-radius: 10px;
           cursor: pointer;

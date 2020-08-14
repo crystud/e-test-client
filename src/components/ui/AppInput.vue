@@ -28,7 +28,6 @@
 
 <script>
 export default {
-  name: 'AppInput',
   props: {
     placeholder: {
       required: false,
@@ -63,7 +62,18 @@ export default {
       newValue: '',
     }
   },
+  watch: {
+    value() {
+      this.newValue = this.value
+    },
+  },
+  created() {
+    this.checkNewValue()
+  },
   methods: {
+    checkNewValue() {
+      this.newValue = this.value
+    },
     focus() {
       this.$refs.appInput.focus()
     },

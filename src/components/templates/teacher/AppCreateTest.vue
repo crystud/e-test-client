@@ -67,14 +67,39 @@
             </div>
           </div>
 
+          <div class="import-test">
+            <div class="or">або</div>
+
+            <label
+              for="importFile"
+              class="btn"
+            >
+              <font-awesome-icon
+                icon="file"
+                class="icon"
+              ></font-awesome-icon>
+
+              Імпортувати з файлу...
+            </label>
+
+            <input
+              type="file"
+              id="importFile"
+              accept=".json"
+              @change="importTestChanged"
+            />
+          </div>
+
           <div class="btns">
             <app-button
               appearance="neutral"
+              class="cancel"
               @click="$emit('close')"
             >Закрити</app-button>
 
             <app-button
-              appearance="primary"
+              appearance="neutral"
+              class="create"
               @click="create"
             >Створити тест</app-button>
           </div>
@@ -112,6 +137,45 @@ export default {
       setAlert: 'alert/set',
       createTest: 'tests/create',
     }),
+    async importTestChanged({ target = {} }) {
+      const { files: [file] = [] } = target
+
+      if (!file) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Файл не оприділено',
+          show: true,
+          isSuccess: false,
+        })
+
+        return
+      }
+
+      const fileReader = new FileReader()
+
+      fileReader.onload = () => {
+        const { result } = fileReader
+
+        this.$router.push({
+          name: 'importing-test',
+          params: { file: result },
+        })
+
+        this.$emit('close')
+      }
+
+      fileReader.onerror = () => {
+        this.setAlert({
+          title: 'Не вдалось обробити файл...',
+          show: true,
+          isSuccess: false,
+        })
+
+        this.$emit('close')
+      }
+
+      fileReader.readAsText(file)
+    },
     async create() {
       try {
         this.showPreloader = true
@@ -244,6 +308,71 @@ export default {
     max-width: 500px;
     width: 100vw;
 
+    .import-test {
+      margin-bottom: 40px;
+
+      .or {
+        width: 100%;
+
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        grid-gap: 10px;
+
+        color: var(--color-font-dark);
+
+        &::before,
+        &::after {
+          content: "";
+
+          width: 100%;
+          height: 2px;
+          background: var(--color-bg-main);
+        }
+      }
+
+      label {
+        display: block;
+
+        width: 100%;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+
+        background: var(--color-bg-main);
+
+        &, .icon {
+          color: var(--color-font-dark);
+          transition: all .3s ease-in-out;
+        }
+
+        .icon {
+          margin-right: -20px;
+
+          visibility: hidden;
+          opacity: 0;
+        }
+
+        &:hover {
+          &, .icon {
+            color: var(--color-accent-green);
+          }
+
+          .icon {
+            margin-right: 5px;
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+
+      input {
+        display: none;
+      }
+    }
+
     .title {
       padding: 30px 0;
       font-size: 1.4em;
@@ -306,6 +435,18 @@ export default {
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: 20px;
+
+        .cancel, .create {
+          background: var(--color-bg-main);
+        }
+
+        .cancel {
+          color: var(--color-font-dark);
+        }
+
+        .create {
+          color: var(--color-accent-green);
+        }
       }
     }
   }

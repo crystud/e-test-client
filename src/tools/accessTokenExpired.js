@@ -21,10 +21,12 @@ export default (axiosInstance, store) => {
 
     return query || response
   }, async (error) => {
+    let query
+
     if (error?.response.status === 401) {
-      await refresh(error.response)
+      query = await refresh(error.response)
     }
 
-    return Promise.reject(error)
+    return query || error.response
   })
 }

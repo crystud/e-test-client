@@ -142,7 +142,7 @@ export default {
       reader.onload = () => {
         const { result = '' } = reader
 
-        const data = result.split('base64,')[1]
+        const [, data] = result.split('base64,')
 
         this.options[index].image = {
           name: image.name,

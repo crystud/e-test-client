@@ -71,4 +71,12 @@ export default [
     },
     component: () => import('@/views/teacher/Permission.vue'),
   },
+  {
+    path: '/tests/import',
+    name: 'importing-test',
+    meta: {
+      title: 'Імпортування тесту',
+    },
+    component: () => import('@/views/teacher/ImportingTest.vue'),
+  },
 ]

@@ -148,8 +148,6 @@ export default {
           return
         }
 
-        console.log(image)
-
         this.avatar = {
           name: image.name,
           value: base64,
