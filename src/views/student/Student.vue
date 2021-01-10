@@ -1,26 +1,45 @@
 <template>
-  <div class="app-student">
+  <div
+    class="app-student"
+    v-if="user.id"
+  >
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <div class="student-info">
+    <div
+      class="student-info"
+      :class="{
+        'student-overiew': !student.invite,
+      }"
+    >
       <app-student-personal-info
+        class="drop-shadow"
         :user="user"
+        :selectedStudent="student"
+        @changeStudent="(student) => loadStudent(student.id)"
         :data="[
           ['E-mail', user.email],
         ]"
       ></app-student-personal-info>
 
-      <app-student-activity :data="studentActivity"></app-student-activity>
+      <app-student-invite
+        v-if="student.invite"
+        class="drop-shadow"
+        :data="student.invite"
+      ></app-student-invite>
     </div>
 
     <div class="sections">
       <div>
-        <app-student-subjects v-if="user.roles.includes('user')"></app-student-subjects>
-
-        <app-student-results v-if="user.roles.includes('user')" ></app-student-results>
+        <app-student-subjects
+          :student="student"
+          :studentID="parseInt($route.params.id || 0, 10)"
+        ></app-student-subjects>
       </div>
 
-      <app-student-messages :messages="exampleMessages"></app-student-messages>
+      <app-student-messages
+        :student="student"
+        :studentID="parseInt($route.params.id || 0, 10)"
+      ></app-student-messages>
     </div>
   </div>
 </template>
@@ -29,21 +48,18 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
-import AppStudentActivity from '@/components/templates/student/AppStudentActivity.vue'
+import AppStudentInvite from '@/components/templates/student/AppStudentInvite.vue'
 import AppStudentSubjects from '@/components/templates/student/AppStudentSubjects.vue'
-import AppStudentResults from '@/components/templates/student/AppStudentResults.vue'
 import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
-  name: 'AppStudent',
   components: {
     AppStudentPersonalInfo,
-    AppStudentActivity,
+    AppStudentInvite,
     AppStudentSubjects,
     AppStudentMessages,
     AppPreloader,
-    AppStudentResults,
   },
   computed: {
     ...mapGetters({
@@ -53,63 +69,61 @@ export default {
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
+      setAlert: 'alert/set',
+      redirectToHome: 'auth/redirectToHome',
+      getStudent: 'student/getByID',
     }),
+    async loadStudent(studentID = null) {
+      const {
+        $route: {
+          params: { id: userID },
+        },
+      } = this
+
+      const user = await this.getUser(userID)
+
+      const { students: [defaultStudent = {}] } = user
+
+      const fetchingID = studentID || defaultStudent.id
+
+      this.student = await this.getStudent(fetchingID)
+      this.user = user
+
+      const { user: { lastName, firstName, patronymic } } = this
+
+      document.title = `${lastName} ${firstName} ${patronymic} - CRYSTUD`
+    },
   },
   data() {
     return {
       user: {},
+      student: {},
       showPreloader: false,
-      studentActivity: [
-        ['Останній тест пройдено', '03.03.2020 (87%)'],
-        ['Середній результат', '78%'],
-        ['Середній час проходження', '13 хвилин 16 секунд'],
-      ],
-      exampleMessages: [
-        {
-          sender: 'Юрочко Ольга Михайлівна',
-          time: '03.02.2020 16:45',
-          message: `
-            Ви пройшли тест, но ще не здали
-            мій предмет без перездач.
-            Побачимось на наступних тестах.
-          `,
-        },
-        {
-          sender: 'Смиковчук Тетяна Володимирівна',
-          time: '03.02.2020 16:45',
-          message: `
-            Проміжний контроль по темах 5-6 до
-            завтра тренуєтесь, завтра з 10.00
-            до 12.00 здаєте в системі (пароль доступу скину)
-            Дотримуємось академічної доброчесності.і з контролями
-            ВСЕ
-          `,
-        },
-      ],
     }
   },
   async created() {
-    const {
-      $route: {
-        params: { id: userID },
-      },
-    } = this
+    const { $router } = this
 
     this.showPreloader = true
 
-    if (!userID) {
+    const { name: routeName } = this.$route
+
+    if (routeName === 'homeUser'
+    && !this.self.roles.includes('student')) {
+      return this.redirectToHome({ $router })
+    }
+
+    if (routeName === 'studentHome') {
       this.user = this.self
 
-      document.title = 'Ваш профіль -  CRYSTUD'
-    } else {
-      this.user = await this.getUser(userID)
-
-      const { user } = this
-
-      document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
+      document.title = 'Ваш профіль - CRYSTUD'
+    } else if (routeName === 'studentOverview') {
+      await this.loadStudent()
     }
 
     this.showPreloader = false
+
+    return false
   },
 }
 </script>
@@ -121,7 +135,15 @@ export default {
     grid-template-columns: 5fr 4fr;
     grid-gap: 20px;
 
+    &.student-overiew {
+      grid-template-columns: 1fr;
+    }
+
     margin-bottom: 20px;
+  }
+
+  .drop-shadow {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, .3);
   }
 
   .sections {

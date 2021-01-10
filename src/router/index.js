@@ -9,13 +9,20 @@ import Tests from './modules/Tests'
 import Student from './modules/Student'
 import Admin from './modules/Admin'
 import Teacher from './modules/Teacher'
-import Superadmin from './modules/Superadmin'
 import User from './modules/User'
 
 Vue.use(VueRouter)
 
 const routes = [
   ...Authorization,
+  {
+    path: '/user/home',
+    name: 'userHome',
+    meta: {
+      title: 'Домівка користувача',
+    },
+    component: () => import('@/views/user/Home.vue'),
+  },
   {
     path: '/',
     component: () => import('@/views/authorization/Home'),
@@ -28,7 +35,6 @@ const routes = [
       ...Student,
       ...Admin,
       ...Teacher,
-      ...Superadmin,
       ...User,
     ],
   },

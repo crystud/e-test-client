@@ -23,18 +23,5 @@ export default {
         return Promise.reject()
       }
     },
-    async getByIDs(_, resultsIDs) {
-      try {
-        const { data, status } = await axios.get(`/results/${resultsIDs}/ids`)
-
-        if (status !== 200) {
-          return Promise.reject()
-        }
-
-        return Promise.resolve(data)
-      } catch (e) {
-        return Promise.reject()
-      }
-    },
   },
 }

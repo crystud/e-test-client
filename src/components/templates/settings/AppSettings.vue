@@ -16,28 +16,7 @@
             ></app-switch>
           </div>
         </div>
-
-        <div class="property">
-          <div class="name">Мова</div>
-          <div class="value">
-            <select
-              v-on:change="handleLanguageChange"
-            >
-              <option
-                v-for="([name, id], i) in languages"
-                v-bind:key="i"
-                :value="id"
-                :selected="id === currentLanguage"
-              >{{name}}</option>
-            </select>
-          </div>
-        </div>
       </div>
-
-      <div
-        class="visit-activity"
-        @click="go"
-      >Моя активність</div>
 
       <div class="footer">
         <span>Зміни зберігаються автоматично</span>

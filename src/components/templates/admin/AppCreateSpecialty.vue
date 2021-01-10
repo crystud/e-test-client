@@ -19,8 +19,6 @@
       <div class="title">Створити спеціальність</div>
 
       <div class="content">
-        <div class="subtitle">Створення спеціальності для "{{college.name}}"</div>
-
         <app-input
           appearance="secondary"
           type="text"
@@ -88,10 +86,6 @@ export default {
       type: Boolean,
       required: true,
     },
-    college: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
@@ -126,10 +120,9 @@ export default {
         symbol,
         yearOfStudy,
         code,
-        college: { id: college },
       } = this
 
-      if (!name || !symbol || !yearOfStudy || !code || !college) {
+      if (!name || !symbol || !yearOfStudy || !code) {
         this.alert = {
           title: 'Помилка...',
           text: 'Всі поля форми повинні бути заповнені.',
@@ -147,11 +140,10 @@ export default {
         name,
         symbol,
         yearOfStudy: Number(yearOfStudy),
-        code,
-        college,
+        code: Number(code),
       }).then(() => {
         this.alert = {
-          title: 'Професію створено',
+          title: 'Спеціальність створено',
           text: '',
           delay: 1000,
           show: true,

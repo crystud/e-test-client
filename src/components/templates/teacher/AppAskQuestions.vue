@@ -3,29 +3,34 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-modal-window
-      :show="show"
+      :show="Boolean(show && !alert.show)"
       :noPaddings="true"
     >
       <div class="title">Виберіть питання до тесту</div>
 
       <div class="content">
+        <div
+          class="no-items"
+          v-if="!questions.length"
+        >Запитань в темі немає...</div>
+
         <div class="list">
           <div
-            v-for="(question, index) in questions"
+            v-for="({ question, type, id }, index) in questions"
             :key="index"
             class="question"
             :class="{
-              selected: selected.includes(question.id) || alreadyAdded.includes(question.id),
+              selected: selected.includes(id) || alreadyAdded.includes(id),
             }"
-            @click="toggleSelected(question.id)"
+            @click="toggleSelected(id)"
           >
             <div class="is-selected">
               <font-awesome-icon icon="check"></font-awesome-icon>
             </div>
 
             <div>
-              <div class="ask">{{question.ask}}</div>
-              <div class="type">{{taskTypes[question.type]}}</div>
+              <div class="ask">{{question}}</div>
+              <div class="type">{{taskTypes[type]}}</div>
             </div>
           </div>
         </div>
@@ -50,7 +55,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
@@ -60,10 +65,17 @@ export default {
     AppPreloader,
     AppModalWindow,
   },
+  computed: {
+    ...mapGetters({
+      alert: 'alert/alert',
+    }),
+    questions() {
+      return this.topicInfo.tasks || []
+    },
+  },
   methods: {
     ...mapActions({
       loadTopic: 'topics/getByID',
-      loadQuestions: 'questions/getByIDs',
       addQuestionsToTest: 'questions/addToTest',
       setAlert: 'alert/set',
     }),
@@ -83,16 +95,9 @@ export default {
       return this.selected.push(questionID)
     },
     async addQuestions() {
-      const { selected, levelID: level } = this
+      const { selected, testID } = this
 
       if (!selected.length) {
-        this.setAlert({
-          title: 'Виберіть питання',
-          isSuccess: false,
-          delay: 1000,
-          show: true,
-        })
-
         return
       }
 
@@ -101,7 +106,7 @@ export default {
 
         await this.addQuestionsToTest({
           questionsIDs: selected,
-          level,
+          testID,
         })
 
         this.setAlert({
@@ -113,9 +118,11 @@ export default {
 
         setTimeout(() => this.$emit('added'))
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось занести питання в тест...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось занести питання в тест...',
+          text,
           delay: 1500,
           show: true,
           isSuccess: false,
@@ -129,13 +136,12 @@ export default {
     return {
       showPreloader: false,
       topicInfo: {},
-      questions: [],
       selected: [],
       taskTypes: {
-        single_choice: 'Один варіант',
-        multy_choice: 'Декілька варіантів',
-        text_input: 'Ввести значення',
-        numbering: 'Визначити послідовність',
+        1: 'Простий вибір',
+        2: 'Множинний вибір',
+        3: 'Коротка відповідь',
+        4: 'Послідовність',
       },
     }
   },
@@ -143,17 +149,14 @@ export default {
     show: {
       type: Boolean,
       required: true,
-      default: () => false,
+    },
+    testID: {
+      type: Number,
+      required: true,
     },
     topic: {
       type: Object,
       required: true,
-      default: () => {},
-    },
-    levelID: {
-      type: Number,
-      required: true,
-      default: () => 0,
     },
     alreadyAdded: {
       type: Array,
@@ -170,9 +173,9 @@ export default {
 
       if (show && id) {
         this.showPreloader = true
+        this.selected = []
 
         this.topicInfo = await this.loadTopic(id)
-        this.questions = await this.loadQuestions(this.topicInfo.tasks)
 
         this.showPreloader = false
       }
@@ -197,6 +200,14 @@ export default {
   }
 
   .content {
+    .no-items {
+      color: var(--color-font-dark);
+      text-align: center;
+
+      margin: 40px 0;
+      font-size: 1.3em;
+    }
+
     .list {
       max-height: 60vh;
       overflow-y: auto;
@@ -265,7 +276,7 @@ export default {
       }
 
       &.add-questions {
-        color: var(--color-accent-dark);
+        color: var(--color-font-dark);
         cursor: default;
 
         &.active {

@@ -2,7 +2,6 @@
   <div>
     <app-create-speciality
       :show="showCreateSpeciality"
-      :college="college"
       @close="showCreateSpeciality = false"
       @created="checkSpecialties"
     ></app-create-speciality>
@@ -31,9 +30,17 @@
           </div>
         </div>
 
+        <div
+          v-if="!specialities.length"
+          class="no-specialities"
+        >
+          <div class="text">У вас наразі немає спеціальностей...</div>
+          <span @click="showCreateSpeciality = true">Створити спеціальність</span>
+        </div>
+
         <div class="btns">
           <div
-            class="close"
+            class="leave"
             @click="$router.push({ name: 'specialtys' })"
           >Перейти до спеціальностей</div>
 
@@ -65,13 +72,13 @@ export default {
       getSpecialties: 'specialities/get',
     }),
     checkSpecialties() {
-      const { college: { id: collegeID }, show } = this
+      const { show } = this
 
       if (!show) return
 
       this.showPreloader = true
 
-      this.getSpecialties(collegeID).then(() => {
+      this.getSpecialties().then(() => {
         this.showPreloader = false
       })
     },
@@ -91,11 +98,6 @@ export default {
       type: Boolean,
       required: true,
       default: () => false,
-    },
-    college: {
-      type: Object,
-      required: true,
-      default: () => null,
     },
   },
   created() {
@@ -149,6 +151,28 @@ export default {
     }
   }
 
+  .no-specialities {
+    text-align: center;
+    margin: 40px;
+
+    .text {
+      font-size: 1.3em;
+      color: var(--color-font-dark);
+    }
+
+    span {
+      color: var(--color-accent-green);
+
+      display: block;
+      margin-top: 10px;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
   .btns {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -164,6 +188,14 @@ export default {
 
       &:hover {
         background: rgba(0, 0, 0, .2);
+      }
+
+      &.leave {
+        color: var(--color-font-dark);
+      }
+
+      &.create {
+        color: var(--color-accent-green);
       }
     }
   }

@@ -41,6 +41,13 @@ export default {
         commit('setRefreshToken', refresh)
         commit('setAuthorized', true)
 
+        const { user, roles } = jwtDecode(access)
+
+        commit('user/setInfo', {
+          ...user,
+          roles,
+        }, { root: true })
+
         return Promise.resolve()
       } catch (e) {
         return Promise.reject(e)
@@ -55,7 +62,12 @@ export default {
         commit('setRefreshToken', refresh)
         commit('setAuthorized', true)
 
-        commit('user/setInfo', jwtDecode(access).user, { root: true })
+        const { user, roles } = jwtDecode(access)
+
+        commit('user/setInfo', {
+          ...user,
+          roles,
+        }, { root: true })
 
         return Promise.resolve()
       } catch (e) {
@@ -81,7 +93,54 @@ export default {
       commit('setRefreshToken', refresh)
       commit('setAuthorized', true)
 
-      return Promise.resolve()
+      const { user, roles } = jwtDecode(access)
+
+      commit('user/setInfo', {
+        ...user,
+        roles,
+      }, { root: true })
+
+      return Promise.resolve(access)
+    },
+    exit({ commit }, $router) {
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+
+      commit('user/setInfo', {}, { root: true })
+
+      $router.push({ name: 'signIn' })
+    },
+    async redirectToHome({ dispatch, rootGetters }, { $router }) {
+      try {
+        const { roles = [] } = rootGetters['user/info']
+
+        if (roles.includes('student')) {
+          const [student] = await dispatch('student/getGroups', null, { root: true })
+
+          return $router.push({
+            name: 'studentHome',
+            params: {
+              id: student.id,
+            },
+          })
+        }
+
+        if (roles.includes('teacher')) {
+          return $router.push({ name: 'homeTeacher' })
+        }
+
+        if (roles.includes('admin')) {
+          return $router.push({ name: 'statsCollege' })
+        }
+
+        if (roles.includes('user')) {
+          return $router.push({ name: 'userHome' })
+        }
+
+        return Promise.resolve()
+      } catch (e) {
+        return Promise.reject(e)
+      }
     },
   },
 }

@@ -27,28 +27,20 @@
 
         <div class="list">
           <div
-            v-for="(subject, index) in subjects"
+            v-for="({ subject }, index) in subjects"
             :key="index"
             class="subject"
             @click="$emit('selected', subject)"
           >
             <div class="name">{{subject.name}}</div>
-
-            <div
-              class="confirmed"
-              :class="{
-                'is': subject.confirmed,
-                'is-not': !subject.confirmed,
-              }"
-            >{{subject.confirmed ? 'Верифікований предмет' : 'Неверифікований предмет'}}</div>
           </div>
         </div>
       </div>
 
-      <router-link
+      <div
         class="leave"
-        :to="{ name: 'homeUser' }"
-      >Перейти до домівки</router-link>
+        @click="$emit('close')"
+      >Закрити</div>
     </app-modal-window>
   </div>
 </template>
@@ -74,7 +66,7 @@ export default {
   computed: {
     ...mapGetters({
       alert: 'alert/alert',
-      subjects: 'user/subjects',
+      subjects: 'teacher/subjects',
     }),
   },
   data() {
@@ -84,7 +76,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTeacherSubjects: 'user/getSubjects',
+      getTeacherSubjects: 'teacher/getSubjects',
     }),
     async checkCurrentState() {
       const { show } = this
@@ -125,6 +117,7 @@ export default {
 
     .text {
       font-size: 1.3em;
+      font-weight: 400;
     }
 
     .refresh {
@@ -163,9 +156,8 @@ export default {
       }
 
       .name {
-        font-size: 1.3em;
-        margin-bottom: 10px;
-        font-weight: 400;
+        font-size: 1.1em;
+        font-weight: 100;
       }
 
       .confirmed {

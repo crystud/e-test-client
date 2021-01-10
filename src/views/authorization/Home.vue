@@ -14,15 +14,6 @@
           'mobile-opened': sidebar.opened,
         }"
       >
-        <div
-          class="settings-icon"
-          @click="settingsOpen = true"
-        >
-          <font-awesome-icon
-            icon="user-cog"
-          ></font-awesome-icon>
-        </div>
-
         <div class="header">
           <font-awesome-icon
             icon="times"
@@ -33,7 +24,9 @@
         <div class="user">
           <div class="avatar">
             <img
-              src="https://www.thispersondoesnotexist.com/image"
+              :src="userAvatar ?
+                `data:image/png;base64,${userAvatar}`
+                : require('@/assets/no_user.png')"
               alt="profile image"
             />
           </div>
@@ -43,91 +36,42 @@
 
         <div class="roles">
           <div
-              v-for="(role, index) in user.roles"
-              :key="index"
-              class="role"
-              :class="[`role-${role}`]"
+            v-for="(role, index) in user.roles"
+            :key="index"
+            class="role"
+            :class="[`role-${role}`]"
           >{{ localization.role[role] }}</div>
         </div>
 
-        <div class="logout">
-          <button
-            @click="exit"
-            class="btn"
-          >Вихід</button>
-        </div>
-
-        <div class="stats">
-          <div class="item">
-            <div class="icon">
-              <font-awesome-icon icon="chart-line" />
-            </div>
-
-            <div class="status">
-              <font-awesome-icon icon="check" />
-            </div>
-
-            <div class="value">
-              <div class="number">-</div>
-              <div class="title">Рейтинг</div>
-            </div>
-          </div>
-
-          <div class="line"></div>
-
-          <div class="item">
-            <div class="icon">
-              <font-awesome-icon icon="home" />
-            </div>
-
-            <div class="status">
-              <font-awesome-icon icon="times" />
-            </div>
-
-            <div class="value">
-              <div class="number">
-                0
-              </div>
-
-              <div class="title">Пропусків</div>
-            </div>
-          </div>
-        </div>
-
         <div class="menu" @click="sidebar.opened = false">
-          <div class="divider">Загальне</div>
+          <div v-if="(user.roles || []).includes('student')">
+            <div class="divider">Студент</div>
 
-          <app-home-link role="student" link="homeUser">Домівка</app-home-link>
+            <app-home-link
+              v-for="student in studentGroups"
+              :key="student.id"
+              role="student"
+              link="studentHome"
+              :params="{ id: student.id }"
+            >{{student.group.name}}</app-home-link>
+          </div>
 
-          <div>
+          <div v-if="(user.roles || []).includes('teacher')">
             <div class="divider">Вчитель</div>
 
-            <app-home-link role="teacher" link="homeTeacher">Домівка вчителя</app-home-link>
-            <app-home-link role="teacher" link="TeacherOwnTests">Авторська розробка</app-home-link>
+            <app-home-link role="teacher" link="homeTeacher">Профіль</app-home-link>
             <app-home-link role="teacher" link="questionsBank">Банк питань</app-home-link>
             <app-home-link role="teacher" link="permissions">Дозволи на проходження</app-home-link>
           </div>
 
-          <div class="divider">Адміністратор</div>
+          <div v-if="(user.roles || []).includes('admin')">
+            <div class="divider">Адміністратор</div>
 
-          <app-home-link role="admin" link="request">Заявка</app-home-link>
-
-          {{user.editableColleges}}
-
-          <div v-if="user.editableColleges || []">
+            <app-home-link role="admin" link="createdInvites">Запрошення</app-home-link>
             <app-home-link role="admin" link="groups">Групи</app-home-link>
-            <app-home-link role="admin" link="college">Навчальний заклад</app-home-link>
             <app-home-link role="admin" link="specialtys">Спеціальності</app-home-link>
-            <app-home-link role="admin" link="classes">Пари</app-home-link>
             <app-home-link role="admin" link="subjects">Предмети</app-home-link>
             <app-home-link role="admin" link="students">Студенти</app-home-link>
-          </div>
-
-          <div v-if="(user.roles || []).includes('admin')">
-            <div class="divider">God</div>
-
-            <app-home-link role="superadmin" link="verifyRequests">Заявки</app-home-link>
-            <app-home-link role="superadmin" link="statsGlobal">Статистика</app-home-link>
           </div>
         </div>
       </div>
@@ -149,6 +93,45 @@
     </div>
 
     <div class="content">
+      <app-create-test
+        :show="showCreateTest"
+        @close="showCreateTest = false"
+        @created="showCreateTest = false"
+      ></app-create-test>
+
+      <app-student-active-tests></app-student-active-tests>
+
+      <div class="global-header">
+        <div class="page-title">
+          <font-awesome-icon
+            icon="map-marker-alt"
+            class="icon"
+          ></font-awesome-icon>
+
+          <span class="text">{{$route.meta.title}}</span>
+        </div>
+
+        <button
+          v-if="(user.roles || []).includes('teacher')"
+          @click="showCreateTest = true"
+          class="create-test"
+        >Створити тест</button>
+
+        <div
+          class="settings-icon"
+          @click="settingsOpen = true"
+        >
+          <font-awesome-icon
+            icon="user-cog"
+          ></font-awesome-icon>
+        </div>
+
+        <button
+          @click="exit($router)"
+          class="logout"
+        >Вихід</button>
+      </div>
+
       <div class="max-width-container">
         <router-view></router-view>
       </div>
@@ -157,22 +140,24 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 import AppScreen from '@/components/ui/AppScreen.vue'
 import AppHomeLink from '@/components/ui/AppHomeLink.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
+import AppCreateTest from '@/components/templates/teacher/AppCreateTest.vue'
+import AppStudentActiveTests from '@/components/templates/student/AppStudentActiveTests.vue'
 
 import AppSettings from '@/components/templates/settings/AppSettings.vue'
 
 export default {
-  name: 'Home.vue',
   data() {
     return {
       isConfirmed: false,
       sidebar: {
         opened: false,
       },
+      showCreateTest: false,
       showPreloader: false,
       settingsOpen: false,
       localization: {
@@ -181,7 +166,6 @@ export default {
           student: 'Студент',
           admin: 'Адміністратор',
           teacher: 'Викладач',
-          superadmin: 'Root',
         },
       },
     }
@@ -189,21 +173,48 @@ export default {
   computed: {
     ...mapGetters({
       user: 'user/info',
+      userAvatar: 'user/avatar',
+      studentGroups: 'student/studentGroups',
     }),
   },
   methods: {
-    exit() {
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+    ...mapActions({
+      loadStudentGroups: 'student/getGroups',
+      setAlert: 'alert/set',
+      getAvatar: 'user/getAvatar',
+      exit: 'auth/exit',
+    }),
+  },
+  async created() {
+    const { user: { roles } } = this
 
-      this.$router.push({ name: 'signIn' })
-    },
+    await this.getAvatar()
+
+    if ((roles || []).includes('student')) {
+      try {
+        this.showPreloader = true
+
+        await this.loadStudentGroups()
+      } catch (e) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось отримати список ваших груп',
+          show: true,
+          delay: 2500,
+          isSuccess: false,
+        })
+      } finally {
+        this.showPreloader = false
+      }
+    }
   },
   components: {
     AppScreen,
     AppHomeLink,
     AppPreloader,
     AppSettings,
+    AppCreateTest,
+    AppStudentActiveTests,
   },
 }
 </script>
@@ -212,6 +223,83 @@ export default {
 @small: ~"screen and (max-width: 799px)";
 @medium: ~"screen and (max-width: 1000px)";
 @large: ~"screen and (min-width: 1001px)";
+
+.global-header {
+  width: 100%;
+  background: var(--color-bg-dark);
+  padding: 20px;
+
+  display: grid;
+  grid-template-columns: 1fr repeat(3, auto);
+  grid-template-areas: 'pagename settings createTest logout';
+
+  justify-content: space-between;
+  align-items: center;
+  grid-gap: 20px;
+
+  border-left: 1px solid var(--color-bg-main);
+
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 105;
+
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+
+  .page-title {
+    font-weight: 400;
+    grid-area: pagename;
+
+    .text {
+      color: var(--color-font-main);
+      margin-left: 10px;
+      font-size: 1.3em;
+    }
+
+    .icon {
+      color: var(--color-font-dark);
+    }
+  }
+
+  .settings-icon {
+    cursor: pointer;
+    grid-area: settings;
+
+    color: var(--color-font-dark);
+    font-size: 1.5em;
+  }
+
+  .create-test {
+    padding: 10px 15px;
+    background: var(--color-accent-green);
+    border: 0;
+    border-radius: 5px;
+    color: #fafafa;
+    cursor: pointer;
+    font-size: 1em;
+    grid-area: createTest;
+  }
+
+  .logout {
+    color: var(--color-font-main);
+    background: transparent;
+    border: 0;
+    font-size: 1em;
+    cursor: pointer;
+    grid-area: logout;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  @media screen and (max-width: 700px) {
+    grid-template-areas: 'pagename pagename pagename' 'settings logout createTest';
+    grid-template-columns: 30px 80px auto;
+
+    justify-content: flex-start;
+  }
+}
 
 .app-screen {
   display: grid;
@@ -257,44 +345,12 @@ export default {
 
     position: relative;
 
-    .settings-icon {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-
-      cursor: pointer;
-
-      color: var(--color-font-dark);
-      font-size: 1.5em;
-    }
-
     .header {
       height: 15px;
       color: var(--color-font-gray);
       font-size: 30px;
       margin: 20px 0 0 20px;
       display: none;
-    }
-
-    .logout {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-
-      margin: 10px 0;
-
-      .btn {
-        background: transparent;
-        border: 0;
-        cursor: pointer;
-        color: var(--color-font-dark);
-        font-size: 1em;
-        margin: 10px 0;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
     }
 
     .user {
@@ -309,12 +365,16 @@ export default {
         background: var(--color-bg-main);
         border-radius: 50%;
 
-        display: flex;
+        position: relative;
         overflow: hidden;
 
         img {
-          width: 100%;
+          position: absolute;
+          top: 0;
+          bottom: 0;
           margin: auto;
+
+          width: 100%;
         }
       }
 
@@ -323,6 +383,7 @@ export default {
         color: var(--color-font-main);
         font-size: 1.3em;
         font-weight: 400;
+        text-align: center;
       }
     }
 
@@ -357,52 +418,6 @@ export default {
 
       .role-superadmin {
         color: #6660ED;
-      }
-    }
-
-    .stats {
-      display: flex;
-      margin-top: 25px;
-      justify-content: center;
-      align-items: center;
-      padding: 0 45px;
-
-      .item {
-        display: flex;
-        align-items: center;
-        margin: 0 30px;
-
-        .icon {
-          height: 18px;
-          width: 18px;
-          color: var(--color-font-gray);
-        }
-
-        .status {
-          margin-left: 5px;
-          color: var(--color-accent-orange);
-        }
-
-        .value {
-          margin-left: 7px;
-
-          .number {
-            color: var(--color-font-main);
-            font-size: 16px;
-            text-align: center;
-          }
-
-          .title {
-            color: var(--color-font-gray);
-            font-size: 14px;
-          }
-        }
-      }
-
-      .line {
-        height: 45px;
-        width: 1px;
-        background: var(--color-font-gray);
       }
     }
 
@@ -447,7 +462,6 @@ export default {
   }
 
   .content {
-    padding: 20px 45px 80px;
     position: relative;
 
     max-height: 100vh;
@@ -456,11 +470,12 @@ export default {
     .max-width-container {
       max-width: 1320px;
       width: 100%;
-      margin: 0 auto 30px;
-    }
+      margin: 0 auto;
+      padding: 30px 30px 20px;
 
-    @media @small {
-      padding: 20px;
+      @media @small {
+        padding: 20px;
+      }
     }
   }
 }

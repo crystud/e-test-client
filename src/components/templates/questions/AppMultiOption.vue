@@ -1,6 +1,6 @@
 <template>
   <div class="app-single-option">
-    <div class="title">Варіанти відповідей</div>
+    <div class="title">Варіанти відповіді</div>
 
     <div
       class="no-options"
@@ -10,56 +10,95 @@
     <div class="list">
       <div
         class="option"
-        v-for="(option, index) in options"
+        v-for="({ question, correct, image }, index) in options"
         :key="index"
       >
-        <div class="text">{{option}}</div>
+        <div class="option-title">Варіант відповіді №{{index+1}}</div>
 
-        <button
-          class="is-right-switch"
-          @click="
-            toggleRightOption(index)
-            emitCurrentState()
-          "
+        <input
+          type="text"
+          v-model="options[index].question"
+          placeholder="Текст варіанта відповіді"
+          @keyup="emitCurrentState"
         >
-          <div
-            class="wrong"
-            v-if="!rightOptions.includes(index)"
-          >Невірна відповідь</div>
 
-          <div
-            class="right"
-            v-if="rightOptions.includes(index)"
-          >Вірна відповідь</div>
-        </button>
+        <div class="controls">
+          <div>
+            <button
+              class="is-right-switch"
+              :class="{
+                wrong: !correct,
+                right: correct,
+              }"
+              @click="
+                options[index].correct = !correct
+                emitCurrentState()
+              "
+            >
+              <span v-if="!correct">Невірна відповідь</span>
+              <span v-else>Вірна відповідь</span>
+            </button>
 
-        <button
-          class="remove"
-          @click="
-            options.splice(index, 1)
-            emitCurrentState()
-          "
-        >
-          <font-awesome-icon icon="times"></font-awesome-icon>
-        </button>
+            <label
+              :for="`attach-image-${index}`"
+              class="attach-image"
+            >
+              <input
+                type="file"
+                accept="image/png,image/jpg,image/gif"
+                :id="`attach-image-${index}`"
+                @change="({ target: { files: [ image ] } }) => {
+                  setImage({ image, index })
+                  emitCurrentState(image)
+                }"
+              >
+
+              <span
+                class="icon"
+                v-if="!image || !image.name"
+              >
+                <font-awesome-icon icon="image"></font-awesome-icon>
+              </span>
+
+              <span
+                class="filename"
+                v-if="image && image.name"
+              >
+                {{image.name}}
+              </span>
+            </label>
+
+            <div
+              class="remove-image"
+              @click="options[index].image = ''"
+              v-if="image"
+            >
+              <font-awesome-icon icon="times"></font-awesome-icon>
+
+              <span class="text">Вилучити зображення</span>
+            </div>
+          </div>
+
+          <button
+            class="remove"
+            @click="
+              options.splice(index, 1)
+              emitCurrentState()
+            "
+          >
+            <font-awesome-icon icon="trash"></font-awesome-icon>
+            <span>Вилучити варіант відповіді</span>
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="add-option-form">
-      <input
-        type="text"
-        placeholder="Текст варіанту відповіді..."
-        v-model="optionValue"
-        v-on:keyup="({ keyCode }) => (keyCode === 13 ? addOption() : null)"
-      >
-
       <button
         title="Додати варіант відповіді"
-        @click="
-          addOption()
-          emitCurrentState()
-        "
+        @click="options.push({ question: '', image: '' })"
       >
+        <span>Створити ще один варіант відповіді</span>
         <font-awesome-icon icon="plus"></font-awesome-icon>
       </button>
     </div>
@@ -72,65 +111,77 @@ import { mapActions } from 'vuex'
 export default {
   data() {
     return {
-      options: [],
-      optionValue: '',
-      rightOptions: [],
+      options: [1, 2, 3, 4].map(() => ({ question: '', image: '', correct: false })),
     }
   },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
     }),
-    toggleRightOption(optionIndex) {
-      const location = this.rightOptions.indexOf(optionIndex)
-
-      if (location !== -1) {
-        this.rightOptions.splice(location, 1)
-      } else if (this.rightOptions.length <= this.options.length - 2) {
-        this.rightOptions.push(optionIndex)
-      }
-    },
     emitCurrentState() {
-      const { options, rightOptions } = this
+      const { options } = this
 
-      const state = {}
+      let ready = true
+      let error
 
-      state.questions = options.map((question, index) => ({
+      if (options.length <= 1) {
+        ready = false
+        error = 'Мінімум 2 варіанта відповіді'
+      }
+
+      const optionsAreNotEmpty = options.filter(({
         question,
-        correct: rightOptions.includes(index),
+        image,
+      }) => image.name || question.length !== 0)
+
+      if (optionsAreNotEmpty.length !== options.length) {
+        ready = false
+        error = 'Заповніть всі варіанти відповіді'
+      }
+
+      const state = {
+        isReadyToBeCreated: { ready, error },
+      }
+
+      state.questions = options.map(({ question, correct, image }) => ({
+        question,
+        image,
+        correct,
       }))
 
       this.$emit('change', state)
     },
-    addOption() {
-      const { optionValue } = this
+    setImage({ image, index }) {
+      const reader = new FileReader()
 
-      if (!optionValue) {
-        return this.setAlert({
-          title: 'Заповніть варіант відповіді',
-          text: '',
-          isSuccess: false,
+      reader.onload = () => {
+        const { result = '' } = reader
+
+        const data = result.split('base64,')[1]
+
+        this.options[index].image = {
+          name: image.name,
+          data,
+        }
+
+        this.emitCurrentState()
+      }
+
+      reader.onerror = () => {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось обробити фото',
+          delay: 1500,
           show: true,
-          delay: 1000,
+          isSuccess: false,
         })
       }
 
-      if (this.options.includes(optionValue)) {
-        return this.setAlert({
-          title: 'Такий варіант відповіді вже існує',
-          text: '',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
-      }
-
-      this.options.push(optionValue)
-
-      this.optionValue = ''
-
-      return false
+      reader.readAsDataURL(image)
     },
+  },
+  created() {
+    this.emitCurrentState()
   },
 }
 </script>
@@ -143,6 +194,28 @@ export default {
     color: var(--color-font-dark);
   }
 
+  .remove-image {
+    padding: 15px;
+    background: var(--color-bg-dark);
+    border-radius: 10px;
+    cursor: pointer;
+
+    &:hover {
+      .text {
+        color: var(--color-font-main);
+      }
+    }
+
+    svg {
+      color: var(--color-accent-red);
+    }
+
+    .text {
+      margin-left: 10px;
+      color: var(--color-font-dark);
+    }
+  }
+
   .title {
     color: var(--color-font-dark);
   }
@@ -152,78 +225,120 @@ export default {
 
     .option {
       background: var(--color-bg-main);
-      border-radius: 5px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
-      margin-bottom: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      margin-bottom: 20px;
 
-      display: grid;
-      grid-template-columns: 1fr auto 60px;
+      overflow: hidden;
 
-      align-items: center;
+      .option-title {
+        padding: 20px;
+        font-size: 1.2em;
+      }
 
-      .text {
+      .controls {
+        padding: 20px;
+
+        display: grid;
+        grid-template-columns: 1fr auto;
+
+        div {
+          display: flex;
+          align-items: center;
+        }
+
+        .attach-image {
+          background: var(--color-bg-dark);
+          color: var(--color-font-dark);
+          padding: 15px;
+          margin: 0 10px;
+          border-radius: 10px;
+          cursor: pointer;
+
+          .icon {
+            font-size: 1.4em;
+          }
+
+          .filename {
+            color: var(--color-accent-green);
+          }
+
+          &:hover {
+            color: var(--color-accent-green);
+          }
+
+          input {
+            display: none;
+          }
+        }
+      }
+
+      input {
         color: var(--color-font-main);
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--color-bg-light);
+        height: 100%;
+        width: 100%;
         padding: 15px;
+        font-size: 1em;
+
+        &::placeholder {
+          color: var(--color-font-dark);
+        }
       }
 
       button {
-        padding: 15px;
+        padding: 15px 20px;
         height: 100%;
         font-size: 1em;
         border: 0;
-        border-left: 1px solid var(--color-bg-light);
+        border-radius: 5px;
         cursor: pointer;
-        background: transparent;
+        background: var(--color-bg-dark);
       }
 
       .is-right-switch {
-        .right {
-          color: var(--color-accent-green);
+        color: #fff;
+
+        &.right {
+          background: var(--color-accent-green);
         }
 
-        .wrong {
-          color: var(--color-accent-red);
+        &.wrong {
+          background: var(--color-accent-red);
         }
       }
 
       .remove {
         color: var(--color-accent-red);
+
+        span {
+          margin-left: 15px;
+        }
       }
     }
   }
 
   .add-option-form {
-    display: grid;
-    grid-template-columns: 1fr 60px;
-
-    overflow: hidden;
-    border-radius: 5px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
-
-    input, button {
+    button {
+      width: 100%;
       padding: 15px;
+      border-radius: 10px;
       font-size: 1em;
       background: var(--color-bg-main);
       border: 0;
-    }
-
-    input {
-      color: var(--color-font-main);
-
-      &::placeholder {
-        color: var(--color-font-dark);
-      }
-    }
-
-    button {
-      border-left: 1px solid var(--color-bg-light);
       text-align: center;
       cursor: pointer;
 
-      color: var(--color-font-main);
+      color: var(--color-font-dark);
 
       &:hover {
-        background: var(--color-bg-dark);
+        color: var(--color-font-main);
+      }
+
+      span {
+        margin-right: 10px;
       }
     }
   }

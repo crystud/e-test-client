@@ -22,6 +22,12 @@ export default {
 
 <style lang="less" scoped>
 button {
+  cursor: pointer;
+
+  &:active {
+    transform: scale(.98);
+  }
+
   &.primary,
   &.secondary,
   &.neutral,
@@ -30,7 +36,6 @@ button {
     border-radius: 7px;
 
     color: #fff;
-    cursor: pointer;
     font-size: 1em;
     padding: 12px 40px;
   }

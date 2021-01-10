@@ -3,54 +3,35 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <div v-if="topic.id">
-      <app-create-question
-        :show="showCreateQuestion"
-        :topic="topic"
-        @close="showCreateQuestion = false"
-        @created="
-          loadTopic()
-          showCreateQuestion = false
-        "
-      ></app-create-question>
-
       <div class="header">
         <div class="title">
-          <div class="main">Запитання до теми "{{topic.name}}"</div>
+          <div class="main">
+            <span v-if="showCreateQuestion">Створення запитання для теми "{{topic.name}}"</span>
 
-          <div
-            class="verificated"
-            :class="{
-              confirmed: topic.confirmed,
-            }"
-          >
-            {{ topic.confirmed ? 'Підтверджена тема' : 'Непідтверджена тема' }}
-          </div>
-
-          <div class="creator">
-            <span class="label">Створив:</span>
-
-            <router-link
-              :to="{
-                name: 'teacher',
-                params: { id: topic.creator.id },
-              }"
-              class="value"
-            >
-              {{topic.creator.firstName}} {{topic.creator.lastName}}
-            </router-link>
+            <span v-else>Список запитань до теми "{{topic.name}}"</span>
           </div>
         </div>
 
         <app-button
+          v-show="!showCreateQuestion"
           appearance="primary"
-          @click="showCreateQuestion = true"
+          @click="
+            showCreateQuestion = true
+            questionShowInfoID = 0
+          "
         >Створити запитання</app-button>
       </div>
+
+      <app-question-detailed-info
+        :questionID="questionShowInfoID"
+        class="question-full-info"
+        @close="questionShowInfoID = 0"
+      ></app-question-detailed-info>
 
       <div class="content">
         <div
           class="no-questions"
-          v-if="!questions.length"
+          v-if="!questions.length && !showCreateQuestion"
         >
           <div class="no-results">В даній темі покищо немає запитань...</div>
 
@@ -60,21 +41,37 @@
           >Створити запитання</div>
         </div>
 
+        <app-create-question
+          :show="showCreateQuestion"
+          :topic="topic"
+          @close="showCreateQuestion = false"
+          @created="
+            loadTopic()
+            showCreateQuestion = false
+          "
+        ></app-create-question>
+
         <div
           class="table"
-          v-if="questions.length"
+          v-if="questions.length && !showCreateQuestion"
         >
           <div class="row header-row">
+            <div class="col">ID</div>
             <div class="col">Запитання</div>
             <div class="col">Тип</div>
           </div>
 
           <div
-            class="row"
             v-for="(task, index) in questions"
             :key="index"
+            class="row question-row"
+            :class="{
+              detailed: task.id === questionShowInfoID,
+            }"
+            @click="questionShowInfoID = task.id"
           >
-            <div class="col title">{{task.ask}}</div>
+            <div class="col title">{{task.id}}</div>
+            <div class="col title">{{task.question}}</div>
             <div class="col type">{{taskTypes[task.type] || '-'}}</div>
           </div>
         </div>
@@ -90,18 +87,19 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 import AppCreateQuestion from '@/components/templates/teacher/AppCreateQuestion.vue'
+import AppQuestionDetailedInfo from '@/components/templates/teacher/AppQuestionDetailedInfo.vue'
 
 export default {
   components: {
     AppButton,
     AppPreloader,
     AppCreateQuestion,
+    AppQuestionDetailedInfo,
   },
   methods: {
     ...mapActions({
       getTopic: 'topics/getByID',
       setAlert: 'alert/set',
-      getQuestionsByIDs: 'questions/getByIDs',
     }),
     async loadTopic() {
       const { $route: { params: { id } } } = this
@@ -118,11 +116,10 @@ export default {
 
       this.showPreloader = true
 
-      const topic = await this.getTopic(id)
-      const questions = await this.getQuestionsByIDs(topic.tasks)
+      const topic = await this.getTopic(id) || {}
 
       this.topic = topic
-      this.questions = questions
+      this.questions = topic.tasks
 
       this.showPreloader = false
 
@@ -135,11 +132,12 @@ export default {
       questions: [],
       showPreloader: false,
       showCreateQuestion: false,
+      questionShowInfoID: 0,
       taskTypes: {
-        single_choice: 'Один варіант',
-        multy_choice: 'Декілька варіантів',
-        text_input: 'Ввести значення',
-        numbering: 'Визначити послідовність',
+        SIMPLE_CHOICE: 'Простий вибір',
+        MULTIPLE_CHOICE: 'Множинний вибір',
+        SHORT_ANSWER: 'Коротка відповідь',
+        NUMERICAL: 'Послідовність',
       },
     }
   },
@@ -173,7 +171,6 @@ export default {
     .title {
       .main {
         font-size: 1.4em;
-        font-weight: 400;
 
         margin-bottom: 5px;
       }
@@ -194,6 +191,10 @@ export default {
         }
       }
     }
+  }
+
+  .question-full-info {
+    margin: 20px 0;
   }
 
   .content {
@@ -226,7 +227,7 @@ export default {
     .table {
       .row {
         display: grid;
-        grid-template-columns: 1fr 200px;
+        grid-template-columns: 50px 1fr 200px;
 
         margin-bottom: 15px;
 
@@ -236,6 +237,21 @@ export default {
           color: var(--color-font-dark);
           border-bottom: 1px solid var(--color-bg-main);
           padding-bottom: 20px;
+        }
+
+        &.question-row {
+          cursor: pointer;
+          padding: 0px;
+          background: transparent;
+          border-radius: 5px;
+          transition: all .3s;
+
+          &.detailed {
+            background: var(--color-accent-green);
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+          }
         }
       }
     }

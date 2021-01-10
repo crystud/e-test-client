@@ -6,8 +6,20 @@
       'selected': selected,
     }"
   >
-    <div class="text">
-      {{text}}
+    <div class="content">
+      <div
+        class="image"
+        v-if="image"
+      >
+        <img
+          :src="`data:image/jpg;base64,${image}`"
+          alt="attached image"
+        >
+      </div>
+
+      <div class="text">
+        {{text}}
+      </div>
     </div>
 
     <div class="line"></div>
@@ -27,6 +39,11 @@ export default {
       type: String,
       required: true,
     },
+    image: {
+      type: String,
+      required: false,
+      default: () => '',
+    },
   },
 }
 </script>
@@ -35,7 +52,7 @@ export default {
 .option {
   cursor: pointer;
 
-  background: var(--color-bg-dark);
+  background: var(--color-bg-main);
   color: var(--color-font-dark);
 
   padding: 30px;
@@ -47,6 +64,12 @@ export default {
   user-select: none;
 
   transition: all .3s;
+
+  .image {
+    img {
+      max-height: 150px;
+    }
+  }
 
   .line {
     position: absolute;

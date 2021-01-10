@@ -1,5 +1,3 @@
-import AsyncLoop from 'node-async-loop'
-
 import axios from '../../tools/axios'
 
 export default {
@@ -20,19 +18,17 @@ export default {
   },
 
   actions: {
-    async get({ commit }, collegeID) {
+    async get({ commit }) {
       try {
-        const college = await axios.get(`/colleges/${collegeID}`)
+        const { data, status } = await axios.get('/specialties')
 
-        const { specialties } = college.data
-
-        if (college.status !== 200 || !specialties) {
+        if (status !== 200) {
           return Promise.reject()
         }
 
-        commit('setSpecialities', specialties)
+        commit('setSpecialities', data)
 
-        return Promise.resolve(specialties)
+        return Promise.resolve(data)
       } catch (e) {
         return Promise.reject(e)
       }
@@ -63,9 +59,9 @@ export default {
         return Promise.reject()
       }
     },
-    async assignStudy(_, { speciality, study }) {
+    async attachSubject(_, payload) {
       try {
-        const { data, status } = await axios.post(`/specialties/${speciality}/study`, { study })
+        const { data, status } = await axios.post('/specialties/addSubject', payload)
 
         if (status !== 201) {
           return Promise.reject()
@@ -73,27 +69,8 @@ export default {
 
         return Promise.resolve(data)
       } catch (e) {
-        return Promise.reject()
+        return Promise.reject(e)
       }
-    },
-    async getGroups({ dispatch }, specialties) {
-      return new Promise((resolve) => {
-        if (!specialties.length) return resolve([])
-
-        let groups = []
-
-        return AsyncLoop(specialties, async (specialtyID, next) => {
-          const speciality = await dispatch('getByID', specialtyID)
-
-          if (!speciality.groups) {
-            return next()
-          }
-
-          groups = [...groups, ...speciality.groups]
-
-          return next()
-        }, () => resolve(groups))
-      })
     },
   },
 }

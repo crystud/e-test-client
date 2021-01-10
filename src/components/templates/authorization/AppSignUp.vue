@@ -4,15 +4,6 @@
 
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-alert
-      :isSuccess="alert.isSuccess"
-      :title="alert.title"
-      :text="alert.text"
-      :show="alert.show"
-      :delay="alert.delay"
-      @close="() => alert.show = false"
-    ></app-alert>
-
     <app-input
       type="text"
       placeholder="Ім'я"
@@ -67,6 +58,39 @@
       class="app-form-field"
     ></app-input>
 
+    <label
+      for="profilePicture"
+      class="select-profile-picture"
+    >
+      <input
+        type="file"
+        id="profilePicture"
+        accept="image/png,image/jpg"
+        @change="({ target: { files: [ image ] } }) => setImage({ image })"
+      >
+
+      <div class="content">
+        <div
+          v-if="!avatar.value"
+          class="icon"
+        >
+          <font-awesome-icon icon="image"></font-awesome-icon>
+        </div>
+
+        <div
+          v-if="avatar.value"
+          class="selected-image"
+        >
+          <img :src="`data:image/jpg;base64,${avatar.value}`">
+        </div>
+
+        <div class="text">
+          <span v-if="!avatar.name">Обрати зображення профілю...</span>
+          <span v-else>{{avatar.name}}</span>
+        </div>
+      </div>
+    </label>
+
     <div class="login-btn">
       <app-button
         @click="validateSignUp"
@@ -91,86 +115,122 @@ import { mapActions } from 'vuex'
 
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
-import AppAlert from '@/components/ui/AppAlert.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
-  name: 'authorization',
   components: {
     AppInput,
     AppButton,
-    AppAlert,
     AppPreloader,
   },
   methods: {
     ...mapActions({
       signUp: 'auth/signUp',
+      setAlert: 'alert/set',
     }),
+    setImage({ image }) {
+      const reader = new FileReader()
+
+      reader.onload = () => {
+        const { result = '' } = reader
+
+        const [, base64] = result.split('base64,')
+
+        if (!base64) {
+          this.setAlert({
+            title: 'Помилка',
+            text: 'Не вдалось обробити фото',
+            delay: 1500,
+            show: true,
+            isSuccess: false,
+          })
+
+          return
+        }
+
+        this.avatar = {
+          name: image.name,
+          value: base64,
+        }
+      }
+
+      reader.onerror = () => {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось обробити фото',
+          delay: 1500,
+          show: true,
+          isSuccess: false,
+        })
+      }
+
+      reader.readAsDataURL(image)
+    },
     validateSignUp() {
       const {
         firstName,
         lastName,
         patronymic,
         email,
+        avatar: { value: avatar },
         password,
         verifyPassword,
       } = this
 
+      if (!avatar) {
+        return this.setAlert({
+          title: 'Валідація...',
+          text: 'Ви повинні вказати зображення профілю',
+          isSuccess: false,
+          show: true,
+        })
+      }
+
       if (!firstName || !lastName || !patronymic) {
-        this.alert = {
+        return this.setAlert({
           title: 'Валідація...',
           text: 'Кожне поле ПІБ повинно бути заповнено.',
           isSuccess: false,
           show: true,
-        }
-
-        return false
+        })
       }
 
       const emailCheck = email.split('@')
 
       if (emailCheck.length <= 1) {
-        this.alert = {
+        return this.setAlert({
           title: 'E-mail адреса',
           text: 'Перевірте валідність вашої E-mail адреси',
           isSuccess: false,
           show: true,
-        }
-
-        return false
+        })
       }
 
       if (emailCheck[1].split('.').length <= 1) {
-        this.alert = {
+        return this.setAlert({
           title: 'E-mail адреса',
           text: 'Перевірте валідність вашої E-mail адреси',
           isSuccess: false,
           show: true,
-        }
-
-        return false
+        })
       }
 
       if (password.length < 7) {
-        this.alert = {
+        return this.setAlert({
           title: 'Довжина паролю',
           text: 'Довжина паролю повинна бути мінімум 7 символів.',
           isSuccess: false,
           show: true,
-        }
-
-        return false
+        })
       }
 
       if (password !== verifyPassword) {
-        this.alert = {
+        return this.setAlert({
           title: 'Пароль',
           text: 'Паролі не співпадають. Перевірте їх, будь ласка, ще раз',
           isSuccess: false,
           show: true,
-        }
-
-        return false
+        })
       }
 
       this.showPreloader = true
@@ -181,27 +241,30 @@ export default {
         patronymic,
         email,
         password,
+        avatar,
       }).then(() => {
         this.$router.push({ name: 'homeUser' })
 
-        this.alert = {
+        this.setAlert({
           title: 'Все чудово!',
-          text: 'Вас було успішно зареєстровано. Через 1.5 вас буде перенаправлено на ваш профіль.',
-          delay: 1500,
+          text: 'Вас було успішно зареєстровано',
+          delay: 1000,
           isSuccess: true,
           show: true,
-        }
+        })
 
-        setTimeout(() => {
-          this.$router.push({ name: 'homeUser' })
-        }, 1500)
+        setTimeout(async () => {
+          await this.redirectToHome({
+            $router: this.$router,
+          })
+        }, 1000)
       }).catch(() => {
-        this.alert = {
+        this.setAlert({
           title: 'Помилка...',
           text: 'Вас не вдалось зареєструвати...',
           show: true,
           isSuccess: false,
-        }
+        })
       }).finally(() => {
         this.showPreloader = false
       })
@@ -209,6 +272,10 @@ export default {
   },
   data() {
     return {
+      avatar: {
+        name: '',
+        value: null,
+      },
       firstName: '',
       lastName: '',
       patronymic: '',
@@ -216,13 +283,6 @@ export default {
       password: '',
       verifyPassword: '',
       showPreloader: false,
-      alert: {
-        title: '',
-        text: '',
-        isSuccess: false,
-        show: false,
-        delay: 1500,
-      },
     }
   },
 }
@@ -239,6 +299,49 @@ export default {
   }
 
   .center();
+
+  .select-profile-picture {
+    width: 100%;
+    border-radius: 5px;
+    background: var(--color-bg-main);
+    margin: 10px 0 30px;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    input {
+      display: none;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+
+      .selected-image {
+        img {
+          max-width: 70px;
+          display: block;
+        }
+      }
+
+      .icon, .text {
+        padding: 15px;
+      }
+
+      .text {
+        color: #55636e;
+        transition: all .15s;
+      }
+    }
+
+    &:hover {
+      .text {
+        color: #fff;
+      }
+    }
+  }
 
   h2 {
     color: #fff;

@@ -2,7 +2,7 @@
   <app-user-card class="app-student-info">
     <div class="profile-image">
       <img
-        src="https://www.thispersondoesnotexist.com/image"
+        :src="userAvatar || require('@/assets/no_user.png')"
         alt="student profile image"
       />
     </div>
@@ -10,7 +10,7 @@
     <div class="info">
       <div class="basic-info">
         <div class="name">{{user.lastName}} {{user.firstName}} {{user.patronymic}}</div>
-        <div class="last-visit">Остання активність: 37 хвилин тому</div>
+        <!-- <div class="last-visit">Остання активність: 37 хвилин тому</div> -->
       </div>
 
       <app-data-list
@@ -18,19 +18,48 @@
         class="additional"
         :data="data"
       ></app-data-list>
+
+      <div
+        v-if="user.students && $route.name !== 'homeTeacher'"
+        class="student-groups"
+      >
+        <div
+          v-for="student in user.students"
+          :key="student.id"
+          class="group"
+          :class="{
+            selected: selectedStudent.id === student.id,
+          }"
+          @click="selectedStudent.id === student.id ? null : $emit('changeStudent', student)"
+        >
+          {{student.group.name}}
+        </div>
+      </div>
     </div>
   </app-user-card>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import AppUserCard from './AppUserCard.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 
 export default {
-  name: 'AppStudentPersonalInfo',
-  components: {
-    AppUserCard,
-    AppDataList,
+  computed: {
+    ...mapGetters({
+      self: 'user/info',
+      selfAvatar: 'user/avatar',
+    }),
+    userAvatar() {
+      const { user, self, selfAvatar } = this
+
+      if (user.id === self.id) {
+        return selfAvatar ? `data:image/png;base64,${selfAvatar}` : null
+      }
+
+      return user.avatar ? `data:image/png;base64,${user.avatar}` : null
+    },
   },
   props: {
     data: {
@@ -43,6 +72,15 @@ export default {
       required: true,
       default: () => {},
     },
+    selectedStudent: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
+  },
+  components: {
+    AppUserCard,
+    AppDataList,
   },
 }
 </script>
@@ -55,6 +93,28 @@ export default {
   grid-template-columns: @profile-image-size 1fr;
   grid-gap: 20px;
   align-items: center;
+
+  .student-groups {
+    margin-top: 20px;
+
+    .group {
+      display: inline-block;
+      border-radius: 5px;
+      padding: 5px 10px;
+      margin: 0 10px 10px 0;
+
+      cursor: pointer;
+
+      background: var(--color-bg-main);
+      color: var(--color-font-main);
+
+      &.selected {
+        background: var(--color-accent-green);
+        color: #fff;
+        cursor: default;
+      }
+    }
+  }
 
   .mobile {
     grid-template-columns: 1fr;
@@ -78,7 +138,15 @@ export default {
     overflow: hidden;
     border-radius: 50%;
 
+    position: relative;
+
     img {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+
+      margin: auto;
+
       width: 100%;
     }
   }

@@ -1,13 +1,5 @@
 export default [
   {
-    path: '/admin',
-    name: 'college',
-    meta: {
-      title: 'Навчальний заклад',
-    },
-    component: () => import('@/views/admin/College.vue'),
-  },
-  {
     path: '/admin/specialities',
     name: 'specialtys',
     meta: {
@@ -22,14 +14,6 @@ export default [
       title: 'Синхронізація спеціальностей',
     },
     component: () => import('@/views/admin/SpecialitiesSync.vue'),
-  },
-  {
-    path: '/admin/classes',
-    name: 'classes',
-    meta: {
-      title: 'Пари/Уроки',
-    },
-    component: () => import('@/views/admin/Classes.vue'),
   },
   {
     path: '/admin/subjects',
@@ -56,14 +40,6 @@ export default [
     component: () => import('@/views/admin/TestsAssigning.vue'),
   },
   {
-    path: '/request',
-    name: 'request',
-    meta: {
-      title: 'Заявка на створення навчального закладу',
-    },
-    component: () => import('@/views/admin/CollegeRequest.vue'),
-  },
-  {
     path: '/groups',
     name: 'groups',
     meta: {
@@ -78,5 +54,21 @@ export default [
       title: 'Група',
     },
     component: () => import('@/views/admin/Group.vue'),
+  },
+  {
+    path: '/invites/:groupID',
+    name: 'invites',
+    meta: {
+      title: 'Створення запрошень для групи',
+    },
+    component: () => import('@/views/admin/Invites.vue'),
+  },
+  {
+    path: '/invites',
+    name: 'createdInvites',
+    meta: {
+      title: 'Створені запрошення',
+    },
+    component: () => import('@/views/admin/CreatedInvites.vue'),
   },
 ]

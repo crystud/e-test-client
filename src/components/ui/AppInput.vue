@@ -3,7 +3,7 @@
     class="app-input"
     :class="[
       appearance,
-      (newValue ? 'is-okay' : 'is-bad'),
+      (isOkay ? 'is-okay' : 'is-bad'),
     ]"
   >
     <input
@@ -11,22 +11,37 @@
       class="main-input"
       ref="appInput"
       :value="value"
+      v-model="newValue"
       :placeholder="placeholder"
       v-on:blur="focused = false"
       v-on:focus="focused = true"
       v-on:change="$emit('change', $event.target.value)"
       v-on:keyup="$emit('change', $event.target.value)"
+      v-on:keypress="$emit('keypress', $event)"
+      v-on:paste="
+        $emit('paste', $event)
+        $emit('change', $event.target.value)
+      "
     />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'AppInput',
   props: {
     placeholder: {
       required: false,
       default: () => '',
+    },
+    autofocus: {
+      type: Boolean,
+      required: false,
+      default: () => false,
+    },
+    isOkay: {
+      type: Boolean,
+      required: false,
+      default: () => true,
     },
     appearance: {
       required: false,
@@ -47,7 +62,18 @@ export default {
       newValue: '',
     }
   },
+  watch: {
+    value() {
+      this.newValue = this.value
+    },
+  },
+  created() {
+    this.checkNewValue()
+  },
   methods: {
+    checkNewValue() {
+      this.newValue = this.value
+    },
     focus() {
       this.$refs.appInput.focus()
     },
@@ -142,8 +168,19 @@ export default {
       width: 2px;
       max-height: 60px;
 
-      background: #1ED6BA;
       border-radius: 10px;
+    }
+
+    &.is-okay {
+      &::before {
+        background: var(--color-accent-green);
+      }
+    }
+
+    &.is-bad {
+      &::before {
+        background: var(--color-accent-red);
+      }
     }
 
     .main-input {

@@ -2,69 +2,63 @@
   <div class="groups-view">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-ask-college
-      @selected="college => editingCollege = college"
-      :show="!editingCollege.id"
-    ></app-ask-college>
+    <app-ask-speciality
+      :show="!editingSpeciality.id"
+      @selected="specialitySelected"
+    ></app-ask-speciality>
 
-    <div v-if="editingCollege.id">
-      <app-ask-speciality
-        :show="editingCollege.id && !editingSpeciality.id"
-        :college="editingCollege"
-        @selected="specialitySelected"
-      ></app-ask-speciality>
+    <div v-if="editingSpeciality.id">
+      <app-create-group
+        :show="showCreateGroup"
+        :speciality="editingSpeciality"
+        @close="showCreateGroup = false"
+        @done="
+          showCreateGroup = false
+          updateGroups()
+        "
+      ></app-create-group>
 
-      <div v-if="editingSpeciality.id">
-        <app-create-group
-          :show="showCreateGroup"
-          :speciality="editingSpeciality"
-          @close="showCreateGroup = false"
-          @done="
-            showCreateGroup = false
-            updateGroups()
-          "
-        ></app-create-group>
+      <div class="header">
+        <div class="title">
+          <div class="pagename">Список груп спеціальності</div>
 
-        <div class="header">
-          <div class="title">
-            <div class="pagename">Групи</div>
-
-            <div
-              class="college"
-              v-show="editingCollege.id && editingSpeciality.id"
-            >
-              <span
-                @click="
-                  editingCollege = {}
-                  editingSpeciality = {}
-                "
-              >{{editingCollege.name}}</span>
-
-              <font-awesome-icon
-                icon="chevron-right"
-                class="icon"
-              ></font-awesome-icon>
-
-              <span @click="editingSpeciality = {}">{{editingSpeciality.name}}</span>
-            </div>
+          <div
+            class="college"
+            v-show="editingSpeciality.id"
+          >
+            <span
+              @click="editingSpeciality = {}"
+            >{{editingSpeciality.name}}</span>
           </div>
-
-          <app-create-button
-            @click="showCreateGroup = true"
-          >Створити групу</app-create-button>
         </div>
 
-        <div class="selection">
-          <div class="list">
-            <app-group
-              v-for="(group, index) in groups"
-              v-bind:key="index"
-              :id="group.id"
-              :name="group.name"
-              :educationStart="group.startEducation"
-              :educationEnd="group.endEducation"
-            ></app-group>
+        <app-create-button
+          @click="showCreateGroup = true"
+        >Створити групу</app-create-button>
+      </div>
+
+      <div class="selection">
+        <div
+          v-if="!groups.length"
+          class="no-groups"
+        >
+          <div>
+            У даній спеціальності покищо немає
+            груп, але ви можете завжди
           </div>
+
+          <span @click="showCreateGroup = true">Створити групу</span>
+        </div>
+
+        <div class="list">
+          <app-group
+            v-for="(group, index) in groups"
+            v-bind:key="index"
+            :id="group.id"
+            :name="group.name"
+            :startYear="group.startYear"
+            :course="group.course"
+          ></app-group>
         </div>
       </div>
     </div>
@@ -72,12 +66,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 import AppGroup from '../../components/templates/admin/AppGroup.vue'
 import AppCreateButton from '../../components/templates/admin/AppCreateButton.vue'
 import AppCreateGroup from '../../components/templates/admin/AppCreateGroup.vue'
-import AppAskCollege from '../../components/templates/admin/AppAskCollege.vue'
 import AppAskSpeciality from '../../components/templates/admin/AppAskSpeciality.vue'
 import AppPreloader from '../../components/ui/AppPreloader.vue'
 
@@ -86,45 +79,34 @@ export default {
     AppCreateButton,
     AppGroup,
     AppCreateGroup,
-    AppAskCollege,
     AppAskSpeciality,
     AppPreloader,
-  },
-  computed: {
-    ...mapGetters({
-      groups: 'groups/list',
-    }),
   },
   data() {
     return {
       showCreateGroup: false,
       showPreloader: false,
-      editingCollege: {},
       editingSpeciality: {},
+      groups: [],
     }
   },
   methods: {
     ...mapActions({
-      getGroups: 'groups/get',
       getSpeciality: 'specialities/getByID',
     }),
     specialitySelected(speciality) {
       this.editingSpeciality = speciality
 
-      this.showPreloader = true
-
-      this.getGroups(speciality.groups).then(() => {
-        this.showPreloader = false
-      })
+      this.updateGroups()
     },
     async updateGroups() {
       const { editingSpeciality: { id } } = this
 
       this.showPreloader = true
 
-      const { groups } = await this.getSpeciality(id) || {}
+      const { groups = [] } = await this.getSpeciality(id) || {}
 
-      await this.getGroups(groups)
+      this.groups = groups
 
       this.showPreloader = false
     },
@@ -139,6 +121,9 @@ export default {
     justify-content: space-between;
     align-items: center;
 
+    border-bottom: 1px solid var(--color-bg-light);
+    padding-bottom: 15px;
+
     font-weight: 300;
 
     .title {
@@ -151,16 +136,12 @@ export default {
         margin-top: 10px;
         color: var(--color-font-dark);
 
-        .icon {
-          margin: 0 10px;
-        }
-
         span {
           cursor: pointer;
           user-select: none;
 
           &:hover {
-            color: var(--color-font-main);
+            color: var(--color-accent-green);
           }
         }
       }
@@ -178,6 +159,28 @@ export default {
 
   .selection {
     margin-top: 20px;
+
+    .no-groups {
+      width: 40%;
+      margin: 70px auto;
+      text-align: center;
+
+      div {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        color: var(--color-font-dark);
+      }
+
+      span {
+        color: var(--color-accent-green);
+        cursor: pointer;
+        font-size: 1.1em;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
 
     .list {
       margin-top: 20px;

@@ -46,10 +46,17 @@
       <div class="line"></div>
     </div>
 
-    <router-link
-      class="section-link"
-      to="/join"
-    >Створити профіль</router-link>
+    <div class="join">
+      <router-link
+        class="section-link"
+        to="/join"
+      >Створити профіль</router-link>
+
+      <router-link
+        class="section-link"
+        :to="{ name: 'inviteJoin' }"
+      >Приєднатись з інвайт-кодом</router-link>
+    </div>
   </div>
 </template>
 
@@ -85,9 +92,10 @@ export default {
   methods: {
     ...mapActions({
       signIn: 'auth/signIn',
+      redirectToHome: 'auth/redirectToHome',
     }),
     validateSignIn() {
-      const { email, password } = this
+      const { email, password, $router } = this
 
       if (!email || !password) {
         this.alert = {
@@ -116,12 +124,12 @@ export default {
       return this.signIn({
         email,
         password,
-      }).then(() => {
-        this.$router.push({ name: 'homeUser' })
+      }).then(async () => {
+        await this.redirectToHome({ $router })
       }).catch(() => {
         this.alert = {
           title: 'Помилка входу',
-          text: 'Увійти не вдалось. Перевірте правильність даних.',
+          text: 'Увійти не вдалось',
           isSuccess: false,
           show: true,
         }
@@ -147,6 +155,14 @@ export default {
     text-align: center;
   }
 
+  .join {
+    text-align: center;
+
+    .section-link {
+      margin-bottom: 10px;
+    }
+  }
+
   .app-form-field {
     margin-bottom: 20px;
 
@@ -162,7 +178,7 @@ export default {
 
   .forgot-password-link,
   .section-link {
-    display: inline-block;
+    display: block;
   }
 
   .forgot-password-link {

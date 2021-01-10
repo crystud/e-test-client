@@ -5,11 +5,27 @@ import axios from '../../tools/axios'
 export default {
   namespaced: true,
 
-  state: {},
+  state: {
+    question: {
+      id: 0,
+      question: '',
+      type: null,
+      attachment: null,
+      topic: {},
+      creator: {},
+      answers: [],
+    },
+  },
 
-  getters: {},
+  getters: {
+    question: ({ question }) => question,
+  },
 
-  mutations: {},
+  mutations: {
+    setQuestion(state, question) {
+      state.question = question
+    },
+  },
 
   actions: {
     async create(_, questionData) {
@@ -31,17 +47,22 @@ export default {
 
         return AsyncLoop(questions, async (questionInfo, next) => {
           const {
-            question: text,
+            question: answerText,
             correct = false,
             position = 0,
+            image: { data: image = '' } = {},
           } = questionInfo
 
-          const { data, status } = await axios.post('/answers', {
-            text,
+          const payload = {
+            answerText,
             correct,
-            position,
             task: test,
-          })
+          }
+
+          if (position) payload.position = position
+          if (image) payload.image = image
+
+          const { data, status } = await axios.post('/answers', payload)
 
           if (status === 201) {
             inserted.push(data)
@@ -51,7 +72,7 @@ export default {
         }, () => resolve(inserted))
       })
     },
-    async getByID(_, questionID) {
+    async getByID({ commit }, questionID) {
       try {
         const { data, status } = await axios.get(`/tasks/${questionID}`)
 
@@ -59,36 +80,21 @@ export default {
           return Promise.reject()
         }
 
+        commit('setQuestion', data)
+
         return Promise.resolve(data)
       } catch (e) {
         return Promise.reject()
       }
     },
-    getByIDs({ dispatch }, questionsIDs) {
+    addToTest(_, { questionsIDs, testID: test }) {
       return new Promise((resolve) => {
-        if (questionsIDs.length === 0) return resolve([])
+        if (questionsIDs.length === 0 || !test) return resolve([])
 
         const questions = []
 
-        return AsyncLoop(questionsIDs, async (id, next) => {
-          const question = await dispatch('getByID', id)
-
-          if (question) {
-            questions.push(question)
-          }
-
-          return next()
-        }, () => resolve(questions))
-      })
-    },
-    addToTest(_, { questionsIDs, level }) {
-      return new Promise((resolve) => {
-        if (questionsIDs.length === 0 || !level) return resolve([])
-
-        const questions = []
-
-        return AsyncLoop(questionsIDs, async (questionID, next) => {
-          const { data, status } = await axios.post(`/levels/${level}/task/${questionID}`)
+        return AsyncLoop(questionsIDs, async (task, next) => {
+          const { data, status } = await axios.post('/tests/addTask', { task, test })
 
           if (status === 201) {
             questions.push(data)
@@ -97,6 +103,15 @@ export default {
           return next()
         }, () => resolve(questions))
       })
+    },
+    async addTopicToTest(_, questionData) {
+      const { data, status } = await axios.post('/tests/addTopic', questionData)
+
+      if (status !== 201) {
+        return Promise.reject()
+      }
+
+      return Promise.resolve(data)
     },
   },
 }

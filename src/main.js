@@ -46,7 +46,18 @@ import {
   faChevronRight,
   faUserPlus,
   faRedo,
+  faMapMarkerAlt,
+  faImage,
+  faChevronDown,
+  faFileExcel,
+  faFileUpload,
+  faUserClock,
+  faQuestion,
+  faQrcode,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons'
+
+import moment from 'moment-timezone'
 
 import App from './App.vue'
 import './registerServiceWorker'
@@ -103,8 +114,23 @@ library.add(faFilter)
 library.add(faChevronRight)
 library.add(faUserPlus)
 library.add(faRedo)
+library.add(faMapMarkerAlt)
+library.add(faImage)
+library.add(faChevronDown)
+library.add(faFileExcel)
+library.add(faFileUpload)
+library.add(faUserClock)
+library.add(faQuestion)
+library.add(faQrcode)
+library.add(faExclamationTriangle)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+moment.locale('uk')
+moment.tz.guess(true)
+
+Vue.prototype.$moment = moment
+Vue.prototype.$defaultAvatar = import('@/assets/no_user.png')
 
 Vue.config.productionTip = false
 

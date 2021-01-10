@@ -1,24 +1,32 @@
 export default (axiosInstance, store) => {
   const refresh = async (response) => {
-    await store.dispatch('auth/refresh')
+    const authorization = await store.dispatch('auth/refresh')
 
-    return axiosInstance.post({
+    const query = await axiosInstance.post({
       ...response.config,
       header: {
-        authorization: store.getters['auth/refreshToken'],
+        authorization,
       },
     })
+
+    return query
   }
 
   axiosInstance.interceptors.response.use(async (response) => {
+    let query
+
     if (response && response.status === 401) {
-      await refresh()
+      query = await refresh(response)
     }
 
-    return response
+    return query || response
   }, async (error) => {
+    let query
+
     if (error?.response.status === 401) {
-      await refresh(error.response)
+      query = await refresh(error.response)
     }
+
+    return query || error.response
   })
 }

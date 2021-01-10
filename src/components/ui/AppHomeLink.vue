@@ -6,7 +6,9 @@
 >
   <div
     class="line"
-    :class="[this.$router.currentRoute.name === this.link  ? '' : 'line-hide']"
+    :class="{
+      'line-hide': !isActiveRoute,
+    }"
   >
     <div class="shadow"></div>
   </div>
@@ -22,15 +24,40 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
-  name: 'AppHomeLink',
   methods: {
     go() {
-      if (this.$router.currentRoute.name !== this.link) {
-        this.$router.push({ name: this.link })
+      const { isActiveRoute } = this
+
+      if (!isActiveRoute) {
+        const { params } = this
+
+        this.$router.push({
+          name: this.link,
+          params,
+        })
       }
+    },
+  },
+  computed: {
+    isActiveRoute() {
+      const {
+        $route: { name, params: currentRouteParams = {} },
+        link,
+        params = {},
+      } = this
+
+      let paramsAreSame = true
+
+      Object
+        .keys(currentRouteParams)
+        .forEach((key) => {
+          if (parseInt(currentRouteParams[key], 10) !== parseInt(params[key], 10)) {
+            paramsAreSame = false
+          }
+        })
+
+      return name === link && paramsAreSame
     },
   },
   props: {
@@ -42,11 +69,11 @@ export default {
       type: String,
       require: true,
     },
-  },
-  computed: {
-    ...mapGetters({
-      user: 'user/self',
-    }),
+    params: {
+      type: Object,
+      require: false,
+      default: () => {},
+    },
   },
 }
 </script>

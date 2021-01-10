@@ -1,83 +1,118 @@
 <template>
-  <div class="app-create-question">
+  <div
+    class="app-create-question"
+    v-if="show"
+  >
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-modal-window
-      :show="show && !alert.show"
-      :noPaddings="true"
-    >
-      <div class="title">Створення запитання для теми</div>
-
-      <div
-        class="content"
-        v-if="show"
-      >
+    <div class="content">
+      <div class="question-info">
         <app-data-list
+          v-if="false"
           :data="[
-            ['Тема', topic.name],
-            ['Створив', `${topic.creator.firstName} ${topic.creator.lastName}`],
+            ['Питання для теми', topic.name],
+            ['Предмет', topic.subject.name],
           ]"
         ></app-data-list>
 
-        <app-input
-          appearance="secondary"
-          class="app-input"
-          placeholder="Запитання..."
-          @change="newTitle => title = newTitle"
-        ></app-input>
+        <div class="question-type-selector">
+          <div class="label">Тип запитання</div>
 
-        <app-text-area
-          placeholder="Опис запитання (не обов'язково)"
-          class="app-text-area"
-          @change="value => description = value"
-        ></app-text-area>
+          <div class="list">
+            <div
+              v-for="({ label, value }, index) in types"
+              v-bind:key="index"
+              @click="type = value"
+              :class="{
+                selected: type === value,
+              }"
+            >{{label}}</div>
+          </div>
+        </div>
 
-        <app-select
-          :values="[
-            { label: '1 варіант відповіді', value: 'single_choice' },
-            { label: 'Декілька варіантів', value: 'multy_choice' },
-            { label: 'Ввести значення', value: 'text_input' },
-            { label: 'Встановити відповідність', value: 'numbering' },
-          ]"
-          label="Тип запитання"
-          class="app-select"
-          :sideBorder="true"
-          @change="({ value }) => type = value"
-        ></app-select>
+        <div
+          class="test-addition"
+          v-if="test"
+        >
+          Створене питання буде автоматично занесено до тесту №{{test.id}} "{{test.name}}"
+        </div>
 
+        <div class="test-info">
+          <app-input
+            appearance="secondary"
+            class="app-input"
+            placeholder="Текст запитання..."
+            @change="newTitle => title = newTitle"
+          ></app-input>
+
+          <label
+            class="attach-image"
+            for="attachImage"
+          >
+            <input
+              type="file"
+              accept="image/jpg,image/png,image/gif,image/jpeg"
+              id="attachImage"
+              @change="setAttachedImage"
+            >
+
+            <font-awesome-icon
+              icon="image"
+              v-if="!attachedFile.name"
+            ></font-awesome-icon>
+
+            <div
+              class="attached-filename"
+              v-if="attachedFile.name"
+            >
+              {{attachedFile.name}}
+            </div>
+          </label>
+
+          <div
+            class="remove-image"
+            @click="attachedFile = {}"
+            v-if="attachedFile.name"
+          >
+            <font-awesome-icon icon="times"></font-awesome-icon>
+          </div>
+        </div>
+      </div>
+
+      <div class="answers-list">
         <app-single-option
-          v-if="type === 'single_choice'"
+          v-if="type === 'SIMPLE_CHOICE'"
           @change="options => optionsState = options"
         ></app-single-option>
 
         <app-multi-option
-          v-if="type === 'multy_choice'"
+          v-if="type === 'MULTIPLE_CHOICE'"
           @change="options => optionsState = options"
         ></app-multi-option>
 
         <app-text-input-option
-          v-if="type === 'text_input'"
+          v-if="type === 'SHORT_ANSWER'"
           @change="options => optionsState = options"
         ></app-text-input-option>
 
         <app-dragging-option
-          v-if="type === 'numbering'"
+          v-if="type === 'NUMERICAL'"
           @change="options => optionsState = options"
         ></app-dragging-option>
       </div>
+    </div>
 
-      <div class="btns">
-        <button
-          class="leave"
-          @click="$emit('close')"
-        >Скасувати</button>
+    <div class="btns">
+      <button
+        class="leave"
+        @click="$emit('close')"
+      >Скасувати</button>
 
-        <button
-          class="create"
-          @click="create"
-        >Створити запитання</button>
-      </div>
-    </app-modal-window>
+      <button
+        class="create"
+        @click="create"
+      >Створити запитання</button>
+    </div>
   </div>
 </template>
 
@@ -85,11 +120,8 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
-import AppModalWindow from '@/components/ui/AppModalWindow.vue'
 import AppDataList from '@/components/ui/AppDataList.vue'
 import AppInput from '@/components/ui/AppInput.vue'
-import AppSelect from '@/components/ui/AppSelect.vue'
-import AppTextArea from '@/components/ui/AppTextArea.vue'
 
 import AppSingleOption from '@/components/templates/questions/AppSingleOption.vue'
 import AppMultiOption from '@/components/templates/questions/AppMultiOption.vue'
@@ -97,27 +129,21 @@ import AppTextInputOption from '@/components/templates/questions/AppTextInputOpt
 import AppDraggingOption from '@/components/templates/questions/AppDraggingOption.vue'
 
 export default {
-  components: {
-    AppPreloader,
-    AppModalWindow,
-    AppDataList,
-    AppInput,
-    AppSelect,
-    AppTextArea,
-    AppSingleOption,
-    AppMultiOption,
-    AppTextInputOption,
-    AppDraggingOption,
-  },
   data() {
     return {
       showPreloader: false,
       type: null,
       title: '',
-      description: '',
       optionsState: {
         questions: [],
       },
+      attachedFile: {},
+      types: [
+        { label: 'Простий вибір', value: 'SIMPLE_CHOICE' },
+        { label: 'Множинний вибір', value: 'MULTIPLE_CHOICE' },
+        { label: 'Коротка відповідь', value: 'SHORT_ANSWER' },
+        { label: 'Послідовність', value: 'NUMERICAL' },
+      ],
     }
   },
   computed: {
@@ -130,57 +156,135 @@ export default {
       setAlert: 'alert/set',
       createQuestion: 'questions/create',
       addAnswers: 'questions/addAnswers',
+      addQuestionToTest: 'questions/addToTest',
     }),
+    setAttachedImage({ target: { files: [image] } }) {
+      const reader = new FileReader()
+
+      reader.onload = () => {
+        const { result } = reader
+
+        const data = result.split('base64,')[1]
+
+        this.attachedFile = {
+          name: image.name,
+          data,
+        }
+      }
+
+      reader.onerror = () => {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось обробити фото',
+          show: true,
+          isSuccess: false,
+        })
+      }
+
+      reader.readAsDataURL(image)
+    },
     async create() {
       const {
         optionsState: {
           questions,
-          ignoreCase = false,
+          isReadyToBeCreated: {
+            ready,
+            error,
+          } = {},
         },
         topic: { id: topic },
-        title: ask,
-        description,
+        title: question,
         type,
+        attachedFile: { data: image = '' },
       } = this
 
-      if (type === 'multy_choice' && questions.length <= 1) {
-        return this.setAlert({
+      if (!type) {
+        this.setAlert({
+          title: 'Оберіть тип, та задайте варіанти відповіді',
+          show: true,
+          delay: 1500,
+          isSuccess: false,
+        })
+
+        return
+      }
+
+      if (!question) {
+        this.setAlert({
+          title: 'Вкажіть текст запитання',
+          show: true,
+          delay: 1500,
+          isSuccess: false,
+        })
+
+        return
+      }
+
+      if (!ready) {
+        this.setAlert({
+          title: 'Помилка',
+          text: error,
+          show: true,
+          delay: 1500,
+          isSuccess: false,
+        })
+
+        return
+      }
+
+      if (type === 'MULTIPLE_CHOICE' && questions.length <= 1) {
+        this.setAlert({
           title: 'Варіантів відповідей недостатньо',
           text: 'Створіть ще варіанти відповідей',
           isSuccess: false,
           delay: 1500,
           show: true,
         })
+
+        return
       }
 
       if (!questions.length) {
-        return this.setAlert({
+        this.setAlert({
           title: 'Варіантів відповідей немає',
           text: 'Створіть варіанти відповідей',
           isSuccess: false,
           delay: 1500,
           show: true,
         })
+
+        return
       }
 
       try {
         this.showPreloader = true
 
-        const { id: test } = await this.createQuestion({
+        const payload = {
           topic,
-          ask,
-          description,
-          ignoreCase,
+          question,
           type,
-        }) || {}
+        }
+
+        if (image) payload.image = image
+
+        const { id: test } = await this.createQuestion(payload) || {}
 
         await this.addAnswers({
           questions,
           test,
         })
 
+        if (this.test) {
+          const { test: { id: insertToTestID } } = this
+
+          await this.addQuestionToTest({
+            questionsIDs: [test],
+            testID: insertToTestID,
+          })
+        }
+
         this.setAlert({
-          title: 'Запитання створено',
+          title: `Запитання створено${this.test ? ' та занесено до тесту' : ''}`,
           isSuccess: true,
           show: true,
           delay: 1000,
@@ -188,9 +292,11 @@ export default {
 
         setTimeout(() => this.$emit('created'))
       } catch (e) {
-        return this.setAlert({
+        const text = 'Створити запитання не вдалось'
+
+        this.setAlert({
           title: 'Помилка',
-          text: 'Створити запитання не вдалось',
+          text,
           delay: 1500,
           show: true,
           isSuccess: false,
@@ -198,50 +304,128 @@ export default {
       } finally {
         this.showPreloader = false
       }
-
-      return false
     },
   },
   props: {
     topic: {
       type: Object,
       required: true,
+    },
+    test: {
+      type: Object,
+      required: false,
       default: () => {},
     },
     show: {
       type: Boolean,
       required: true,
-      default: () => false,
     },
+  },
+  components: {
+    AppPreloader,
+    AppDataList,
+    AppInput,
+    AppSingleOption,
+    AppMultiOption,
+    AppTextInputOption,
+    AppDraggingOption,
   },
 }
 </script>
 
 <style lang="less" scoped>
 .app-create-question {
+  .test-addition {
+    color: var(--color-accent-orange);
+    margin: 30px 0;
+  }
+
   .title,
   .content {
-    width: 100vw;
-    max-width: 600px;
-    padding: 20px;
-  }
-
-  .title {
-    font-size: 1.2em;
-    text-align: center;
-    border-bottom: 1px solid var(--color-bg-main);
+    padding: 0 20px;
   }
 
   .content {
-    overflow-y: auto;
-    max-height: 60vh;
+    display: grid;
+
+    .app-input {
+      padding: 5px;
+      font-size: 1.1em;
+    }
 
     .app-input,
-    .app-select,
-    .app-text-area {
+    .app-select {
       background: var(--color-bg-main);
-      margin-bottom: 20px;
       border-radius: 10px;
+    }
+  }
+
+  .remove-image {
+    padding: 15px;
+    background: var(--color-bg-main);
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--color-accent-red);
+  }
+
+  .test-info {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-gap: 10px;
+    align-items: center;
+
+    margin: 20px 0 30px;
+
+    .attach-image {
+      padding: 20px;
+      border-radius: 10px;
+      color: var(--color-font-dark);
+      height: 100%;
+      cursor: pointer;
+
+      svg {
+        font-size: 1.3em;
+      }
+
+      &:hover,
+      .attached-filename {
+        color: var(--color-accent-green);
+      }
+
+      input {
+        display: none;
+      }
+    }
+  }
+
+  .question-type-selector {
+    margin-bottom: 25px;
+
+    .label {
+      font-size: 1.2em;
+      font-weight: 100;
+      color: var(--color-font-dark);
+      margin-bottom: 15px;
+    }
+
+    .list {
+      div {
+        cursor: pointer;
+        display: inline-block;
+        margin-right: 10px;
+        padding: 15px 20px;
+        border-radius: 7px;
+        background: var(--color-bg-main);
+        color: var(--color-font-main);
+
+        transition: none;
+
+        &.selected {
+          background: var(--color-accent-green);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+          color: #fff;
+        }
+      }
     }
   }
 
@@ -250,6 +434,8 @@ export default {
     grid-template-columns: 1fr 1fr;
 
     border-top: 1px solid var(--color-bg-main);
+
+    margin-top: 40px;
 
     button {
       background: transparent;

@@ -8,88 +8,186 @@
       @finish="finish"
     ></app-finish-warning>
 
-    <app-questions-list
-      :currentQuestion="currentQuestion.id"
-      @setQuestion="loadQuestion"
-      @onStop="showWarning = true"
-      :tasksList="attempt.tasks || []"
-    ></app-questions-list>
-
-    {{attempt.tasks}}
-
-    <div>
-      <div style="margin: 10px 0">{{currentQuestion}}</div>
-      <div style="margin: 10px 0">{{options}}</div>
-      <div style="margin: 10px 0">{{userAnswers}}</div>
-      <div style="margin: 10px 0">{{numbering}}</div>
-    </div>
-
-    <div
-      v-if="!currentQuestion.id"
-      class="select-question"
-    >Оберіть запитання</div>
-
-    <div v-if="currentQuestion.id">
-      <app-question :question="currentQuestion"></app-question>
-
-      <div class="options">
-        <div class="header">
-          <span class="title">{{taskTypesTips[currentQuestion.type]}}</span>
-          <span class="title">Тип: {{taskTypes[currentQuestion.type]}}</span>
-        </div>
-
-        <div
-          v-if="currentQuestion.type === 'text_input'"
-          class="input-type"
-        >
-          <input
-            type="text"
-            placeholder="Введіть свою відповідь"
-            v-on:keyup="fillTextInputQuestion"
-            :value="getTextInputQuestionValue()"
-          >
-        </div>
-
-        <div
-          v-if="currentQuestion.type === 'numbering'"
-          class="numbering-type"
-        >
+    <div class="markup">
+      <div class="leftbar">
+        <div class="questions">
           <div
-            class="option"
-            v-for="(option, index) in options"
-            :key="index"
+            class="time-left"
+            :class="{
+              good: secondsLeft > 180,
+              warning: secondsLeft < 180 && secondsLeft > 60,
+              bad: secondsLeft < 60,
+            }"
           >
-            <select v-on:change="(ev) => fillNumberingQuestion(ev, index)">
-              <option>-</option>
+            <div class="label">Залишилось часу</div>
 
-              <option
-                v-for="(numberingOption, localIndex) in options"
-                :key="localIndex"
-                :value="numberingOption.id"
-                :selected="checkNumberingOptionSelected(numberingOption.id, index)"
-              >{{localIndex+1}}</option>
-            </select>
-
-            <span class="text">{{option.text}}</span>
-          </div>
-        </div>
-
-        <div v-if="['single_choice', 'multy_choice'].includes(currentQuestion.type)">
-          <div
-            v-if="!options.length"
-            class="select-question"
-          >
-            Варіантів відповіді не знайдено...
+            <div class="value">{{timeLeft}}</div>
           </div>
 
-          <div class="list">
-            <app-answer-option
-              v-for="(option, index) in options"
+          <ul>
+            <li
+              v-for="(task, index) in tasksList"
               v-bind:key="index"
-              :text="option.text"
-              @toggleSelect="toggle(option.id, currentQuestion.id)"
-              :selected="isSelected(option.id, currentQuestion.id)"
-            ></app-answer-option>
+              :class="{
+                selected: currentQuestion.id === task.id,
+              }"
+              @click="() => {
+                if (currentQuestion.id !== task.id) {
+                  currentQuestion = task
+                  loadQuestion()
+                }
+              }"
+            >
+              <span class="text">Питання №{{index+1}}</span>
+
+              <span
+                class="is-answered"
+                :class="{
+                  'answered': userAnswers[index].answers.length,
+                }"
+              >
+                <font-awesome-icon
+                  :icon="
+                    userAnswers[index].answers.length ?
+                      'check' : 'question'
+                  "
+                ></font-awesome-icon>
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="finish"
+          @click="showWarning = true"
+        >
+          Закінчити тест
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="content">
+          Статус: {{currentStatus.toFixed(2)}}%
+        </div>
+
+        <div
+          class="progress"
+          :style="{
+            width: `${currentStatus}%`,
+          }"
+        ></div>
+      </div>
+
+      <div class="current-question">
+        <div
+          v-if="question.id"
+          class="question-content"
+        >
+          <div
+            class="image"
+            v-if="question.task.image"
+          >
+            <img
+              :src="`data:image/jpg;base64,${question.task.image}`"
+              alt="question image"
+            >
+          </div>
+
+          <div
+            class="text"
+            v-if="question.task.question"
+          >
+            {{question.task.question}}
+          </div>
+        </div>
+
+        <div
+          v-if="!question.id"
+          class="select-question"
+        >Оберіть запитання</div>
+
+        <div v-if="question.task">
+          <div class="options">
+            <div class="header">
+              <span class="title">{{taskTypesTips[currentQuestion.task.type]}}</span>
+              <span class="title">Тип: {{taskTypes[currentQuestion.task.type]}}</span>
+            </div>
+
+            <div
+              v-if="question.task.type === 'SHORT_ANSWER'"
+              class="input-type"
+            >
+              <input
+                type="text"
+                autofocus
+                placeholder="Введіть свою відповідь"
+                v-on:keyup="fillTextInputQuestion"
+                :value="getTextInputQuestionValue()"
+              >
+            </div>
+
+            <div
+              v-if="question.task.type === 'NUMERICAL'"
+              class="numbering-type"
+            >
+              <draggable
+                class="list-group"
+                tag="ul"
+                v-model="numbering"
+                :dragOptions="{
+                  animation: 0,
+                  group: 'description',
+                  disabled: false,
+                  ghostClass: 'ghost',
+                }"
+                @end="endDragging"
+              >
+                <transition-group
+                  type="transition"
+                  name="flip-list"
+                >
+                    <div
+                      v-for="option in numbering"
+                      :key="option.id"
+                      class="sortable-option"
+                    >
+                      <div
+                        v-if="option.answer.image"
+                        class="sortable-image"
+                      >
+                        <img
+                          :src="`data:image/jpg;base64,${option.answer.image}`"
+                          alt=""
+                        />
+                      </div>
+
+                      <div class="sortable-text">
+                        {{option.answer.answerText}}
+                      </div>
+                    </div>
+                </transition-group>
+              </draggable>
+            </div>
+
+            <div v-if="['SIMPLE_CHOICE', 'MULTIPLE_CHOICE'].includes(question.task.type)">
+              <div
+                v-if="!options.length"
+                class="select-question"
+              >
+                Варіантів відповіді не знайдено...
+              </div>
+
+              <div class="list">
+                <app-answer-option
+                  v-for="(option, index) in options"
+                  v-bind:key="index"
+                  :text="option.answer.answerText"
+                  :image="option.answer.image || ''"
+                  @toggleSelect="toggle(option.id, question.id)"
+                  :selected="isSelected(option.id, question.id)"
+                ></app-answer-option>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -100,35 +198,88 @@
 <script>
 import { mapActions } from 'vuex'
 
-import AppQuestionsList from '@/components/templates/tests/AppQuestionsList.vue'
-import AppQuestion from '@/components/templates/tests/AppQuestion.vue'
+import draggable from 'vuedraggable'
+
 import AppAnswerOption from '@/components/templates/tests/AppAnswerOption.vue'
 import AppFinishWarning from '@/components/templates/tests/AppFinishWarning.vue'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
-  name: 'testPass',
-  components: {
-    AppQuestionsList,
-    AppQuestion,
-    AppAnswerOption,
-    AppFinishWarning,
-    AppPreloader,
+  computed: {
+    tasksList() {
+      const { attempt: { attemptTasks } = {} } = this
+
+      return attemptTasks || []
+    },
+    options() {
+      return this.question.attemptAnswers || []
+    },
+    currentStatus() {
+      const { userAnswers, tasksList } = this
+
+      return ((userAnswers.filter(({ answers }) => answers.length > 0).length
+            / tasksList.length) * 100)
+    },
   },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
       getTest: 'tests/getTestByID',
       getAttempt: 'attempts/getByID',
-      getQuestion: 'attempts/getQuestion',
       getTasks: 'attempts/getTasks',
       loadOptions: 'attempts/loadOptions',
       sendAnswers: 'attempts/sendAnswers',
+      getQuestion: 'attempts/getQuestion',
     }),
+    countFinishTime() {
+      const {
+        attempt: { maxEndTime } = {},
+      } = this
+
+      const endTime = new Date(maxEndTime)
+      const currentTime = new Date()
+
+      const diff = Math.round((endTime - currentTime) / 1000) - 3600 * 3
+
+      this.secondsLeft = diff
+      this.timeLeft = this.countPassingTime(diff > 0 ? diff : 0)
+    },
+    countPassingTime(timeLeft) {
+      const hours = Math.floor(timeLeft / 3600)
+      const minutes = Math.floor((timeLeft - (hours * 3600)) / 60)
+      const seconds = timeLeft % 60
+
+      const hoursText = hours > 0 ? `${hours} год. ` : ''
+
+      return `${hoursText}${minutes} хв. ${seconds} сек.`
+    },
+    endDragging() {
+      const {
+        currentQuestion: { id: questionID },
+        numbering,
+      } = this
+
+      const question = this.userAnswers.findIndex(({ question: { id } }) => questionID === id)
+
+      if (question === -1) {
+        const answers = numbering.map(({ id }) => id)
+
+        this.userAnswers.push({
+          question: this.currentQuestion,
+          answers,
+        })
+      } else {
+        const answers = this.userAnswers
+
+        answers[question].answers = numbering.map(({ id }) => id)
+
+        this.userAnswers = answers
+      }
+    },
     async finish() {
       const {
         userAnswers,
-        tasks,
+        tasksList: tasks,
         $route: { params: { attemptID } },
       } = this
 
@@ -137,7 +288,7 @@ export default {
       userAnswers.forEach(({ question, answers }) => {
         const location = tasks.findIndex(({ id }) => question.id === id)
 
-        if (question.type === 'text_input') {
+        if (question.task.type === 'SHORT_ANSWER') {
           responseTasks[location] = {
             answers: answers[0],
           }
@@ -153,22 +304,42 @@ export default {
       try {
         this.showPreloader = true
 
-        await this.sendAnswers({
-          payload: { tasks: responseTasks },
+        const { result: { id: resultID } = {} } = await this.sendAnswers({
+          payload: {
+            tasks: responseTasks.map((response) => response || { answers: [] }),
+          },
           attemptID,
         })
+
+        localStorage.removeItem('attempt')
+
+        if (!resultID) {
+          this.setAlert({
+            title: 'Помилка',
+            text: 'Не вдалось оприділити ID результату',
+            show: true,
+            isSuccess: false,
+          })
+
+          return
+        }
+
+        this.$router.push({
+          name: 'testResults',
+          params: { resultID },
+        })
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось надіслати результати...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось надіслати результати...',
+          text,
           show: true,
           delay: 2500,
           isSuccess: false,
         })
       } finally {
         this.showPreloader = false
-
-        this.$router.push({ name: 'homeUser' })
       }
     },
     checkNumberingOptionSelected(optionID, index) {
@@ -181,30 +352,6 @@ export default {
       if (!question) return false
 
       return parseInt(question.answers[index], 10) === parseInt(optionID, 10)
-    },
-    fillNumberingQuestion(ev, index) {
-      const {
-        currentQuestion: { id: questionID },
-      } = this
-
-      const question = this.userAnswers.findIndex(({ question: { id } }) => questionID === id)
-
-      if (question === -1) {
-        const answers = []
-
-        answers[index] = ev.target.value
-
-        this.userAnswers.push({
-          question: this.currentQuestion,
-          answers,
-        })
-      } else {
-        const answers = this.userAnswers
-
-        answers[question].answers[index] = ev.target.value
-
-        this.userAnswers = answers
-      }
     },
     fillTextInputQuestion(ev) {
       const {
@@ -253,13 +400,12 @@ export default {
           answers: [optionID],
         })
       } else {
-        switch (this.currentQuestion.type) {
-          case 'single_choice':
+        switch (this.question.task.type) {
+          case 'SIMPLE_CHOICE':
             question.answers = [optionID]
             break
-          case 'multy_choice':
-            if (question.answers.length + 1 < this.options.length
-                && !question.answers.includes(optionID)) {
+          case 'MULTIPLE_CHOICE':
+            if (!question.answers.includes(optionID)) {
               question.answers.push(optionID)
             } else {
               const location = question.answers.indexOf(optionID)
@@ -276,22 +422,25 @@ export default {
 
       return false
     },
-    async loadQuestion(questionID) {
+    async loadQuestion() {
       try {
+        const { currentQuestion: { id } = {} } = this
+
         this.showPreloader = true
 
-        const question = this.tasks.find(({ id }) => id === questionID)
+        this.question = await this.getQuestion(id)
 
-        this.options = await this.loadOptions({
-          questionID: question.id,
-          attemptID: this.attempt.id,
-        })
+        if (this.question.task.type === 'NUMERICAL') {
+          this.numbering = this.options
 
-        this.currentQuestion = question
+          this.endDragging()
+        }
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось прогрузити питання...'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось прогрузити питання...',
+          text,
           show: true,
           isSuccess: false,
         })
@@ -305,23 +454,23 @@ export default {
       showWarning: false,
       showPreloader: false,
       currentQuestion: {},
-      test: {},
       attempt: {},
-      tasks: [],
-      options: [],
+      question: {},
       userAnswers: [],
       numbering: [],
+      timeLeft: '',
+      secondsLeft: 0,
       taskTypes: {
-        single_choice: 'Один варіант',
-        multy_choice: 'Декілька варіантів',
-        text_input: 'Ввести значення',
-        numbering: 'Визначити послідовність',
+        SIMPLE_CHOICE: 'Простий вибір',
+        MULTIPLE_CHOICE: 'Множинний вибір',
+        SHORT_ANSWER: 'Коротка відповідь',
+        NUMERICAL: 'Послідовність',
       },
       taskTypesTips: {
-        single_choice: 'Варіанти відповідей',
-        multy_choice: 'Варіанти відповідей',
-        text_input: 'Введіть відповідь',
-        numbering: 'Визначте послідовність',
+        SIMPLE_CHOICE: 'Варіанти відповідей',
+        MULTIPLE_CHOICE: 'Варіанти відповідей',
+        SHORT_ANSWER: 'Введіть відповідь',
+        NUMERICAL: 'Сортування',
       },
     }
   },
@@ -332,17 +481,55 @@ export default {
 
     try {
       this.attempt = await this.getAttempt(attemptID)
-      this.tasks = await this.getTasks(attemptID)
+
+      if (!this.attempt.active) {
+        const delay = 2000
+
+        localStorage.removeItem('attempt')
+
+        this.setAlert({
+          title: 'Спроба неактивна',
+          text: 'Час дії спроби витік.',
+          show: true,
+          isSuccess: false,
+          delay,
+        })
+
+        setTimeout(() => {
+          this.$router.push({ name: 'homeUser' })
+        }, delay)
+
+        return
+      }
+
+      localStorage.setItem('attempt', JSON.stringify(this.attempt))
+
+      this.userAnswers = this.attempt.attemptTasks.map((question) => ({
+        question,
+        answers: [],
+      }))
+
+      this.countFinishTime()
+
+      this.timerInterval = setInterval(this.countFinishTime, 1000)
     } catch (e) {
+      const text = e?.response.data.message || 'Не вдалось прогрузити дані...'
+
       this.setAlert({
         title: 'Помилка',
-        text: 'Не вдалось прогрузити дані...',
+        text,
         isSuccess: false,
         show: true,
       })
     } finally {
       this.showPreloader = false
     }
+  },
+  components: {
+    AppAnswerOption,
+    AppFinishWarning,
+    AppPreloader,
+    draggable,
   },
 }
 </script>
@@ -351,97 +538,285 @@ export default {
 .app-test-pass {
   user-select: none;
 
-  .options {
-    margin-top: 30px;
+  .time-left {
+    border-bottom: 1px solid var(--color-bg-main);
+    padding: 20px;
 
-    .header {
+    .label {
       color: var(--color-font-dark);
-
-      margin-bottom: 15px;
-
-      display: flex;
-      justify-content: space-between;
     }
 
-    .numbering-type,
-    .input-type {
-      padding: 60px 30px;
-      text-align: center;
-      border-radius: 10px;
-      background: var(--color-bg-dark);
+    .value {
+      color: var(--color-font-dark);
     }
 
-    .numbering-type {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
+    &.good .value { color: var(--color-accent-green) }
+    &.warning .value { color: var(--color-accent-orange) }
+    &.bad .value { color: var(--color-accent-red) }
+  }
 
-      .option {
-        margin-bottom: 30px;
-        display: grid;
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
 
-        grid-template-columns: 70px 200px;
-        grid-gap: 10px;
+  .no-move {
+    transition: transform 0s;
+  }
 
-        select,
-        .text {
-          background: var(--color-bg-main);
-          color: var(--color-font-main);
-          padding: 10px;
-          border-radius: 5px;
-          font-size: 1.2em;
-        }
+  .sortable-option {
+    background: var(--color-bg-main);
+    border-radius: 10px;
+    padding: 20px;
 
-        select {
-          height: 100%;
-          border: 0;
-          width: 70px;
-        }
+    margin-bottom: 20px;
 
-        .text {
-          display: flex;
-          align-items: center;
-        }
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 30px;
+
+    align-items: center;
+
+    cursor: move;
+
+    .sortable-image {
+      img {
+        max-height: 100px;
       }
     }
 
-    .input-type {
-      input {
-        padding: 15px;
-        max-width: 300px;
-        width: 100%;
-        font-size: 1em;
-        border-radius: 10px;
-        border: 0;
-        background: var(--color-bg-main);
-        color: var(--color-font-main);
-
-        &::placeholder {
-          color: var(--color-font-dark);
-        }
-      }
-    }
-
-    .list {
-      margin-top: 10px;
-
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-gap: 20px;
-    }
-
-    @media screen and (max-width: 680px) {
-      .list {
-        grid-template-columns: 1fr;
-      }
+    .sortable-text {
+      font-size: 1.1em;
     }
   }
 
-  .select-question {
-    text-align: center;
-    margin: 80px;
-    font-size: 1.5em;
-    color: var(--color-font-dark);
+  .markup {
+    display: grid;
+    grid-template-areas: 'leftbar status' 'leftbar current-question';
+    grid-template-columns: 230px 1fr;
+    grid-template-rows: auto 1fr;
+
+    width: 100%;
+    min-height: calc(100vh - 130px);
+
+    background: var(--color-bg-dark);
+    border-radius: 10px;
+
+    .leftbar {
+      grid-area: leftbar;
+      border-right: 1px solid var(--color-bg-main);
+
+      display: grid;
+      grid-template-rows: 1fr 50px;
+
+      .questions {
+        overflow: auto;
+
+        ul {
+          display: block;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+
+          li {
+            padding: 15px 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all .3s;
+
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-gap: 10px;
+
+            .is-answered {
+              color: var(--color-font-dark);
+
+              &.answered {
+                color: var(--color-accent-green);
+              }
+            }
+
+            &:hover {
+              background: var(--color-bg-main);
+            }
+
+            &::before {
+              content: "";
+
+              display: block;
+              position: absolute;
+              top: 0;
+              left: 0;
+              bottom: 0;
+              margin: auto;
+
+              width: 4px;
+              height: 0%;
+              background: var(--color-accent-green);
+              border-radius: 10px;
+
+              transition: all .3s;
+            }
+
+            &.selected {
+              color: var(--color-accent-green);
+
+              &::before {
+                height: 70%;
+              }
+            }
+          }
+        }
+      }
+
+      .finish {
+        cursor: pointer;
+        color: var(--color-accent-red);
+        background: var(--color-bg-dark);
+        border-top: 1px solid var(--color-bg-main);
+        border-radius: 0 0 0 10px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:active {
+          transform: scale(.96);
+        }
+      }
+    }
+
+    .status {
+      grid-area: status;
+      border-bottom: 1px solid var(--color-bg-main);
+
+      padding: 20px;
+
+      position: relative;
+
+      .content {
+        position: relative;
+        z-index: 105;
+      }
+
+      .progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+
+        width: auto;
+        height: 1px;
+        border-radius: 10px;
+
+        background: var(--color-accent-green);
+        opacity: 1;
+
+        transition: all .3s;
+
+        z-index: 100;
+      }
+    }
+
+    .current-question {
+      grid-area: current-question;
+      padding: 30px;
+
+      .select-question {
+        color: var(--color-font-dark);
+        font-size: 1.3em;
+        text-align: center;
+      }
+
+      .list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 20px;
+
+        @media screen and (max-width: 700px) {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .question-content {
+        display: grid;
+        grid-template-columns: auto auto;
+
+        align-items: center;
+
+        margin-bottom: 20px;
+        background: var(--color-bg-main);
+        padding: 20px;
+        border-radius: 10px;
+
+        .image {
+          img {
+            max-height: 150px;
+          }
+        }
+
+        .text {
+          font-size: 1.3em;
+        }
+      }
+
+      .options {
+        .header {
+          margin-bottom: 20px;
+
+          display: flex;
+          justify-content: space-between;
+
+          color: var(--color-font-dark);
+        }
+      }
+
+      .numbering-type {
+        .option {
+          margin-bottom: 15px;
+
+          .number {
+            font-size: 1.2em;
+          }
+
+          select {
+            font-size: 1em;
+            padding: 10px;
+            border-radius: 5px;
+            border: 0;
+            background: var(--color-bg-main);
+            color: var(--color-font-main);
+
+            margin-left: 15px;
+          }
+        }
+      }
+
+      .input-type {
+        input {
+          padding: 15px;
+          font-size: 1em;
+          border-radius: 5px;
+          border: 0;
+          background: var(--color-bg-main);
+          color: var(--color-font-main);
+
+          width: 100%;
+
+          &::placeholder {
+            color: var(--color-font-dark);
+          }
+        }
+      }
+    }
+
+    @media screen and (max-width: 650px) {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      grid-template-areas: 'status' 'leftbar' 'current-question';
+
+      .leftbar {
+        border-right: 0;
+      }
+    }
   }
 }
 </style>

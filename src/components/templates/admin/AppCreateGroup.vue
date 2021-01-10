@@ -21,17 +21,17 @@
           ]"
         ></app-data-list>
 
-        <app-datepicker
-          class="form-input"
-          placeholder="Початок навчання"
-          @change="newVal => educationStart = `${newVal}T00:00:00.000Z`"
-        ></app-datepicker>
+        <div class="education-start">
+          <span>Початок навчання</span>
 
-        <app-datepicker
-          class="form-input"
-          placeholder="Кінець навчання"
-          @change="newVal => educationFinish = `${newVal}T00:00:00.000Z`"
-        ></app-datepicker>
+          <app-input
+            class="form-input"
+            placeholder="Початок навчання"
+            @change="newVal => educationStart = newVal"
+            appearance="secondary"
+            :value="educationStart"
+          ></app-input>
+        </div>
 
         <div class="btns">
           <app-button
@@ -57,7 +57,7 @@ import { mapActions } from 'vuex'
 import AppModalWindow from '../../ui/AppModalWindow.vue'
 import AppDataList from '../../ui/AppDataList.vue'
 import AppButton from '../../ui/AppButton.vue'
-import AppDatepicker from '../../ui/AppDatepicker.vue'
+import AppInput from '../../ui/AppInput.vue'
 
 export default {
   name: 'AppCreateGroup',
@@ -65,12 +65,11 @@ export default {
     AppModalWindow,
     AppDataList,
     AppButton,
-    AppDatepicker,
+    AppInput,
   },
   data() {
     return {
-      educationStart: null,
-      educationFinish: null,
+      educationStart: new Date().getFullYear(),
     }
   },
   methods: {
@@ -79,16 +78,11 @@ export default {
     }),
     create() {
       const {
-        educationStart: startEducation,
-        educationFinish: endEducation,
+        educationStart: startYear,
         speciality: { id: speciality },
       } = this
 
-      this.createGroup({
-        endEducation,
-        startEducation,
-        speciality,
-      }).then(() => {
+      this.createGroup({ startYear, speciality }).then(() => {
         this.$emit('done', { created: true })
       }).catch(() => {
         this.$emit('done', { created: false })
@@ -135,8 +129,13 @@ export default {
         border-bottom: 1px solid var(--color-bg-light);
       }
 
-      .form-input {
+      .education-start {
         margin: 15px 0;
+        color: var(--color-font-dark);
+
+        .form-input {
+          margin-top: 10px;
+        }
       }
 
       .content {

@@ -1,70 +1,59 @@
 <template>
   <div class="app-single-option">
-    <div class="title">Відповідь: {{optionValue}}</div>
+    <div class="title">Відповідь: {{answer}}</div>
 
     <div class="add-option-form">
-      <input
+      <app-input
         type="text"
-        placeholder="Текст варіанту відповіді..."
-        v-model="optionValue"
-        @change="emitCurrentState"
-      >
-
-      <div
-        class="ignore-case"
-        @click="ignoreCase = !ignoreCase"
-      >
-        Ігнорувати регістр:
-        <span
-          :class="{
-            'ignore': ignoreCase,
-          }"
-        >{{ignoreCase ? 'Так' : 'Ні'}}</span>
-      </div>
+        placeholder="Текст короткої відповіді..."
+        appearance="secondary"
+        class="app-input"
+        @change="value => {
+          answer = value
+          emitCurrentState()
+        }"
+      ></app-input>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import AppInput from '@/components/ui/AppInput.vue'
 
 export default {
+  components: {
+    AppInput,
+  },
   data() {
     return {
-      optionValue: '',
-      ignoreCase: true,
+      answer: '',
     }
   },
   methods: {
-    ...mapActions({
-      setAlert: 'alert/set',
-    }),
     emitCurrentState() {
       const {
-        optionValue: question,
-        ignoreCase,
+        answer: question,
       } = this
 
-      this.$emit('change', {
-        questions: [{ question, correct: true }],
-        ignoreCase,
-      })
-    },
-    addOption() {
-      const { optionValue } = this
+      let ready = true
+      let error
 
-      if (!optionValue) {
-        return this.setAlert({
-          title: 'Заповніть варіант відповіді',
-          text: '',
-          isSuccess: false,
-          show: true,
-          delay: 1000,
-        })
+      if (question.length <= 0) {
+        ready = false
+        error = 'Довжина відповіді мін. 1 символ'
       }
 
-      return false
+      this.$emit('change', {
+        questions: [{
+          question,
+          correct: true,
+        }],
+        isReadyToBeCreated: { ready, error },
+      })
     },
+  },
+  created() {
+    this.emitCurrentState()
   },
 }
 </script>
@@ -78,38 +67,15 @@ export default {
   .add-option-form {
     margin-top: 10px;
 
-    input {
-      width: 100%;
-      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    grid-gap: 10px;
 
-      padding: 15px;
-      font-size: 1em;
+    .app-input {
       background: var(--color-bg-main);
-      border: 0;
-      border-radius: 5px;
-
-      color: var(--color-font-main);
-
-      &::placeholder {
-        color: var(--color-font-dark);
-      }
-    }
-  }
-
-  .ignore-case {
-    margin: 20px 0;
-    font-size: 1.2em;
-    user-select: none;
-    cursor: pointer;
-
-    color: var(--color-font-dark);
-
-    span {
-      color: var(--color-accent-red);
-
-      &.ignore {
-        color: var(--color-accent-green);
-      }
+      padding: 5px;
+      font-size: 1.1em;
     }
   }
 }

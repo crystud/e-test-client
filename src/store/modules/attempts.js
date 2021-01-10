@@ -36,9 +36,9 @@ export default {
         return Promise.reject(e)
       }
     },
-    async loadOptions(_, { questionID, attemptID }) {
+    async getQuestion(_, questionID) {
       try {
-        const { data, status } = await axios.get(`/attempts/${attemptID}/tasks/${questionID}/answers`)
+        const { data, status } = await axios.get(`/attempts/attemptTasks/${questionID}`)
 
         if (status !== 200) {
           return Promise.reject()
@@ -49,9 +49,12 @@ export default {
         return Promise.reject(e)
       }
     },
-    async sendAnswers(_, { payload, attemptID }) {
+    async sendAnswers(_, { payload: tasks, attemptID }) {
       try {
-        const { data, status } = await axios.post(`/attempts/${attemptID}/complete`, payload)
+        const { data, status } = await axios.post('/attempts/complete', {
+          ...tasks,
+          attempt: parseInt(attemptID, 10),
+        })
 
         if (status !== 201) {
           return Promise.reject()

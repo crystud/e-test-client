@@ -8,7 +8,7 @@
   >
     <div class="image">
       <img
-        src="https://www.thispersondoesnotexist.com/image"
+        :src="require('@/assets/no_user.png')"
         alt="student profile image from search results"
       />
     </div>

@@ -2,74 +2,94 @@
   <div class="app-permissions">
     <app-preloader :show="showPreloader"></app-preloader>
 
-    <app-ask-study
-      :show="Boolean(showCreatePermission && !showSelectGroup)"
-      @selected="studySelected"
-    ></app-ask-study>
-
     <app-ask-group
-      :show="Boolean(showSelectGroup && !group.id)"
-      :groupsList="groupsList"
+      :show="Boolean(showCreatePermission && !group.id)"
       @selected="selectedGroup => group = selectedGroup"
+      @close="showCreatePermission = false"
     ></app-ask-group>
 
     <app-create-permission
       :show="Boolean(group.id && showCreatePermission)"
       :group="group"
-      :studyID="studyID"
       @done="
         showCreatePermission = false
-        showSelectGroup = false
-        studyID = 0
         group = {}
-        subject = {}
-        groupsList = []
         loadPermissions()
       "
       @cancel="
         showCreatePermission = false
-        showSelectGroup = false
-        studyID = 0
         group = {}
-        subject = {}
-        groupsList = []
       "
     ></app-create-permission>
 
     <div class="header">
-      <div class="title">Дозволи на проходження тестів</div>
+      <div class="info">
+        <div class="title">Дозволи на проходження тестів</div>
+
+        <select
+          v-model="teaching"
+          @change="loadPermissions"
+          class="subject-select"
+        >
+          <option
+            v-for="(teacher, index) in subjects"
+            v-bind:key="index"
+            :value="teacher"
+          >{{teacher.subject.name}}</option>
+        </select>
+      </div>
 
       <app-button
         appearance="primary"
-        @click="showCreatePermission = true"
+        @click="
+          showCreatePermission = true
+          group = {}
+        "
       >Створити дозвіл</app-button>
     </div>
 
     <div class="content">
-      <div class="title">Ви надали {{grantedPermissions.length}} дозволів</div>
-
-      {{grantedPermissions}}
+      <div
+        v-if="teaching"
+        class="title"
+      >
+        Ви надали {{grantedPermissions.length}} дозволів з предмету "{{teaching.subject.name}}"
+      </div>
 
       <div class="list">
         <div class="row header-row">
           <div class="test">Назва тесту</div>
-          <div class="created">Час створення</div>
-          <div class="start">Початок активності</div>
+          <div class="start">Створено</div>
           <div class="end">Кінець активності</div>
-          <div class="members">К-сть груп</div>
+          <div class="group">Група</div>
         </div>
 
         <div
+          class="no-permissions"
+          v-if="!grantedPermissions.length && teaching"
+        >Ви не надали жодного дозволу на проходження з предмету "{{teaching.subject.name}}"</div>
+
+        <router-link
           v-for="(permission, index) in grantedPermissions"
           :key="index"
-          class="row"
+          class="row permission-row"
+          :to="{
+            name: 'permissionDetails',
+            params: { permissionID: permission.id },
+          }"
         >
-          <div class="test">-</div>
-          <div class="created">{{getNormalDate(permission.createAt)}}</div>
-          <div class="start">{{getNormalDate(permission.startTime)}}</div>
-          <div class="end">{{getNormalDate(permission.endTime)}}</div>
-          <div class="members">{{permission.groups.length}}</div>
-        </div>
+          <div class="test">{{permission.test.name}}</div>
+
+          <div class="start">
+            {{$moment(permission.createAt).format('Do MMMM YYYY, HH:mm')}}
+          </div>
+
+          <div class="end">
+            {{$moment(permission.endTime).format('Do MMMM YYYY, HH:mm')}}
+          </div>
+
+          <div class="group">{{permission.group.name}}</div>
+        </router-link>
       </div>
     </div>
   </div>
@@ -81,7 +101,6 @@ import { mapActions } from 'vuex'
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 
-import AppAskStudy from '@/components/templates/teacher/AppAskStudy.vue'
 import AppAskGroup from '@/components/templates/teacher/AppAskGroup.vue'
 import AppCreatePermission from '@/components/templates/teacher/AppCreatePermission.vue'
 
@@ -89,56 +108,66 @@ export default {
   data() {
     return {
       showCreatePermission: false,
-      showSelectGroup: false,
       showPreloader: false,
-      subject: {},
       group: {},
-      groupsList: [],
-      studyID: 0,
+      subjects: [],
+      teaching: null,
       grantedPermissions: [],
     }
   },
   methods: {
     ...mapActions({
-      getGroups: 'specialities/getGroups',
-      getSelfPermissions: 'user/getPermissions',
+      getSelfPermissions: 'teacher/getPermissions',
+      getSubjects: 'teacher/getSubjects',
+      setAlert: 'alert/set',
     }),
-    getNormalDate(time) {
-      if (!time) return ''
+    async loadSubjects() {
+      try {
+        this.showPreloader = true
 
-      const date = new Date(time)
+        const subjects = await this.getSubjects()
+        const teaching = subjects[0] ? subjects[0] : null
 
-      const datetime = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
-      const daytime = `${date.getHours()}:${date.getMinutes()}`
+        this.subjects = subjects
+        this.teaching = teaching
+      } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати список предметів...'
 
-      return `${datetime} ${daytime}`
+        this.setAlert({
+          title: 'Помилка',
+          text,
+        })
+      } finally {
+        this.showPreloader = false
+      }
     },
     async loadPermissions() {
-      this.showPreloader = true
+      try {
+        this.showPreloader = true
 
-      this.grantedPermissions = await this.getSelfPermissions()
+        const { teaching } = this
 
-      this.showPreloader = false
-    },
-    async studySelected({ specialties, id }) {
-      this.showPreloader = true
+        this.grantedPermissions = teaching ? await this.getSelfPermissions(teaching.id) : []
+      } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати список дозволів...'
 
-      const groups = await this.getGroups(specialties.map(({ id: specialityID }) => specialityID))
-
-      this.showSelectGroup = true
-      this.showPreloader = false
-      this.studyID = id
-      this.groupsList = groups
+        this.setAlert({
+          title: 'Помилка',
+          text,
+        })
+      } finally {
+        this.showPreloader = false
+      }
     },
   },
   components: {
     AppButton,
-    AppAskStudy,
     AppAskGroup,
     AppPreloader,
     AppCreatePermission,
   },
   async created() {
+    await this.loadSubjects()
     await this.loadPermissions()
   },
 }
@@ -156,6 +185,17 @@ export default {
     .title {
       font-size: 1.5em;
       font-weight: 400;
+    }
+
+    .subject-select {
+      margin-top: 10px;
+
+      padding: 15px 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+      background: var(--color-bg-dark);
+      color: var(--color-font-main);
     }
   }
 
@@ -176,9 +216,33 @@ export default {
     .list {
       margin-top: 20px;
 
+      .no-permissions {
+        text-align: center;
+        margin: 70px auto;
+        color: var(--color-font-dark);
+        font-size: 1.3em;
+
+        position: relative;
+        max-width: 500px;
+
+        &::before {
+          content: "";
+          display: block;
+          width: 70px;
+          height: 2px;
+          background: var(--color-accent-red);
+
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -15px;
+          margin: auto;
+        }
+      }
+
       .row {
         display: grid;
-        grid-template-columns: 1fr 200px 200px 200px 70px;
+        grid-template-columns: 1fr 200px 200px 100px;
         grid-gap: 20px;
 
         align-items: center;
@@ -191,6 +255,28 @@ export default {
           padding-bottom: 15px;
           border-bottom: 1px solid var(--color-bg-main);
         }
+
+        &.permission-row {
+          &:hover {
+            text-decoration: underline !important;
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 700px) {
+    .header {
+      grid-template-columns: 1fr;
+    }
+
+    .content .list .row {
+      grid-template-columns: 1fr;
+      grid-gap: 10px;
+
+      .test {
+        font-size: 1.5em;
+        font-weight: 400;
       }
     }
   }

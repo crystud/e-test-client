@@ -1,10 +1,14 @@
 <template>
   <app-user-card class="app-student-activity">
-    <div class="title">Активність тестування</div>
+    <div class="title">Інвайт студента</div>
 
     <app-data-list
       class="data"
-      :data="data"
+      :data="[
+        ['Код', data.code],
+        ['Дата створення', $moment(data.createAt).utc(true).format('Do MMMM YYYY, HH:mm')],
+        ['Створив', `${data.creator.lastName} ${data.creator.firstName} ${data.creator.patronymic}`]
+      ]"
     ></app-data-list>
   </app-user-card>
 </template>
@@ -21,9 +25,12 @@ export default {
   },
   props: {
     data: {
-      type: Array,
+      type: Object,
       required: true,
-      default: () => [],
+      default: () => ({
+        code: '',
+        creator: {},
+      }),
     },
   },
 }

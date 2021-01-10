@@ -3,30 +3,158 @@
     <app-preloader :show="showPreloader"></app-preloader>
 
     <app-modal-window
-      :show="show && !alert.show"
+      :show="Boolean(ticket && ticketInfo.id && !alert.show)"
       :noPaddings="true"
     >
-      <div class="title">Ви впевнені, що хочете пройти тест?</div>
-
       <div
-        class="content"
-        v-if="ticket.id"
+        v-if="ticketInfo.id"
+        class="sections"
+        :class="{
+          'showing-attempts-list': attempts.length,
+        }"
       >
-        <div class="test">
-          <div class="name">{{ticket.title || '-'}}</div>
+        <div
+          class="attempts-list"
+          v-if="attempts.length"
+        >
+          <div class="title">
+            {{$route.name === 'studentOverview' ?
+              'Спроби проходження' :
+              'Ваші спроби проходження'
+            }} (Спроб - {{attempts.length}})
+          </div>
+
+          <div
+            v-for="({
+              active,
+              startTime,
+              endTime,
+              maxEndTime,
+              id: attemptID,
+              result,
+            }, index) in attempts"
+            v-bind:key="index"
+            class="attempt"
+          >
+            <div class="start-time">
+              <div v-if="endTime">{{countPassingTime(startTime, endTime)}}</div>
+            </div>
+
+            <div
+              class="date"
+              v-if="startTime && endTime"
+            >
+              {{$moment(startTime).format('Do MMMM YYYY, HH:mm')}}
+              - {{$moment(endTime).format('Do MMMM YYYY, H:mm')}}</div>
+
+            <div
+              v-if="result.id"
+              class="see-result"
+              @click="$router.push({
+                name: 'testResults',
+                params: {
+                  resultID: result.id,
+                },
+              })"
+            >Результат {{result.percent}}%</div>
+
+            <div v-if="active">
+              <div class="is-active active">Активна</div>
+
+              <div
+                class="time-until-closed"
+                :class="{
+                  'is-closed': countTimeUntilClosed(maxEndTime).isClosed,
+                }"
+              >
+                {{countTimeUntilClosed(maxEndTime).text}}
+              </div>
+
+              <div
+                v-if="
+                  !countTimeUntilClosed(maxEndTime).isClosed
+                  && $route.name !== 'studentOverview'
+                "
+                @click="$router.push({
+                  name: 'testPass',
+                  params: {
+                    attemptID,
+                  },
+                })"
+                class="continue"
+              >Продовжити проходження</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="header">
+            <div class="name">{{ticketInfo.permission.test.name}}</div>
+
+            <div class="created-at">
+              Дозвіл створено {{$moment(ticketInfo.createAt).format('Do MMMM YYYY, HH:mm')}}
+            </div>
+          </div>
+
+          <app-data-list
+            class="app-data-list"
+            :data="[
+              [
+                'Початок доступу',
+                $moment(ticketInfo.permission.startTime).format('Do MMMM YYYY, HH:mm')
+              ],
+              [
+                'Кінець доступу',
+                $moment(ticketInfo.permission.endTime).format('Do MMMM YYYY, HH:mm')
+              ],
+              ['Макс. к-сть спроб', ticketInfo.permission.maxCountOfUse || 'Безмежна'],
+            ]"
+          ></app-data-list>
+
+          <div class="access-status">
+            <span>Статус: </span>
+
+            <span
+              v-if="ticketInfo.unstarted"
+              class="unstarted"
+            >
+              Дозвіл відкриється
+              {{$moment(ticketInfo.permission.startTime).format('Do MMMM YYYY, HH:mm')}}
+            </span>
+
+            <span
+              v-if="ticketInfo.used && !ticketInfo.unstarted"
+              class="denied"
+            >Використаний</span>
+
+            <span
+              v-if="!ticketInfo.used && !ticketInfo.unstarted"
+              class="granted"
+            >Невикористаний</span>
+
+            <span
+              v-if="ticketInfo.outstanding
+                  && !ticketInfo.used
+                  && !ticketInfo.unstarted"
+            >
+              /
+              <span class="denied"> Прострочений</span>
+            </span>
+          </div>
         </div>
       </div>
 
       <div class="btns">
         <button
-          class="leave"
-          @click="$emit('cancel')"
-        >Скасувати</button>
-
-        <button
+          v-if="$route.name !== 'studentOverview' && !ticketInfo.unstarted"
           class="pass"
           @click="pass"
         >Почати</button>
+
+        <button
+          class="leave"
+          @click="$emit('cancel')"
+        >Закрити</button>
       </div>
     </app-modal-window>
   </div>
@@ -37,50 +165,105 @@ import { mapActions, mapGetters } from 'vuex'
 
 import AppPreloader from '@/components/ui/AppPreloader.vue'
 import AppModalWindow from '@/components/ui/AppModalWindow.vue'
+import AppDataList from '@/components/ui/AppDataList.vue'
 
 export default {
-  components: {
-    AppPreloader,
-    AppModalWindow,
-  },
-  props: {
-    show: {
-      type: Boolean,
-      required: true,
-    },
-    ticket: {
-      type: Object,
-      required: true,
-    },
-  },
   computed: {
     ...mapGetters({
       alert: 'alert/alert',
     }),
+    attempts() {
+      return this.ticketInfo.attempts || []
+    },
   },
   methods: {
     ...mapActions({
       setAlert: 'alert/set',
       useTicket: 'tickets/use',
+      loadTicket: 'tickets/getByID',
     }),
+    countTimeUntilClosed(closeTime, current) {
+      const currentTime = current || new Date()
+      const difference = new Date(closeTime).getTime() - currentTime.getTime()
+
+      const timeLeft = Math.round(difference / 1000)
+
+      const days = Math.floor(timeLeft / 86400)
+      const hours = Math.floor((timeLeft - (days * 86400)) / 3600)
+      const minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600)) / 60)
+      const seconds = timeLeft % 60
+
+      return {
+        time: {
+          days,
+          hours,
+          minutes,
+          seconds,
+        },
+        isClosed: timeLeft < 0,
+        text:
+          this.isClosed
+            ? 'Доступ закрито'
+            : `Доступ закриється через ${days} дн. ${hours} год. ${minutes} хв.`,
+      }
+    },
+    countPassingTime(startTime, endTime) {
+      const difference = new Date(endTime).getTime() - new Date(startTime).getTime()
+
+      const timeLeft = Math.round(difference / 1000)
+
+      const hours = Math.floor(timeLeft / 3600)
+      const minutes = Math.floor((timeLeft - (hours * 3600)) / 60)
+      const seconds = timeLeft % 60
+
+      const hoursText = hours > 0 ? `${hours} год. ` : ''
+
+      return `${hoursText}${minutes} хв. ${seconds} сек.`
+    },
+    async checkState() {
+      const { ticket } = this
+
+      if (ticket) {
+        try {
+          this.showPreloader = true
+
+          this.ticketInfo = await this.loadTicket(ticket)
+        } catch (e) {
+          const text = e?.response.data.message || 'Не вдалось отримати інформацію про квиток'
+
+          this.setAlert({
+            title: 'Помилка',
+            text,
+            show: true,
+            isSuccess: false,
+          })
+        } finally {
+          this.showPreloader = false
+        }
+      }
+    },
     async pass() {
       const { ticket } = this
 
       try {
         this.showPreloader = true
 
-        const { attempts: [attempt] } = await this.useTicket(ticket.id)
+        const attemptData = await this.useTicket(ticket)
+
+        localStorage.setItem('attempt', JSON.stringify(attemptData))
 
         this.$router.push({
           name: 'testPass',
           params: {
-            attemptID: attempt.id,
+            attemptID: attemptData.id,
           },
         })
       } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати дані про квиток'
+
         this.setAlert({
           title: 'Помилка',
-          text: 'Не вдалось отримати дані про квиток',
+          text,
           isSuccess: false,
           show: true,
         })
@@ -92,69 +275,178 @@ export default {
   data() {
     return {
       showPreloader: false,
+      ticketInfo: {},
     }
+  },
+  watch: {
+    ticket() {
+      this.checkState()
+    },
+  },
+  props: {
+    ticket: {
+      type: Number,
+      required: true,
+    },
+  },
+  components: {
+    AppPreloader,
+    AppDataList,
+    AppModalWindow,
   },
 }
 </script>
 
 <style lang="less" scoped>
 .app-warn-passing {
-  .title,
-  .content {
-    width: 100vw;
-    max-width: 500px;
-    padding: 20px;
-  }
+  .sections {
+    max-width: 850px;
 
-  .title {
-    font-size: 1.3em;
-    color: var(--color-font-main);
+    display: grid;
+    grid-gap: 10px;
 
-    text-align: center;
-    border-bottom: 1px solid var(--color-bg-main);
-  }
+    &.showing-attempts-list {
+      grid-template-columns: 2fr 3fr;
+    }
 
-  .content {
-    text-align: center;
+    .attempts-list {
+      max-height: 70vh;
+      overflow-y: auto;
 
-    .test {
-      .name {
-        color: var(--color-font-main);
-        font-size: 1.3em;
-        font-weight: 100;
-        margin-bottom: 10px;
-      }
+      border-right: 1px solid var(--color-bg-main);
 
-      .description {
+      .title {
+        padding: 15px 10px;
         color: var(--color-font-dark);
       }
+
+      .attempt {
+        padding: 20px 30px;
+        border-top: 1px solid var(--color-bg-main);
+
+        .start-time {
+          font-size: 1.1em;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+
+        .date {
+          margin-bottom: 5px;
+          color: var(--color-accent-orange);
+        }
+
+        .see-result {
+          color: var(--color-font-dark);
+          cursor: pointer;
+          user-select: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        .is-active {
+          color: var(--color-accent-green);
+        }
+
+        .time-until-closed {
+          margin-top: 10px;
+          color: var(--color-font-dark);
+        }
+
+        .continue {
+          display: inline-block;
+          padding: 5px 10px;
+          border-radius: 5px;
+          cursor: pointer;
+          user-select: none;
+          margin-top: 15px;
+          color: var(--color-accent-green);
+          background: var(--color-bg-main);
+        }
+      }
+    }
+
+    @media screen and (max-width: 650px) {
+      .attempts-list {
+        max-height: 40vh;
+        border-bottom: 1px solid var(--color-bg-main);
+        border-right: 0;
+
+        .attempt {
+          background: var(--color-bg-main);
+          border-radius: 10px;
+
+          padding: 20px;
+          margin: 15px;
+
+          border-top: 0;
+        }
+      }
+
+      &.showing-attempts-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  .content {
+    padding: 35px;
+
+    .header {
+      margin-bottom: 20px;
+
+      .name {
+        font-size: 1.3em;
+        font-weight: bold;
+      }
+
+      .created-at {
+        color: var(--color-font-dark);
+        margin-top: 5px;
+      }
+    }
+
+    .access-status {
+      margin-top: 20px;
+      color: var(--color-font-dark);
+
+      .granted { color: var(--color-accent-green) }
+      .denied { color: var(--color-accent-red) }
+      .unstarted { color: var(--color-accent-orange) }
     }
   }
 
   .btns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto;
+    grid-gap: 10px;
+    justify-content: flex-end;
+
     border-top: 1px solid var(--color-bg-main);
+    padding: 20px;
 
     button {
-      background: transparent;
       border: 0;
-      padding: 20px;
+      padding: 13px 30px;
+      border-radius: 5px;
       font-size: 1em;
       cursor: pointer;
-      transition: none;
-
-      &:hover {
-        background: var(--color-bg-main);
-      }
 
       &.leave {
-        color: var(--color-accent-red);
+        background: var(--color-bg-main);
+        color: var(--color-font-dark);
       }
 
       &.pass {
-        color: var(--color-accent-green);
+        background: var(--color-accent-green);
+        color: #fff;
       }
+    }
+
+    @media screen and (max-width: 400px) {
+      grid-template-columns: 1fr;
+      justify-content: center;
     }
   }
 }

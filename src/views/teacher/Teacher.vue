@@ -1,46 +1,66 @@
 <template>
   <div class="app-student">
+    <app-create-test
+      :show="showCreateTest"
+      :subject="createTestSubject"
+      @close="
+        showCreateTest = false
+        createTestSubject = {}
+      "
+      @created="({ id }) => $router.push({
+        name: 'testDevelop',
+        params: { id },
+      })"
+    ></app-create-test>
+
     <div class="student-info">
       <app-student-personal-info
+        class="drop-shadow"
         :user="user"
         :data="[
           ['E-mail', user.email || 'Невідомо'],
-          ['Викладаєте у', 'Коломийський політехнічний коледж'],
         ]"
       ></app-student-personal-info>
 
-      <app-teacher-activity :data="activity"></app-teacher-activity>
+      <app-teacher-activity
+        class="drop-shadow"
+        :teachers="user.teachers"
+      ></app-teacher-activity>
     </div>
 
     <div class="sections">
-      <div class="tests">
-        <app-teacher-tests-list
-          class="teacher-tests"
-          title="Тести в розробці"
-          :tests="[
-            { name: 'Математика. Базовий рівень', questionsCount: 16 },
-            { name: 'Математика. Середній рівень', questionsCount: 16 },
-            { name: 'Математика. Вищий рівень', questionsCount: 16 },
-          ]"
-          :totalCount="7"
-        ></app-teacher-tests-list>
+      <div>
+        <app-fade-card
+          :show="!showCreateMessage"
+          class="tests"
+        >
+          <app-teacher-attached-subject
+            v-for="(subject, index) in subjects"
+            v-bind:key="index"
+            :subject="subject"
+            :isOpened="openedIndex === index"
+            class="teaching-subject"
+            @click="openedIndex = index"
+            @create="
+              createTestSubject = subject
+              showCreateTest = true
+            "
+          ></app-teacher-attached-subject>
+        </app-fade-card>
 
-        <app-teacher-tests-list
-          class="teacher-tests"
-          title="Активні тести"
-          :tests="[
-            { name: 'Вища математика. Базовий рівень', questionsCount: 32 },
-            { name: 'Вища математика. Середній рівень', questionsCount: 32 },
-            { name: 'Вища математика. Вищий рівень', questionsCount: 32 },
-          ]"
-          :totalCount="5"
-        ></app-teacher-tests-list>
+        <app-fade-card :show="showCreateMessage">
+          <app-create-message
+            @close="showCreateMessage = false"
+            @sent="showCreateMessage = false"
+          ></app-create-message>
+        </app-fade-card>
       </div>
 
-      <app-student-messages
-        title="Ваші оголошення"
-        :messages="exampleMessages"
-      ></app-student-messages>
+      <app-teacher-messages
+        @showCreateMessage="showCreateMessage = true"
+        :showingCreateMessage="showCreateMessage"
+        :user="user"
+      ></app-teacher-messages>
     </div>
   </div>
 </template>
@@ -49,21 +69,22 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import AppStudentPersonalInfo from '@/components/templates/student/AppStudentPersonalInfo.vue'
-import AppStudentMessages from '@/components/templates/student/AppStudentMessages.vue'
+import AppTeacherMessages from '@/components/templates/teacher/AppTeacherMessages.vue'
+
 import AppTeacherActivity from '@/components/templates/teacher/AppTeacherActivity.vue'
-import AppTeacherTestsList from '@/components/templates/teacher/AppTeacherTestsList.vue'
+import AppTeacherAttachedSubject from '@/components/templates/teacher/AppTeacherAttachedSubject.vue'
+import AppCreateTest from '@/components/templates/teacher/AppCreateTest.vue'
+import AppCreateMessage from '@/components/templates/teacher/AppCreateMessage.vue'
+
+import AppFadeCard from '@/components/ui/AppFadeCard.vue'
 
 export default {
-  name: 'AppStudent',
-  components: {
-    AppStudentPersonalInfo,
-    AppTeacherActivity,
-    AppStudentMessages,
-    AppTeacherTestsList,
-  },
   methods: {
     ...mapActions({
       getUser: 'user/getUser',
+      getTeacherSubjects: 'teacher/getSubjects',
+      getTeacher: 'teacher/getByID',
+      setAlert: 'alert/set',
     }),
     setFullHistory(isOpened) {
       this.fullIsOpened = isOpened
@@ -77,45 +98,53 @@ export default {
   data() {
     return {
       user: {},
+      showCreateMessage: false,
+      showCreateTest: false,
+      createTestSubject: {},
       fullIsOpened: false,
+      openedIndex: null,
+      subjects: [],
       activity: [
         ['У авторській розробці', '5 тестів'],
-        ['Створено питань', '78%'],
-        ['Предметів', '6'],
-      ],
-      exampleMessages: [
-        {
-          sender: 'Вчитель Вчительович',
-          time: '03.02.2020 16:45',
-          message: `
-            Проходимо тести. Доступ відкрив.
-          `,
-        },
+        ['Створено питань', '37'],
+        ['Предметів викладаєте', '3'],
       ],
     }
   },
   async created() {
-    this.showPreloader = true
-
-    const {
-      $route: {
-        params: { id: userID },
-      },
-    } = this
-
-    if (!userID) {
-      this.user = this.self
+    try {
+      this.showPreloader = true
 
       document.title = 'Ваш профіль -  CRYSTUD'
-    } else {
-      this.user = await this.getUser(userID)
+
+      this.user = await this.getUser(this.self.id)
+      this.subjects = await this.getTeacherSubjects()
+
+      const { user } = this
+
+      document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
+    } catch (e) {
+      const text = e?.response.data.message || 'Не вдалось отримати інформацію про вчителя'
+
+      this.setAlert({
+        title: 'Помилка',
+        text,
+        delay: 1500,
+        show: true,
+        isSuccess: false,
+      })
+    } finally {
+      this.showPreloader = false
     }
-
-    const { user } = this
-
-    document.title = `${user.lastName} ${user.firstName} ${user.patronymic} - CRYSTUD`
-
-    this.showPreloader = false
+  },
+  components: {
+    AppTeacherAttachedSubject,
+    AppStudentPersonalInfo,
+    AppTeacherActivity,
+    AppTeacherMessages,
+    AppCreateMessage,
+    AppCreateTest,
+    AppFadeCard,
   },
 }
 </script>
@@ -138,6 +167,10 @@ export default {
     .teacher-tests {
       margin-bottom: 20px;
     }
+  }
+
+  .teaching-subject {
+    margin-bottom: 10px;
   }
 
   .mobile {

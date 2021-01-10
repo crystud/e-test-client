@@ -35,7 +35,7 @@ export default [
     path: '/tests/own',
     name: 'TeacherOwnTests',
     meta: {
-      title: 'Тести у авторській розробці',
+      title: 'Тести в розробці',
     },
     component: () => import('@/views/teacher/Tests.vue'),
   },
@@ -59,8 +59,24 @@ export default [
     path: '/permissions',
     name: 'permissions',
     meta: {
-      title: 'Дозволи на проходження',
+      title: 'Дозволи на проходження тестів',
     },
     component: () => import('@/views/teacher/Permissions.vue'),
+  },
+  {
+    path: '/permission/:permissionID',
+    name: 'permissionDetails',
+    meta: {
+      title: 'Інформація про дозвіл',
+    },
+    component: () => import('@/views/teacher/Permission.vue'),
+  },
+  {
+    path: '/tests/import',
+    name: 'importing-test',
+    meta: {
+      title: 'Імпортування тесту',
+    },
+    component: () => import('@/views/teacher/ImportingTest.vue'),
   },
 ]

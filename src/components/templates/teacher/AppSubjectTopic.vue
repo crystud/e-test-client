@@ -7,24 +7,13 @@
     @click="visit"
   >
     <div class="name">{{topic.name}}</div>
-
-    <app-data-list
-      class="data-list"
-      :data="[
-        ['Підтверджена', topic.confirmed ? 'Так' : 'Ні'],
-      ]"
-    ></app-data-list>
   </div>
 </template>
 
 <script>
-import AppDataList from '@/components/ui/AppDataList.vue'
 import { mapActions } from 'vuex'
 
 export default {
-  components: {
-    AppDataList,
-  },
   props: {
     topic: {
       type: Object,
@@ -61,7 +50,7 @@ export default {
 <style lang="less" scoped>
 .app-subject-topic {
   background: var(--color-bg-dark);
-  padding: 25px;
+  padding: 35px;
   border-radius: 10px;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
   position: relative;
@@ -69,11 +58,6 @@ export default {
 
   .name {
     font-size: 1.4em;
-    margin-bottom: 20px;
-  }
-
-  .data-list {
-    margin: 0;
   }
 
   &::before {

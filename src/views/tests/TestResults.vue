@@ -1,74 +1,131 @@
 <template>
   <div class="app-test-results">
-    <app-test-header
-      :showMinimize="true"
-    ></app-test-header>
+    <app-preloader :show="showPreloader"></app-preloader>
 
-    <div class="results-wrap">
-      <div class="student-info">
-        <div class="wrap">
-          <div class="profile-image">
-            <img
-              src="https://www.thispersondoesnotexist.com/image"
-              alt="student's profile image"
-            />
+    <template v-if="result.id">
+      <div class="results-wrap">
+        <div class="student-info">
+          <div class="wrap">
+            <div class="profile-image">
+              <img
+                :src="require('@/assets/no_user.png')"
+                alt="student's profile image"
+              />
+            </div>
+
+            <div class="info">
+              <div class="name">{{self.lastName}} {{self.firstName}}</div>
+              <!-- <div class="last-visit">В мережі</div> -->
+            </div>
           </div>
+        </div>
 
-          <div class="info">
-            <div class="name">Студент Студентович</div>
-            <div class="last-visit">Не в мережі</div>
+        <div class="results-list">
+          <div
+            v-for="([ label, value ], index) in [
+              ['Результат', `${result.percent}%`],
+              ['Час', getPassingTime(result.attempt.startTime, result.attempt.endTime)],
+            ]"
+            v-bind:key="index"
+            class="item"
+          >
+            <div class="value">{{value}}</div>
+            <div class="label">{{label}}</div>
           </div>
         </div>
       </div>
 
-      <div class="results-list">
-        <div
-          v-for="([ label, value ], index) in results"
+      <div class="answers-list">
+        <app-student-answer
+          v-for="(answer, index) in result.resultTasks"
           v-bind:key="index"
-          class="item"
-        >
-          <div class="value">{{value}}</div>
-          <div class="label">{{label}}</div>
-        </div>
+          :answer="answer"
+        ></app-student-answer>
       </div>
-    </div>
-
-    <div class="answers-list">
-      <app-student-answer
-        v-for="i in 7"
-        v-bind:key="i"
-        :isRight="Math.random() > 0.5"
-      ></app-student-answer>
-    </div>
+    </template>
   </div>
 </template>
 
 <script>
-import AppTestHeader from '@/components/templates/tests/AppTestHeader.vue'
+import { mapActions, mapGetters } from 'vuex'
+
 import AppStudentAnswer from '@/components/templates/tests/AppStudentAnswer.vue'
+import AppPreloader from '@/components/ui/AppPreloader.vue'
 
 export default {
-  name: 'AppTestResults',
+  computed: {
+    ...mapGetters({
+      self: 'user/info',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      getResults: 'results/getByID',
+      setAlert: 'alert/set',
+    }),
+    getPassingTime(startTime, endTime) {
+      const difference = new Date(endTime).getTime() - new Date(startTime).getTime()
+      const differenceInSeconds = Math.round(difference / 1000)
+
+      const hours = Math.floor(differenceInSeconds / 3600)
+      const minutes = Math.floor((differenceInSeconds - (hours * 3600)) / 60)
+      const seconds = differenceInSeconds % 60
+
+      const hoursText = hours > 0 ? `${hours} год. ` : ''
+
+      return `${hoursText}${minutes} хв. ${seconds} сек.`
+    },
+    async loadResults() {
+      const { params: { resultID: rawResultID } } = this.$route
+
+      const resultID = Number(rawResultID)
+
+      if (!resultID) {
+        this.setAlert({
+          title: 'Помилка',
+          text: 'Не вдалось оприділити ID спроби...',
+          isSuccess: false,
+          show: true,
+        })
+
+        return
+      }
+
+      try {
+        this.showPreloader = true
+
+        this.result = await this.getResults(resultID)
+      } catch (e) {
+        const text = e?.response.data.message || 'Не вдалось отримати результати...'
+
+        this.setAlert({
+          title: 'Помилка',
+          text,
+          show: true,
+          isSuccess: false,
+        })
+      } finally {
+        this.showPreloader = false
+      }
+    },
+  },
+  created() {
+    this.loadResults()
+  },
   data() {
     return {
-      results: [
-        ['Оцінка', 12],
-        ['Час', '12:35'],
-        ['Вірних', 3],
-        ['Невірних', 3],
-        ['Вирішено', '50%'],
-      ],
+      showPreloader: false,
+      result: {},
     }
   },
   components: {
-    AppTestHeader,
+    AppPreloader,
     AppStudentAnswer,
   },
 }
 </script>
 
 <style lang="less" scoped>
-@extrasmall: ~"screen and (max-width: 430px)";
 @small: ~"screen and (max-width: 1050px)";
 @medium: ~"screen and (max-width: 1200px)";
 @large: ~"screen and (min-width: 1250px)";
@@ -103,7 +160,7 @@ export default {
         }
 
         .last-visit {
-          color: var(--color-font-dark);
+          color: var(--color-accent-green);
           margin-top: 5px;
         }
 
@@ -135,8 +192,10 @@ export default {
 
   .results-list {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
+
+    justify-content: space-between;
 
     background: var(--color-bg-dark);
     border-radius: 10px;

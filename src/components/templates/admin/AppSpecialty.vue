@@ -7,14 +7,14 @@
         ['Скорочена назва', specialty.symbol || '-'],
         ['Код', specialty.code],
         ['К-сть груп', specialty.groups ? specialty.groups.length : '-'],
-        ['Закріплено пар', specialty.studies ? specialty.studies.length : '-'],
+        ['Закріплено предметів', specialty.studies ? specialty.studies.length : '-'],
       ]"
     ></app-data-list>
 
     <div
-      @click="$emit('editStudies')"
+      @click="$emit('editAttachedSubjects')"
       class="study-plan"
-    >Закріплені пари</div>
+    >Закріплені предмети ({{specialty.subjects.length}})</div>
   </app-card>
 </template>
 
